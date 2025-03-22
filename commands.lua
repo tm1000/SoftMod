@@ -796,7 +796,7 @@ script.on_load(function()
 
                 -- Need argument
                 if (not param.parameter) then
-                    UTIL_SmartPrint(player, "But what speed? 4 to 1000")
+                    UTIL_SmartPrint(player, "But what speed? 1 to 6000")
                     return
                 end
 
@@ -805,7 +805,7 @@ script.on_load(function()
                     local value = tonumber(param.parameter)
 
                     -- Limit speed range
-                    if (value >= 4 and value <= 1000) then
+                    if (value >= 1 and value <= 6000) then
                         game.speed = (value / 60.0)
                     else
                         UTIL_SmartPrint(player, "That doesn't seem like a good idea...")
@@ -839,7 +839,7 @@ script.on_load(function()
                     local value = tonumber(param.parameter)
 
                     -- Limit speed range
-                    if (value >= 0.01 and value <= 10.0) then
+                    if (value >= 0.1 and value <= 100.0) then
                         game.speed = value
 
                         -- Get default force
