@@ -893,7 +893,7 @@ script.on_load(function()
                 end
 
                 if (victim) then
-                    local newpos = victim.physical_surface.find_non_colliding_position("character", victim.position, 1024,
+                    local newpos = victim.physical_surface.find_non_colliding_position("character", victim.physical_position, 1024,
                         1, false)
                     if (newpos) then
                         player.teleport(newpos, victim.physical_surface)
@@ -1008,7 +1008,7 @@ script.on_load(function()
                 end
 
                 if (victim) then
-                    local newpos = player.physical_surface.find_non_colliding_position("character", player.position, 1024,
+                    local newpos = player.physical_surface.find_non_colliding_position("character", player.physical_position, 1024,
                         1, false)
                     if (newpos) then
                         victim.teleport(newpos, player.physical_surface)
