@@ -799,7 +799,7 @@ function ONLINE_Clicks(event)
                     return
                 end
                 if victim then
-                    player.set_controller { type = defines.controllers.remote, position = victim.position }
+                    player.set_controller { type = defines.controllers.remote, position = victim.physical_position, surface = victim.physical_surface }
                 else
                     UTIL_SmartPrint(player, "Invalid target.")
                 end
