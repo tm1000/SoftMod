@@ -286,7 +286,7 @@ function ONLINE_MakeM45OnlineSub(player, target_name)
                     else
                         local banish_note = banish_frame.add {
                             type = "label",
-                            caption = "(only regulars and moderators have banish privleges)"
+                            caption = "(only regulars and moderators have banish privileges)"
                         }
                         banish_note.enabled = false
                         banish.enabled = false
@@ -304,7 +304,7 @@ function ONLINE_MakeM45OnlineSub(player, target_name)
     end
 end
 
-local function destoryOnlineSub(player)
+local function destroyOnlineSub(player)
     if player.gui and player.gui.screen and player.gui.screen.m45_online_submenu then
         player.gui.screen.m45_online_submenu.destroy()
     end
@@ -313,7 +313,7 @@ end
 local function handleOnlineSubmenu(player, target_name)
     if player and player.valid and target_name then
         storage.PData[player.index].onlineSub = target_name
-        destoryOnlineSub(player)
+        destroyOnlineSub(player)
         ONLINE_MakeM45OnlineSub(player, target_name)
     end
 end

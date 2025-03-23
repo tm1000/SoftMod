@@ -13,7 +13,7 @@ function INFO_MakeClock(player)
             type = "button",
             name = "reset_clock",
             style = "red_button",
-            tooltip = "Map reset schdule. Control-right-click to minimize.",
+            tooltip = "Map reset schedule. Control-right-click to minimize.",
             visible = false,
         }
         rclock.style.size = { 24, 24 }

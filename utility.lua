@@ -373,7 +373,7 @@ function UTIL_Is_Veteran(victim)
         end
     end
 
-    --Workaround for mods that screw with permisison groups
+    --Workaround for mods that screw with permissions groups
     if not UTIL_Is_Banished(victim) then
         if storage and storage.PData[victim.index] then
             local level = storage.PData[victim.index].level
@@ -398,7 +398,7 @@ function UTIL_Is_Regular(victim)
         end
     end
 
-    --Workaround for mods that screw with permisison groups
+    --Workaround for mods that screw with permissions groups
     if not UTIL_Is_Banished(victim) then
         if storage and storage.PData[victim.index] then
             local level = storage.PData[victim.index].level
@@ -422,7 +422,7 @@ function UTIL_Is_Member(victim)
         end
     end
 
-    --Workaround for mods that screw with permisison groups
+    --Workaround for mods that screw with permissions groups
     if not UTIL_Is_Banished(victim) then
         if storage and storage.PData[victim.index] then
             local level = storage.PData[victim.index].level

@@ -278,7 +278,7 @@ function LOG_MarkedUpgrade(event)
         local obj = event.entity
 
         if player then
-            local msg = "[ACT] " .. player.name .. " marked for upgrade " .. obj.name
+            local msg = "[ACT] " .. player.name .. " marked for upgrade " .. obj.name .. " at " .. UTIL_GPSObj(obj)
 
             if player.surface and player.surface.index ~= 1 then
                 msg = msg .. " (" .. player.surface.name .. ")"
@@ -303,7 +303,7 @@ function LOG_CancelUpgrade(event)
         local obj = event.entity
 
         if player then
-            local msg = "[ACT] " .. player.name .. " cancelled upgrade " .. obj.name
+            local msg = "[ACT] " .. player.name .. " cancelled upgrade " .. obj.name .. " at " .. UTIL_GPSObj(obj)
 
             if player.surface and player.surface.index ~= 1 then
                 msg = msg .. " (" .. player.surface.name .. ")"
@@ -328,7 +328,7 @@ function LOG_MarkDecon(event)
         local obj = event.entity
 
         if player then
-            local msg = "[ACT] " .. player.name .. " marked for deconstruction " .. obj.name
+            local msg = "[ACT] " .. player.name .. " marked for deconstruction " .. obj.name .. " at " .. UTIL_GPSObj(obj)
 
             if player.surface and player.surface.index ~= 1 then
                 msg = msg .. " (" .. player.surface.name .. ")"
@@ -357,7 +357,7 @@ function LOG_CancelDecon(event)
         end
 
         if player then
-            local msg = "[ACT] " .. player.name .. " cancelled deconstruction " .. obj.name
+            local msg = "[ACT] " .. player.name .. " cancelled deconstruction " .. obj.name .. " at " .. UTIL_GPSObj(obj)
 
             if player.surface and player.surface.index ~= 1 then
                 msg = msg .. " (" .. player.surface.name .. ")"
@@ -443,7 +443,7 @@ function LOG_OrderLaunch(event)
     end
 end
 
-function LOG_FastTransfered(event)
+function LOG_FastTransferred (event)
     if event and event.player_index and event.entity then
         local player = game.players[event.player_index]
         local obj = event.entity
@@ -455,10 +455,10 @@ function LOG_FastTransfered(event)
         if player and obj then
             if event.from_player then
                 UTIL_ConsolePrint("[ACT] " ..
-                    player.name .. " fast-transfered items to " .. obj.name .. " at " .. obj.gps_tag)
+                    player.name .. " fast-transferred items to " .. obj.name .. " at " .. obj.gps_tag)
             else
                 UTIL_ConsolePrint("[ACT] " ..
-                    player.name .. " fast-transfered items from " .. obj.name .. " at " .. obj.gps_tag)
+                    player.name .. " fast-transferred items from " .. obj.name .. " at " .. obj.gps_tag)
             end
         end
     end
@@ -477,7 +477,7 @@ function LOG_InvChanged(event)
         end
 
         if player then
-            UTIL_ConsolePrint("[ACT] " .. player.name .. " transfered some items at " .. player.character.gps_tag)
+            UTIL_ConsolePrint("[ACT] " .. player.name .. " transferred some items at " .. player.character.gps_tag)
         end
     end
 end

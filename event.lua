@@ -352,7 +352,7 @@ script.on_event(
         elseif event.name == defines.events.on_rocket_launch_ordered then
             LOG_OrderLaunch(event)
         elseif event.name == defines.events.on_player_fast_transferred then
-            LOG_FastTransfered(event)
+            LOG_FastTransferred (event)
         elseif event.name == defines.events.on_player_main_inventory_changed then
             LOG_InvChanged(event)
         end

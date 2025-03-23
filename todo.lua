@@ -942,7 +942,7 @@ local function guiClick(event)
                             storage.todo_throttle[player.index] = game.tick
 
                             -- Log action
-                            UTIL_ConsolePrint("[TODO] " .. player.name .. " editied todo item: " .. todo_key(i))
+                            UTIL_ConsolePrint("[TODO] " .. player.name .. " edited todo item: " .. todo_key(i))
 
                             -- Destroy window
                             player.gui.screen.m45_todo_submenu.destroy()
