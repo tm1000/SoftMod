@@ -914,8 +914,7 @@ script.on_load(function()
             end
         end)
 
-        -- Teleport x,y
-        commands.add_command("tp", "Moderators only: telport to <x,y> or <surface>", function(param)
+        commands.add_command("tp", "Moderators only: teleport to <x,y>, <surface>, or [gps=x,y] or [gps=x,y,surface]", function(param)
             local player
             if param and param.player_index then
                 player = game.players[param.player_index]
@@ -923,66 +922,63 @@ script.on_load(function()
             if CMD_NoSys(param) or CMD_ModsOnly(param) then
                 return
             end
-
-            local surface = player.physical_surface
-
-            -- Argument required
-            if param.parameter then
-                local str = param.parameter
-                local xpos = "0.0"
-                local ypos = "0.0"
-
-                -- Find surface from argument
-                local n = game.surfaces[param.parameter]
-                if n then
-                    surface = n
-                    local position = {
-                        x = xpos,
-                        y = ypos
-                    }
-                    local newpos = surface.find_non_colliding_position("character", position, 1024, 1, false)
-                    if newpos then
-                        player.teleport(newpos, surface)
-                    else
-                        player.teleport(position, surface)
-                        UTIL_ConsolePrint("[ERROR] tp: unable to find non_colliding_position.")
-                    end
-                    UTIL_SmartPrint(player, "You teleport to " .. str)
-
-                    return
+        
+            if not param.parameter then
+                UTIL_SmartPrint(player, "Teleport to where?")
+                return
+            end
+        
+            local str = param.parameter
+            local surface = player.surface -- default surface
+            local xpos, ypos
+        
+            -- Try [gps=x,y] or [gps=x,y,surface]
+            local gx, gy, gsurf = str:match("%[gps=([-%d%.]+),([-%d%.]+),([%w_]+)%]")
+            if not gx then
+                gx, gy = str:match("%[gps=([-%d%.]+),([-%d%.]+)%]")
+            end
+            if gx and gy then
+                xpos = tonumber(gx)
+                ypos = tonumber(gy)
+                if gsurf and game.surfaces[gsurf] then
+                    surface = game.surfaces[gsurf]
                 end
-
-                -- Find x/y from argument
-                -- Matches two potentially negative numbers separated by a comma, gps compatible
-                -- str could be "-353.5,19.3" or "[gps=80,-20]" or "[gps=5,3,jail]"
-                xpos, ypos = str:match("(%-?%d+)%.?%d*,%s*(%-?%d+)")
-                if tonumber(xpos) and tonumber(ypos) then
-                    local position = {
-                        x = xpos,
-                        y = ypos
-                    }
-
-                    if position then
-                        if position.x and position.y then
-                            local newpos = surface.find_non_colliding_position("character", position, 1024, 1,
-                                false)
-                            if (newpos) then
-                                player.teleport(newpos, surface)
-                                UTIL_SmartPrint(player, "You teleport to " .. str)
-                            else
-                                UTIL_SmartPrint(player, "Area appears to be full.")
-                                UTIL_ConsolePrint("[ERROR] tp: unable to find non_colliding_position.")
-                            end
-                        else
-                            UTIL_SmartPrint(player, "Invalid location.")
-                        end
-                    end
-                    return
+            else
+                -- Try x,y format
+                local x, y = str:match("([-%d%.]+),([-%d%.]+)")
+                if x and y then
+                    xpos = tonumber(x)
+                    ypos = tonumber(y)
                 else
-                    UTIL_SmartPrint(player, "Numbers only.")
+                    -- Try surface name
+                    local named_surface = game.surfaces[str]
+                    if named_surface then
+                        surface = named_surface
+                        xpos = 0
+                        ypos = 0
+                    end
                 end
             end
-            UTIL_SmartPrint(player, "Telport to where?")
+        
+            if xpos and ypos then
+                local position = { x = xpos, y = ypos }
+                local newpos = surface.find_non_colliding_position("character", position, 1024, 1, false)
+                if newpos then
+                    player.teleport(newpos, surface)
+                    UTIL_SmartPrint(player, "You teleport to (" .. xpos .. "," .. ypos .. ") on surface '" .. surface.name .. "'.")
+                else
+                    player.teleport(position, surface)
+                    UTIL_SmartPrint(player, "Area appears to be full.")
+                    UTIL_ConsolePrint("[ERROR] tp: unable to find non_colliding_position.")
+                end
+            elseif surface then
+                local position = { x = 0, y = 0 }
+                local newpos = surface.find_non_colliding_position("character", position, 1024, 1, false)
+                player.teleport(newpos or position, surface)
+                UTIL_SmartPrint(player, "You teleport to spawn of surface '" .. surface.name .. "'.")
+            else
+                UTIL_SmartPrint(player, "Invalid location or surface.")
+            end
         end)
 
         -- Teleport player to me
