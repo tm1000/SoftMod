@@ -1023,102 +1023,88 @@ script.on_load(function()
         end)
 
         -- Teleport victim to x,y
-        commands.add_command("transport", "Moderators only: transport <player> <x,y> or <surface>",
-            function(param)
-                local player
-                local args
-                local victim
-                local surface
-
-                if CMD_ModsOnly(param) then
-                    return
+        commands.add_command("transport", "Moderators only: transport <player> <x,y>, <surface>, or [gps=x,y] or [gps=x,y,surface]", function(param)
+            if CMD_ModsOnly(param) then
+                return
+            end
+        
+            local player = game.players[param.player_index]
+        
+            if not param.parameter then
+                UTIL_SmartPrint(player, "Transport who to where?")
+                return
+            end
+        
+            local args = UTIL_SplitStr(param.parameter, " ")
+            local victim_name = args[1]
+            local target = args[2]
+        
+            if not victim_name or not target then
+                UTIL_SmartPrint(player, "Usage: /transport <player> <x,y>, <surface>, or [gps=x,y,surface]")
+                return
+            end
+        
+            local victim = game.players[victim_name]
+            if not victim then
+                UTIL_SmartPrint(player, "There isn't a player with that name.")
+                return
+            elseif UTIL_Is_Banished(victim) then
+                UTIL_SmartPrint(player, "They are in jail, use /unjail <name>")
+                return
+            end
+        
+            local surface = victim.surface
+            local xpos, ypos
+        
+            -- Try GPS tag [gps=x,y,surface]
+            local gx, gy, gsurf = target:match("%[gps=([-%d%.]+),([-%d%.]+),([%w_]+)%]")
+            if not gx then
+                gx, gy = target:match("%[gps=([-%d%.]+),([-%d%.]+)%]")
+            end
+            if gx and gy then
+                xpos = tonumber(gx)
+                ypos = tonumber(gy)
+                if gsurf and game.surfaces[gsurf] then
+                    surface = game.surfaces[gsurf]
                 end
-
-                if param and param.player_index then
-                    player = game.players[param.player_index]
-                end
-
-                if param.parameter then
-                    args = UTIL_SplitStr(param.parameter, " ")
+            else
+                -- Try x,y format
+                local x, y = target:match("([-%d%.]+),([-%d%.]+)")
+                if x and y then
+                    xpos = tonumber(x)
+                    ypos = tonumber(y)
                 else
-                    UTIL_SmartPrint(player, "Transport who to where?")
-                    return
-                end
-
-                if args ~= {} and args[1] then
-                    victim = game.players[args[1]]
-
-                    if not victim then
-                        UTIL_SmartPrint(player, "There isn't a player with that name.")
-                        return
-                    elseif UTIL_Is_Banished(victim) then
-                        UTIL_SmartPrint(player, "They are in jail, use /unjail <name>")
-                        return
+                    -- Try surface name
+                    local named_surface = game.surfaces[target]
+                    if named_surface and named_surface.valid then
+                        surface = named_surface
+                        xpos = 0
+                        ypos = 0
                     end
                 end
-
-                -- Argument required
-                if args ~= {} and args[1] and args[2] then
-                    local str = args[2]
-                    local xpos = "0.0"
-                    local ypos = "0.0"
-
-                    -- Find surface from argument
-                    local n = game.surfaces[args[2]]
-                    if n ~= nil and n.valid then
-                        surface = n
-                        local position = {
-                            x = xpos,
-                            y = ypos
-                        }
-                        local newpos = surface.find_non_colliding_position("character", position, 1024, 1, false)
-                        if newpos then
-                            victim.teleport(newpos, surface)
-                        else
-                            victim.teleport(position, surface)
-                            UTIL_ConsolePrint("[ERROR] transport: unable to find non_colliding_position.")
-                        end
-                        if player and victim then
-                            UTIL_SmartPrint(player, "You transport " .. victim.name .. " to " .. args[2])
-                            UTIL_SmartPrint(victim, player.name .. " has transported you.")
-                        end
-                        return
-                    end
-
-                    -- Find x/y from argument
-                    -- Matches two potentially negative numbers separated by a comma, gps compatible
-                    -- str could be "-353.5,19.3" or "[gps=80,-20]" or "[gps=5,3,jail]"
-                    xpos, ypos = str:match("(%-?%d+)%.?%d*,%s*(%-?%d+)")
-                    if tonumber(xpos) and tonumber(ypos) then
-                        local position = {
-                            x = xpos,
-                            y = ypos
-                        }
-
-                        if position then
-                            if position.x and position.y and surface and surface.valid then
-                                local newpos = surface.find_non_colliding_position("character", position, 1024, 1, false)
-                                if (newpos) then
-                                    surface = victim.physical_surface
-                                    victim.teleport(newpos, surface)
-                                    if player and victim then
-                                        UTIL_SmartPrint(player, "You transport " .. victim.name .. " to " .. args[2])
-                                        UTIL_SmartPrint(victim, player.name .. " has transported you.")
-                                    end
-                                else
-                                    UTIL_SmartPrint(player, "Area appears to be full.")
-                                    UTIL_ConsolePrint("[ERROR] transport: unable to find non_colliding_position.")
-                                end
-                            else
-                                UTIL_SmartPrint(player, "Invalid location.")
-                            end
-                        end
-                        return
-                    end
+            end
+        
+            if xpos and ypos then
+                local position = { x = xpos, y = ypos }
+                local newpos = surface.find_non_colliding_position("character", position, 1024, 1, false)
+                if not newpos then
+                    newpos = position
+                    UTIL_ConsolePrint("[ERROR] transport: unable to find non_colliding_position.")
                 end
-                UTIL_SmartPrint(player, "Transport them to where?")
-            end)
-
+                victim.teleport(newpos, surface)
+                UTIL_SmartPrint(player, "You transported " .. victim.name .. " to (" .. xpos .. "," .. ypos .. ") on '" .. surface.name .. "'.")
+                UTIL_SmartPrint(victim, player.name .. " has transported you.")
+            elseif surface then
+                local position = { x = 0, y = 0 }
+                local newpos = surface.find_non_colliding_position("character", position, 1024, 1, false)
+                victim.teleport(newpos or position, surface)
+                UTIL_SmartPrint(player, "You transported " .. victim.name .. " to the spawn of '" .. surface.name .. "'.")
+                UTIL_SmartPrint(victim, player.name .. " has transported you.")
+            else
+                UTIL_SmartPrint(player, "Transport target location invalid.")
+            end
+        end)
+        
         -- List surfaces
         commands.add_command("surfaces", "Moderators only, list game surfaces and players on them.",
             function(param)
