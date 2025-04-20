@@ -46,6 +46,15 @@ local function isUnreadVictim(victim, id)
 
     local note = storage.todo_list[id]
 
+    --Note is not visible
+    if note.hidden then
+        return false
+    end
+
+    if note.last_user == victim.name then
+        return false
+    end
+
     --We've never seen a note
     if not storage.todo_unread then
         return false
