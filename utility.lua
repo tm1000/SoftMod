@@ -17,7 +17,6 @@ function UTIL_CheckAbandoned()
     end
 end
 
-
 function UTIL_DumpInv(player, force)
     if not player then
         return false
@@ -147,8 +146,8 @@ end
 
 function UTIL_GPSPos(pos)
     if pos and pos.x and pos.y then
-    return "[gps=" .. math.floor(pos.x) .. ","
-                .. math.floor(pos.y) .. "] "
+        return "[gps=" .. math.floor(pos.x) .. ","
+            .. math.floor(pos.y) .. "] "
     else
         return "[Invalid position]"
     end
@@ -156,8 +155,8 @@ end
 
 function UTIL_GPSXY(x, y)
     if x and y then
-    return "[gps=" .. math.floor(x) .. ","
-                .. math.floor(y) .. "] "
+        return "[gps=" .. math.floor(x) .. ","
+            .. math.floor(y) .. "] "
     else
         return "[Invalid xy]"
     end
@@ -165,10 +164,10 @@ end
 
 function UTIL_Area(size, area)
     if size and area and area.left_top and area.right_bottom then
-    return "from: " ..
-        UTIL_GPSXY(area.left_top.x, area.left_top.y) ..
-        " to " .. UTIL_GPSXY(area.right_bottom.x, area.right_bottom.y) ..
-        " AREA: " .. math.floor(size) .. "sq"
+        return "from: " ..
+            UTIL_GPSXY(area.left_top.x, area.left_top.y) ..
+            " to " .. UTIL_GPSXY(area.right_bottom.x, area.right_bottom.y) ..
+            " AREA: " .. math.floor(size) .. "sq"
     else
         return "[Invalid area]"
     end
@@ -190,7 +189,7 @@ function UTIL_GPSObj(item)
         end
     end
     return "[Invalid Object]"
-end 
+end
 
 function UTIL_ConsolePrint(message)
     if message then
@@ -354,7 +353,7 @@ end
 
 -- Check if player is flagged nitro
 function UTIL_Is_Nitro(victim)
-    if victim and storage.PData[victim.index]and storage.PData[victim.index].nitro then
+    if victim and storage.PData[victim.index] and storage.PData[victim.index].nitro then
         return storage.PData[victim.index].nitro
     else
         return false
@@ -476,7 +475,7 @@ function UTIL_Is_Banished(victim)
         end
     end
 
-    
+
     if storage and storage.PData[victim.index] then
         local pointsNeeded = 1
         local level = storage.PData[victim.index].level
@@ -484,13 +483,13 @@ function UTIL_Is_Banished(victim)
         if level == 2 then
             pointsNeeded = 2
         end
-        if level == 3  then
+        if level == 3 then
             pointsNeeded = 4
         end
-    
+
         --Has enough votes against them
         if storage.PData and storage.PData[victim.index] and storage.PData[victim.index].banished and storage.PData[victim.index].banished > pointsNeeded then
-           return true
+            return true
         else
             return false
         end
@@ -564,5 +563,26 @@ function UTIL_GetDefaultSpawn()
     else
         UTIL_ConsolePrint("[ERROR] get_default_spawn: Couldn't find default surface 1.")
         return { 0, 0 }
+    end
+end
+
+function UTIL_DrawMapClock(target)
+    if storage.SM_Store and storage.SM_Store.resetDuration then
+        if target.valid and target.gui and target.gui.top and target.gui.top.reset_clock then
+
+            if storage.SM_Store.resetDuration ~= "" then
+                target.gui.top.reset_clock.visible = true
+            else 
+                target.gui.top.reset_clock.visible = false
+            end
+
+            if storage.PData and storage.PData[target.index].hideClock  then
+                target.gui.top.reset_clock.caption = ">"
+                target.gui.top.reset_clock.style      = "mini_tool_button_red"
+            else
+                target.gui.top.reset_clock.caption = "MAP RESET: " .. storage.SM_Store.resetDuration
+                target.gui.top.reset_clock.style      = "red_button"
+            end
+        end
     end
 end

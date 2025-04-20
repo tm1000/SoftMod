@@ -16,7 +16,8 @@ function INFO_MakeClock(player)
             tooltip = "Map reset schedule. Control-right-click to minimize.",
             visible = false,
         }
-        rclock.style.size = { 24, 24 }
+
+        UTIL_DrawMapClock(player)
     end
 end
 
@@ -815,11 +816,11 @@ function INFO_Clicks(event)
             elseif event.element.name == "patreon_button" and player.gui and player.gui.center and
                 player.gui.screen.m45_info_window then
                 -- QR changetab button (info window)
-                player.gui.screen.m45_info_window.m45_info_window_tabs.selected_tab_index = 6
+                player.gui.screen.m45_info_window.m45_info_window_tabs.selected_tab_index = 5
             elseif event.element.name == "qr_button" and player.gui and player.gui.center and
                 player.gui.screen.m45_info_window then
                 -- QR Discord button
-                player.gui.screen.m45_info_window.m45_info_window_tabs.selected_tab_index = 5
+                player.gui.screen.m45_info_window.m45_info_window_tabs.selected_tab_index = 4
             elseif event.element.name == "m45_button" then
                 -- Online window toggle
                 if player.gui and player.gui.center and player.gui.screen.m45_info_window then
@@ -834,16 +835,12 @@ function INFO_Clicks(event)
                         if storage.PData[player.index].hideClock and
                             storage.SM_Store.resetDuration ~= "" then
                             storage.PData[player.index].hideClock = false
-                            player.gui.top.reset_clock.caption    = "Map reset: " .. storage.SM_Store.resetDuration
-                            player.gui.top.reset_clock.style      = "red_button"
-                            player.gui.top.reset_clock.style.size = { 350, 24 }
                         else
                             if event.button and event.button == defines.mouse_button_type.right and event.control then
                                 storage.PData[player.index].hideClock = true
-                                player.gui.top.reset_clock.caption    = ">"
-                                player.gui.top.reset_clock.style.size = { 24, 24 }
                             end
                         end
+                        UTIL_DrawMapClock(player)
                     end
                 end
             end
