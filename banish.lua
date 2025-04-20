@@ -4,21 +4,26 @@
 -- License: MPL 2.0
 
 local function unbanishPlayer(victim)
+    if not victim then
+        return
+    end
+
     table.insert(storage.SM_Store.sendToSurface, {
         victim = victim,
         surface = 1,
         position = UTIL_GetDefaultSpawn()
     })
 
-    storage.PData[victim.index].banished = 0
-
-    if victim and victim.permission_group.name ~= storage.SM_Store.defGroup.name then
-        storage.SM_Store.defGroup.add_player(victim)
+    if victim and victim.permission_group.name == storage.SM_Store.jailGroup.name then
         UTIL_MsgAll(victim.name .. " moved out of jailed group.")
     end
 
+    storage.PData[victim.index].banished = 0
+    storage.SM_Store.jailGroup.remove_player(victim)
+    storage.SM_Store.defGroup.add_player(victim)
+
     --Close banished window
-    if victim and victim.gui and victim.gui.screen and victim.gui.screen.banished_inform then
+    if victim.gui and victim.gui.screen and victim.gui.screen.banished_inform then
         victim.gui.screen.banished_inform.destroy()
     end
 
@@ -96,7 +101,7 @@ function BANISH_UpdateVotes()
             newstate = banishedtemp[victim.index]
         end
 
-        
+
         local pointsNeeded = 1
         if UTIL_Is_Regular(victim) then
             pointsNeeded = 2
@@ -113,7 +118,7 @@ function BANISH_UpdateVotes()
             local msg = victim.name .. " is no longer banished."
             print("[REPORT] SYSTEM " .. msg)
             UTIL_MsgAllSys(msg)
-            
+
             unbanishPlayer(victim)
         elseif newstate >= pointsNeeded and prevstate < pointsNeeded then
             -- Was not banished, but is now.
