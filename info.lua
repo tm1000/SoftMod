@@ -353,7 +353,6 @@ function INFO_InfoWin(player)
                 type = "label",
                 caption = "[font=default-large]See other M45 maps:[/font]"
             }
-
             tab1_info_top.add {
                 type = "text-box",
                 name = "server_list",
@@ -362,7 +361,23 @@ function INFO_InfoWin(player)
             }
             tab1_info_top.server_list.style.font = "default-large"
             tab1_info_top.server_list.style.minimal_width = 350
-
+            tab1_info_top.add {
+                type = "label",
+                caption = "  "
+            }
+            -- relay url
+            tab1_info_top.add {
+                type = "label",
+                caption = "[font=default-large]Connecting from Europe? Try the relay server:[/font]"
+            }
+            tab1_info_top.add {
+                type = "text-box",
+                name = "relay_url",
+                text = "http://eu.m45sci.xyz",
+                tooltip = "COPY: Click text then Control-C"
+            }
+            tab1_info_top.relay_url.style.font = "default-large"
+            tab1_info_top.relay_url.style.minimal_width = 350
             tab1_info_top.add {
                 type = "label",
                 caption = "  "
@@ -800,8 +815,9 @@ function INFO_Clicks(event)
 
         if player and player.valid and event.element.name then
             if event.element.name == "discord_url" or
-            event.element.name == "server_list" or
-            event.element.name == "patreon_url" then
+                event.element.name == "server_list" or
+                event.element.name == "relay_url" or
+                event.element.name == "patreon_url" then
                 event.element.select_all()
             end
 
@@ -859,6 +875,8 @@ function INFO_TextChanged(event)
             event.element.text = "https://discord.gg/rQANzBheVh"
         elseif event.element.name == "server_list" then
             event.element.text = "http://factorio.go-game.net/?tag=M45"
+        elseif event.element.name == "relay_url" then
+            event.element.text = "http://eu.m45sci.xyz"
         elseif event.element.name == "patreon_url" then
             event.element.text = "https://www.patreon.com/m45sci"
         end
