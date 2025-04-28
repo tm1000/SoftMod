@@ -275,7 +275,7 @@ function LOG_MarkedUpgrade(event)
         local obj = event.entity
 
         if player then
-            local msg = "[ACT] " .. player.name .. " marked for upgrade " .. obj.name .. " at " .. UTIL_GPSObj(obj)
+            local msg = "[ACT] " .. player.name .. " upgrade " .. obj.name .. " at " .. UTIL_GPSObj(obj)
 
             if UTIL_Is_New(player) or UTIL_Is_Member(player) then -- Dont bother with regulars/moderators
                 if not UTIL_Is_Banished(player) then              -- Don't let bansihed players use this to spam
@@ -296,7 +296,7 @@ function LOG_CancelUpgrade(event)
         local obj = event.entity
 
         if player then
-            local msg = "[ACT] " .. player.name .. " cancelled upgrade " .. obj.name .. " at " .. UTIL_GPSObj(obj)
+            local msg = "[ACT] " .. player.name .. " cancel upgrade " .. obj.name .. " at " .. UTIL_GPSObj(obj)
 
             if UTIL_Is_New(player) or UTIL_Is_Member(player) then -- Dont bother with regulars/moderators
                 if not UTIL_Is_Banished(player) then              -- Don't let bansihed players use this to spam
