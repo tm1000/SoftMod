@@ -236,6 +236,7 @@ function LOG_Decon(event)
     if event and event.player_index and event.area then
         local player = game.players[event.player_index]
         local area = event.area
+        local surface = event.surface
 
 
         if not player or not player.character then
@@ -250,14 +251,10 @@ function LOG_Decon(event)
                 local msg = ""
                 if event.alt then
                     msg = "[ACT] " ..
-                        player.name ..
-                        " at " ..
-                        player.character.gps_tag ..
-                        " is unmarking for deconstruction " .. UTIL_Area(decon_size, event.area)
+                        player.name .. " undecon " .. UTIL_Area(surface, decon_size, event.area)
                 else
                     msg = "[ACT] " ..
-                        player.name ..
-                        " at " .. player.character.gps_tag .. " is deconstructing " .. UTIL_Area(decon_size, event.area)
+                        player.name .. " decon " .. UTIL_Area(surface, decon_size, event.area)
 
                     if UTIL_Is_New(player) or UTIL_Is_Member(player) then -- Dont bother with regulars/moderators
                         if not UTIL_Is_Banished(player) then              -- Don't let bansihed players use this to spam
@@ -280,10 +277,6 @@ function LOG_MarkedUpgrade(event)
         if player then
             local msg = "[ACT] " .. player.name .. " marked for upgrade " .. obj.name .. " at " .. UTIL_GPSObj(obj)
 
-            if player.surface and player.surface.index ~= 1 then
-                msg = msg .. " (" .. player.surface.name .. ")"
-            end
-
             if UTIL_Is_New(player) or UTIL_Is_Member(player) then -- Dont bother with regulars/moderators
                 if not UTIL_Is_Banished(player) then              -- Don't let bansihed players use this to spam
                     if UTIL_WarnOkay(event.player_index) then
@@ -305,10 +298,6 @@ function LOG_CancelUpgrade(event)
         if player then
             local msg = "[ACT] " .. player.name .. " cancelled upgrade " .. obj.name .. " at " .. UTIL_GPSObj(obj)
 
-            if player.surface and player.surface.index ~= 1 then
-                msg = msg .. " (" .. player.surface.name .. ")"
-            end
-
             if UTIL_Is_New(player) or UTIL_Is_Member(player) then -- Dont bother with regulars/moderators
                 if not UTIL_Is_Banished(player) then              -- Don't let bansihed players use this to spam
                     if UTIL_WarnOkay(event.player_index) then
@@ -328,11 +317,7 @@ function LOG_MarkDecon(event)
         local obj = event.entity
 
         if player then
-            local msg = "[ACT] " .. player.name .. " marked for deconstruction " .. obj.name .. " at " .. UTIL_GPSObj(obj)
-
-            if player.surface and player.surface.index ~= 1 then
-                msg = msg .. " (" .. player.surface.name .. ")"
-            end
+            local msg = "[ACT] " .. player.name .. " decon " .. obj.name .. " at " .. UTIL_GPSObj(obj)
 
             if UTIL_Is_New(player) or UTIL_Is_Member(player) then -- Dont bother with regulars/moderators
                 if not UTIL_Is_Banished(player) then              -- Don't let bansihed players use this to spam
@@ -357,11 +342,7 @@ function LOG_CancelDecon(event)
         end
 
         if player then
-            local msg = "[ACT] " .. player.name .. " cancelled deconstruction " .. obj.name .. " at " .. UTIL_GPSObj(obj)
-
-            if player.surface and player.surface.index ~= 1 then
-                msg = msg .. " (" .. player.surface.name .. ")"
-            end
+            local msg = "[ACT] " .. player.name .. " undecon " .. obj.name .. " at " .. UTIL_GPSObj(obj)
 
             if UTIL_Is_New(player) or UTIL_Is_Member(player) then -- Dont bother with regulars/moderators
                 if not UTIL_Is_Banished(player) then              -- Don't let bansihed players use this to spam
@@ -388,9 +369,6 @@ function LOG_Flushed(event)
                 obj.name ..
                 " of " .. math.floor(event.amount) .. " " .. event.fluid .. " at " .. obj.gps_tag
 
-            if player.surface and player.surface.index ~= 1 then
-                msg = msg .. " (" .. player.surface.name .. ")"
-            end
 
             if UTIL_Is_New(player) or UTIL_Is_Member(player) then -- Dont bother with regulars/moderators
                 UTIL_MsgAll(msg)
@@ -417,10 +395,6 @@ function LOG_PlayerDrive(event)
                     player.name ..
                     " got out of a " ..
                     event.entity.name .. " at " .. event.entity.gps_tag
-            end
-
-            if player.surface and player.surface.index ~= 1 then
-                msg = msg .. " (" .. player.surface.name .. ")"
             end
 
             if UTIL_Is_New(player) or UTIL_Is_Member(player) then -- Dont bother with regulars/moderators

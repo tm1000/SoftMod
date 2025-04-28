@@ -153,21 +153,24 @@ function UTIL_GPSPos(pos)
     end
 end
 
-function UTIL_GPSXY(x, y)
+function UTIL_GPSXY(surface, x, y)
     if x and y then
+        if surface then
         return "[gps=" .. math.floor(x) .. ","
+            .. math.floor(y) .. ",".. surface.name .."] "
+        else
+             return "[gps=" .. math.floor(x) .. ","
             .. math.floor(y) .. "] "
+        end
     else
         return "[Invalid xy]"
     end
 end
 
-function UTIL_Area(size, area)
+function UTIL_Area(surface, size, area)
     if size and area and area.left_top and area.right_bottom then
-        return "from: " ..
-            UTIL_GPSXY(area.left_top.x, area.left_top.y) ..
-            " to " .. UTIL_GPSXY(area.right_bottom.x, area.right_bottom.y) ..
-            " AREA: " .. math.floor(size) .. "sq"
+        return UTIL_GPSXY(surface, area.left_top.x, area.left_top.y) ..
+            " " .. math.floor(size) .. "m²"
     else
         return "[Invalid area]"
     end
