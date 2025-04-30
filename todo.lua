@@ -506,10 +506,21 @@ function TODO_MakeWindow(player)
                 }
             end
 
+
+            storage.vis_todo_count = 0
+            for i, target in pairs(storage.todo_list) do
+                if not target.hidden or (storage.show_hidden_notes and storage.show_hidden_notes[player.index]) then
+                    storage.vis_todo_count = storage.vis_todo_count + 1
+                end
+            end
+
             if storage.vis_todo_count and storage.vis_todo_count > 0 then
+                local position = 0
                 for i, target in pairs(storage.todo_list) do
                     -- Skip hidden items
                     if not target.hidden or (storage.show_hidden_notes and storage.show_hidden_notes[player.index]) then
+                        position = position + 1
+
                         todo_main.add {
                             type = "line",
                             direction = "horizontal"
@@ -611,7 +622,7 @@ function TODO_MakeWindow(player)
                         }
 
                         -- Invisible space for up arrow when hidden
-                        if i == 1 then
+                        if position == 1 then
                             local invis_space = move_ud_frame.add {
                                 type = "label",
                                 caption = " "
@@ -627,7 +638,7 @@ function TODO_MakeWindow(player)
                             tooltip = "move up"
                         }
                         moveup.style.size = { 18, 18 }
-
+I 
                         local movedown = move_ud_frame.add {
                             type = "sprite-button",
                             sprite = "file/img/todo/down.png",
@@ -643,10 +654,10 @@ function TODO_MakeWindow(player)
                         end
 
                         -- Hide buttons that would do nothing, first item up, last item down
-                        if i == 1 then
+                        if position == 1 then
                             moveup.visible = false
                         end
-                        if i == storage.vis_todo_count then
+                        if position == storage.vis_todo_count then
                             local invis_space = move_ud_frame.add {
                                 type = "label",
                                 caption = " "
