@@ -638,7 +638,7 @@ function TODO_MakeWindow(player)
                             tooltip = "move up"
                         }
                         moveup.style.size = { 18, 18 }
-I 
+
                         local movedown = move_ud_frame.add {
                             type = "sprite-button",
                             sprite = "file/img/todo/down.png",
