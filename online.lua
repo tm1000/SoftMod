@@ -815,6 +815,10 @@ function ONLINE_Clicks(event)
                 if player.gui and player.gui.left and player.gui.left.m45_online then
                     player.gui.left.m45_online.destroy()
                 end
+            elseif event.element.name == "m45_banish_close_button" then
+                if player.gui and player.gui.screen and player.gui.screen.banished_inform then
+                    player.gui.screen.banished_inform.destroy()
+                end
             elseif event.element.name == "m45_online_show_offline" then
                 storage.PData[player.index].onlineShowOffline = event.element.state
                 ONLINE_Window(player)

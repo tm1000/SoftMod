@@ -163,6 +163,22 @@ local function informBanished(victim)
                 caption = "YOU HAVE BEEN BANISHED!"
             }
 
+            local pusher = banished_titlebar.add {
+                type = "empty-widget",
+                style = "draggable_space_header"
+            }
+            pusher.style.vertically_stretchable = true
+            pusher.style.horizontally_stretchable = true
+            pusher.drag_target = main_flow
+
+            banished_titlebar.add {
+                type = "sprite-button",
+                name = "m45_banish_close_button",
+                sprite = "utility/close",
+                style = "frame_action_button",
+                tooltip = "Close this window"
+            }
+
             local banished_main = main_flow.add {
                 type = "frame",
                 name = "main",
@@ -468,17 +484,13 @@ function BANISH_AddBanishCommands()
                 local victim = game.players[param.parameter]
 
                 if (victim) then
-                    if victim.index == player.index then
-                        UTIL_SmartPrint(player, "You can't put yourself in jail. Seek therapy.")
+                    if player and victim.index == player.index then
+                        UTIL_SmartPrint(player, "You can't put yourself in jail. Go touch grass.")
                         return
                     end
-                    if not UTIL_Is_Banished(victim) then
-                        storage.PData[victim.index].banished = 1000
-                        BANISH_DoJail(victim)
-                        UTIL_SmartPrint(player, "Jailed player.")
-                    else
-                        UTIL_SmartPrint(player, "They are already in jail.")
-                    end
+                    storage.PData[victim.index].banished = 1000
+                    BANISH_DoJail(victim)
+                    UTIL_SmartPrint(player, "Jailed player.")
                 else
                     UTIL_SmartPrint(player, "Couldn't find that player.")
                 end
@@ -505,26 +517,22 @@ function BANISH_AddBanishCommands()
                         UTIL_SmartPrint(player, "You can't unjail yourself.")
                         return
                     end
-                    if UTIL_Is_Banished(victim) then
-                        storage.PData[victim.index].banished = 0
-                        for _, vote in pairs(storage.SM_Store.votes) do
-                            if vote and vote.victim then
-                                if vote.victim.index == victim.index then
-                                    vote.overruled = true
-                                    break
-                                end
+                    storage.PData[victim.index].banished = 0
+                    for _, vote in pairs(storage.SM_Store.votes) do
+                        if vote and vote.victim then
+                            if vote.victim.index == victim.index then
+                                vote.overruled = true
+                                break
                             end
                         end
-                        if not victim.character then
-                            UTIL_SmartPrint(player, "They are OFFLINE right now, but will be unjailed on login.")
-                        else
-                            UTIL_SmartPrint(player, "Unjailed player.")
-                        end
-
-                        unbanishPlayer(victim)
-                    else
-                        UTIL_SmartPrint(player, "They aren't in jail.")
                     end
+                    if not victim.character then
+                        UTIL_SmartPrint(player, "They are OFFLINE right now, but will be unjailed on login.")
+                    else
+                        UTIL_SmartPrint(player, "Unjailed player.")
+                    end
+
+                    unbanishPlayer(victim)
                 else
                     UTIL_SmartPrint(player, "Couldn't find that player.")
                 end
