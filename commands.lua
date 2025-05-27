@@ -81,7 +81,6 @@ script.on_load(function()
                 for _, victim in pairs(game.connected_players) do
                     UTIL_DrawMapClock(victim)
                 end
-
             end
         end)
 
@@ -671,93 +670,128 @@ script.on_load(function()
 
         -- Reveal map
         commands.add_command("reveal",
-            "Moderators only: <size> -- (OPTIONAL) Reveals <size> units of the map from map center, or 1024 by default. Min 128, Max 8192)",
+            "Moderators only: <size> [x,y]|[gps=x,y]|[gps=x,y,surface] -- Reveals map from a given position or the center of map. Size is in tiles. Default size 1024. Min 128, Max 8192.",
             function(param)
-                local size = tonumber(1024)
-                local victim
-
-                if param and param.player_index then
-                    victim = game.players[param.player_index]
-                end
                 if CMD_ModsOnly(param) then
                     return
                 end
-                -- Get surface and force
+
+                local victim = param.player_index and game.players[param.player_index] or nil
                 local psurface = game.surfaces[1]
                 local pforce = game.forces["player"]
+                local center = { x = 0, y = 0 }
+                local size = 1024
 
-                -- Use mods's surface and force if possible
                 if victim then
-                    psurface = victim.physical_surface
+                    psurface = victim.surface
                     pforce = victim.force
+                    center = victim.position
                 end
 
-                -- If size specified
                 if param.parameter then
-                    if tonumber(param.parameter) then
-                        local rsize = tonumber(param.parameter)
+                    local str = param.parameter
 
-                        -- Limit size of area
-                        if rsize > 0 then
-                            if rsize < 128 then
-                                rsize = 128
-                            else
-                                if rsize > 8192 then
-                                    rsize = 8192
-                                end
-                                size = rsize
-                            end
+                    -- Attempt to extract gps format
+                    local gx, gy, gsurf = str:match("%[gps=([-%d%.]+),([-%d%.]+),([%w_]+)%]")
+                    if not gx then gx, gy = str:match("%[gps=([-%d%.]+),([-%d%.]+)%]") end
+
+                    local x, y = str:match("([-%d%.]+),([-%d%.]+)")
+                    local surfname = str:match("^%s*([%w_]+)%s*$")
+
+                    local tokens = {}
+                    for token in str:gmatch("[^%s,]+") do
+                        table.insert(tokens, token)
+                    end
+
+                    -- First numeric token = size
+                    local s = tonumber(tokens[1])
+                    if s then
+                        size = math.max(128, math.min(8192, s))
+                        table.remove(tokens, 1)
+                    end
+
+                    -- Handle GPS
+                    if gx and gy then
+                        center = { x = tonumber(gx), y = tonumber(gy) }
+                        if gsurf and game.surfaces[gsurf] then
+                            psurface = game.surfaces[gsurf]
                         end
-                    else
-                        UTIL_SmartPrint(victim, "Numbers only.")
-                        return
+                        -- Handle x,y
+                    elseif x and y then
+                        center = { x = tonumber(x), y = tonumber(y) }
+                        -- Handle surface name if valid
+                    elseif surfname and game.surfaces[surfname] then
+                        psurface = game.surfaces[surfname]
+                        center = { x = 0, y = 0 }
                     end
                 end
 
-                -- Chart the area
-                if psurface and pforce and size then
-                    pforce.chart(psurface, {
-                        lefttop = {
-                            x = -size / 2,
-                            y = -size / 2
-                        },
-                        rightbottom = {
-                            x = size / 2,
-                            y = size / 2
-                        }
-                    })
-                    local sstr = math.floor(size)
-                    UTIL_SmartPrint(victim, "Revealing " .. sstr .. "x" .. sstr .. " tiles")
+                if psurface and pforce and center then
+                    local area = {
+                        lefttop = { x = center.x - size / 2, y = center.y - size / 2 },
+                        rightbottom = { x = center.x + size / 2, y = center.y + size / 2 }
+                    }
+
+                    pforce.chart(psurface, area)
+                    UTIL_SmartPrint(victim, "Revealing " .. size .. "x" .. size ..
+                        " area centered at (" ..
+                        math.floor(center.x) .. "," .. math.floor(center.y) .. ") on surface '" .. psurface.name .. "'.")
                 else
-                    UTIL_SmartPrint(victim, "Invalid force or surface.")
+                    UTIL_SmartPrint(victim, "Invalid force, surface, or center position.")
                 end
             end)
 
-        -- Rechart map
-        commands.add_command("rechart", "Moderators only: Refreshes all chunks that exist", function(param)
-            local victim
 
-            if param and param.player_index then
-                victim = game.players[param.player_index]
-            end
-            if CMD_ModsOnly(param) then
-                return
-            end
+        commands.add_command("rechart",
+            "Moderators only: Recharts known chunks. Usage: /rechart [surface] [force]",
+            function(param)
+                if CMD_ModsOnly(param) then return end
 
-            local pforce = game.forces["player"]
+                local victim = param.player_index and game.players[param.player_index] or nil
 
-            -- Use admin's force
-            if victim then
-                pforce = victim.force
-            end
+                local psurface = game.surfaces[1]
+                local pforce = game.forces["player"]
 
-            if pforce then
-                pforce.clear_chart()
-                UTIL_SmartPrint(victim, "Recharting map...")
-            else
-                UTIL_SmartPrint(victim, "Couldn't find force.")
-            end
-        end)
+                if victim then
+                    psurface = victim.surface
+                    pforce = victim.force
+                end
+
+                if param.parameter then
+                    local tokens = {}
+                    for token in param.parameter:gmatch("[^%s]+") do
+                        table.insert(tokens, token)
+                    end
+
+                    if #tokens >= 1 then
+                        local surfname = tokens[1]
+                        if game.surfaces[surfname] then
+                            psurface = game.surfaces[surfname]
+                        else
+                            UTIL_SmartPrint(victim, "Invalid surface: " .. surfname)
+                            return
+                        end
+                    end
+
+                    if #tokens >= 2 then
+                        local forcename = tokens[2]
+                        if game.forces[forcename] then
+                            pforce = game.forces[forcename]
+                        else
+                            UTIL_SmartPrint(victim, "Invalid force: " .. forcename)
+                            return
+                        end
+                    end
+                end
+
+                if psurface and pforce then
+                    pforce.clear_chart(psurface)
+                    UTIL_SmartPrint(victim,
+                        "Recharting surface '" .. psurface.name .. "' for force '" .. pforce.name .. "'.")
+                else
+                    UTIL_SmartPrint(victim, "Invalid surface or force.")
+                end
+            end)
 
         -- Online
         commands.add_command("online", "See who is online", function(param)
