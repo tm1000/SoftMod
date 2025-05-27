@@ -793,6 +793,46 @@ script.on_load(function()
                 end
             end)
 
+            commands.add_command("purge-unused", "Moderators only: Uncharts and later deletes unused chunks. Optional: <surface>",
+            function(param)
+                if CMD_ModsOnly(param) then return end
+        
+                local victim = param.player_index and game.players[param.player_index] or nil
+                local psurface = game.surfaces[1]
+                local pforce = game.forces["player"]
+        
+                if victim then
+                    psurface = victim.surface
+                    pforce = victim.force
+                end
+        
+                if param.parameter then
+                    local surfname = param.parameter:match("^%s*([%w_]+)%s*$")
+                    if surfname and game.surfaces[surfname] then
+                        psurface = game.surfaces[surfname]
+                    else
+                        UTIL_SmartPrint(victim, "Invalid surface: " .. param.parameter)
+                        return
+                    end
+                end
+        
+                -- Phase 1: Unchart all
+                for chunk in psurface.get_chunks() do
+                    pforce.unchart_chunk({ x = chunk.x, y = chunk.y }, psurface)
+                end
+        
+                -- Add to task queue
+                table.insert( storage.SM_Store, {
+                    surface = psurface.name,
+                    force = pforce.name,
+                    delay = game.tick + 120, -- 2 seconds later
+                    player_index = victim and victim.index or nil
+                })
+        
+                UTIL_SmartPrint(victim, "Chunks uncharted. Deletion will occur in ~2 seconds.")
+            end)
+        
+
         -- Online
         commands.add_command("online", "See who is online", function(param)
             local victim
