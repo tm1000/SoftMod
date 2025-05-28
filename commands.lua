@@ -3,6 +3,23 @@
 -- GitHub: https://github.com/M45-Science/SoftMod
 -- License: MPL 2.0
 
+local function cleanSurface(psurface, pforce, delayTick, victim)
+    -- Phase 1: Unchart all
+    pforce.clear_chart(psurface)
+
+    if not storage.SM_Store.purge_tasks then
+        storage.SM_Store.purge_tasks = {}
+    end
+
+    -- Add to task queue
+    table.insert(storage.SM_Store.purge_tasks, {
+        surface = psurface,
+        force = pforce,
+        delay = game.tick + delayTick,
+        victim = victim,
+    })
+end
+
 function CMD_NoBanished(player)
     if player and UTIL_Is_Banished(player) then
         UTIL_SmartPrint(player, "No. You are banished.")
@@ -793,45 +810,56 @@ script.on_load(function()
                 end
             end)
 
-            commands.add_command("purge-unused", "Moderators only: Uncharts and later deletes unused chunks. Optional: <surface>",
+        commands.add_command("clean-surface",
+            "Moderators only: Uncharts and later deletes unused chunks. Optional: <surface> or <all>",
             function(param)
                 if CMD_ModsOnly(param) then return end
-        
+
                 local victim = param.player_index and game.players[param.player_index] or nil
                 local psurface = game.surfaces[1]
                 local pforce = game.forces["player"]
-        
+                local doAllSurf = false
+
                 if victim then
                     psurface = victim.surface
                     pforce = victim.force
                 end
-        
+
                 if param.parameter then
                     local surfname = param.parameter:match("^%s*([%w_]+)%s*$")
                     if surfname and game.surfaces[surfname] then
                         psurface = game.surfaces[surfname]
                     else
-                        UTIL_SmartPrint(victim, "Invalid surface: " .. param.parameter)
-                        return
+                        if param.parameter == "all" then
+                            doAllSurf = true
+                        else
+                            UTIL_SmartPrint(victim, "Invalid surface: " .. param.parameter)
+                            return
+                        end
                     end
                 end
-        
-                -- Phase 1: Unchart all
-                for chunk in psurface.get_chunks() do
-                    pforce.unchart_chunk({ x = chunk.x, y = chunk.y }, psurface)
+
+                game.server_save()
+
+                if doAllSurf then
+                    local x = 0
+                    for _, surface in pairs(game.surfaces) do
+                        if string.sub(surface.name, 1, 8) == "platform" or surface.name == "jail" then
+                            UTIL_ConsolePrint("Skipped cleaning surface: " .. surface.name)
+                        else
+                            x = x + 1
+                            cleanSurface(surface, pforce, (60 * 10) + (x*30), victim)
+                        end
+                    end
+                    UTIL_MsgAll("Cleaning all surfaces (" .. x .. "), chunk deletion scheduled.")
+                    return
+                else
+                    cleanSurface(psurface, pforce, (60 * 10), victim)
+                    UTIL_MsgAll("Unused chunk deletion for " .. psurface.name .. " scheduled for 10s from now.")
                 end
-        
-                -- Add to task queue
-                table.insert( storage.SM_Store, {
-                    surface = psurface.name,
-                    force = pforce.name,
-                    delay = game.tick + 120, -- 2 seconds later
-                    player_index = victim and victim.index or nil
-                })
-        
-                UTIL_SmartPrint(victim, "Chunks uncharted. Deletion will occur in ~2 seconds.")
+
             end)
-        
+
 
         -- Online
         commands.add_command("online", "See who is online", function(param)
