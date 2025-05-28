@@ -43,19 +43,31 @@ local function ChunkPurge()
 
     for chunk in task.surface.get_chunks() do
         if not task.force.is_chunk_charted(task.surface, chunk) then
-            task.surface.delete_chunk(chunk)
-            deleted = deleted + 1
+            -- 64x64 area = 1 chunk buffer in all directions
+            local area = {
+                left_top = { x = (chunk.x - 1) * 32, y = (chunk.y - 1) * 32 },
+                right_bottom = { x = (chunk.x + 2) * 32, y = (chunk.y + 2) * 32 }
+            }
+
+            local count = task.surface.count_entities_filtered{
+                area = area,
+                force = "player"
+            }
+
+            if count == 0 then
+                task.surface.delete_chunk(chunk)
+                deleted = deleted + 1
+            end
         end
     end
 
     if task.victim and task.victim.name then
-        UTIL_MsgAll(task.victim.name .." deleted " .. deleted .. " unused chunks from surface '" .. task.surface.name .. "'.")
+        UTIL_MsgAll(task.victim.name .. " deleted " .. deleted .. " unused chunks from surface '" .. task.surface.name .. "'.")
     else
         UTIL_MsgAll("System deleted " .. deleted .. " unused chunks from surface '" .. task.surface.name .. "'.")
-
     end
 
-    -- Remove task from queue
+    -- Remove the completed task
     table.remove(queue, 1)
 end
 
