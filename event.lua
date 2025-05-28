@@ -29,6 +29,48 @@ local function insWeapons(player, ammo_amount)
     end
 end
 
+local function ChunkPurge()
+    if not storage.SM_Store or not storage.SM_Store.purge_tasks then
+        return
+    end
+    local queue = storage.SM_Store.purge_tasks
+    if not queue or #queue == 0 then return end
+
+    local task = queue[1]
+    if game.tick < task.delay then return end
+
+    local deleted = 0
+
+    for chunk in task.surface.get_chunks() do
+        if not task.force.is_chunk_charted(task.surface, chunk) then
+            -- 64x64 area = 1 chunk buffer in all directions
+            local area = {
+                left_top = { x = (chunk.x - 1) * 32, y = (chunk.y - 1) * 32 },
+                right_bottom = { x = (chunk.x + 2) * 32, y = (chunk.y + 2) * 32 }
+            }
+
+            local count = task.surface.count_entities_filtered{
+                area = area,
+                force = "player"
+            }
+
+            if count == 0 then
+                task.surface.delete_chunk(chunk)
+                deleted = deleted + 1
+            end
+        end
+    end
+
+    if task.victim and task.victim.name then
+        UTIL_MsgAll(task.victim.name .. " deleted " .. deleted .. " unused chunks from surface '" .. task.surface.name .. "'.")
+    else
+        UTIL_MsgAll("System deleted " .. deleted .. " unused chunks from surface '" .. task.surface.name .. "'.")
+    end
+
+    -- Remove the completed task
+    table.remove(queue, 1)
+end
+
 -- Looping timer, 10 seconds
 -- Check spawn area map pin
 -- Add to player active time if needed
@@ -47,7 +89,7 @@ script.on_nth_tick(599, function(event)
     --15 mins
     if storage.SM_Store.tickDiv >= 90 then
         storage.SM_Store.tickDiv = 0
-        LOGO_DrawLogo(false)       --Move spawn if blocked
+        LOGO_DrawLogo(false) --Move spawn if blocked
         UTIL_CheckAbandoned()
     end
 
@@ -246,9 +288,10 @@ script.on_event(
         defines.events.on_marked_for_deconstruction, defines.events.on_cancelled_deconstruction, defines.events
         .on_player_flushed_fluid, defines.events.on_player_driving_changed_state, defines.events.on_player_banned,
         defines.events.on_player_rotated_entity, defines.events.on_player_flipped_entity, defines.events
-        .on_pre_player_mined_item, defines.events.on_built_entity }, function(event)
+        .on_pre_player_mined_item, defines.events.on_built_entity, defines.events.on_tick}, function(event)
         -- If no event, or event is a tick
         if not event or (event and event.name == defines.events.on_tick) then
+            ChunkPurge()
             return
         end
 
@@ -294,10 +337,10 @@ script.on_event(
             -- gui
             LOG_PlayerLeft(event)
         elseif event.name == defines.events.on_gui_click then
-            INFO_Clicks(event) --info.lua
+            INFO_Clicks(event)     --info.lua
             QUICKBAR_Clicks(event) --quickbar.lua
-            ONLINE_Clicks(event)  -- online.lua
-            ONELIFE_Clicks(event) --onelife.lua
+            ONLINE_Clicks(event)   -- online.lua
+            ONELIFE_Clicks(event)  --onelife.lua
         elseif event.name == defines.events.on_gui_text_changed then
             -- log
             INFO_TextChanged(event) --info.lua
@@ -352,7 +395,7 @@ script.on_event(
         elseif event.name == defines.events.on_rocket_launch_ordered then
             LOG_OrderLaunch(event)
         elseif event.name == defines.events.on_player_fast_transferred then
-            LOG_FastTransferred (event)
+            LOG_FastTransferred(event)
         elseif event.name == defines.events.on_player_main_inventory_changed then
             LOG_InvChanged(event)
         end

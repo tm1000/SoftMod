@@ -15,8 +15,13 @@ function STORAGE_CreateGlobal()
     if not storage.SM_Store.resetDuration then
         storage.SM_Store.resetDuration = ""
     end
-    if not storage.SM_Store.resetDuration then
-        storage.SM_Store.resetDate = ""
+     --Map resets
+     if not storage.SM_Store.resetDuration then
+        storage.SM_Store.resetDuration = ""
+    end
+    --Map chunk purges
+    if not storage.SM_Store.purge_tasks then
+        storage.SM_Store.purge_tasks = {}
     end
 
     --Perms
