@@ -15,10 +15,6 @@ function STORAGE_CreateGlobal()
     if not storage.SM_Store.resetDuration then
         storage.SM_Store.resetDuration = ""
     end
-     --Map resets
-     if not storage.SM_Store.resetDuration then
-        storage.SM_Store.resetDuration = ""
-    end
     --Map chunk purges
     if not storage.SM_Store.purge_tasks then
         storage.SM_Store.purge_tasks = {}
@@ -143,10 +139,10 @@ function STORAGE_MakePlayerStorage(player)
 
     --online menu
     if not storage.PData[player.index].onlineBrief then
-        storage.PData[player.index].online_brief = false
+        storage.PData[player.index].onlineBrief = false
     end
     if not storage.PData[player.index].onlineShowOffline then
-        storage.PData[player.index].online_show_offline = false
+        storage.PData[player.index].onlineShowOffline = false
     end
 
     if not storage.PData[player.index].level then
