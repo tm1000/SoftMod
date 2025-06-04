@@ -402,6 +402,14 @@ function INFO_InfoWin(player)
             }
             tab1_discord_sub1_frame.add {
                 type = "label",
+                caption = "[font=default-large]Use Discord commands to vote for map rewinds or skip the next reset.[/font]"
+            }
+            tab1_discord_sub1_frame.add {
+                type = "label",
+                caption = "[font=default-large]You can even start a brand new map with a Discord vote.[/font]"
+            }
+            tab1_discord_sub1_frame.add {
+                type = "label",
                 caption = "[font=default-large]Visit m45sci.xyz or copy-paste the link below:[/font]"
             }
 

@@ -73,7 +73,7 @@ end
 
 -- Looping timer, 10 seconds
 -- Check spawn area map pin
--- Add to player active time if needed
+-- Add to player score if they were active or moving
 -- Refresh players online window
 
 script.on_nth_tick(599, function(event)
@@ -100,48 +100,36 @@ script.on_nth_tick(599, function(event)
             -- Banish if some mod eats respawn event
             BANISH_SendToSurface(player)
 
-            -- Player active?
-            if storage.PData[player.index].active then
-                if storage.PData[player.index].active then
-                    storage.PData[player.index].active = false -- Turn back off
+            local pdata = storage.PData[player.index]
 
-                    if storage.PData[player.index].score then
-                        -- Compensate for game speed
-                        storage.PData[player.index].score =
-                            storage.PData[player.index].score + (600.0 / game.speed) -- Same as loop time
-                        if storage.PData[player.index].lastOnline then
-                            storage.PData[player.index].lastOnline = game.tick
-                        end
-                    else
-                        -- INIT
-                        storage.PData[player.index].score = 0
-                    end
+            -- Player active?
+            if pdata.active then
+                -- Reset flag so next event must set it again
+                pdata.active = false
+
+                -- Increase score for being active this tick
+                pdata.score = (pdata.score or 0) + (600.0 / game.speed)
+                if pdata.lastOnline then
+                    pdata.lastOnline = game.tick
                 end
             else
-                -- INIT
-                storage.PData[player.index].active = false
+                -- Ensure flag exists
+                pdata.active = false
             end
 
             -- Player moving?
-            if storage.PData[player.index].moving then
-                if storage.PData[player.index].moving then
-                    storage.PData[player.index].moving = false -- Turn back off
+            if pdata.moving then
+                -- Reset flag so next event must set it again
+                pdata.moving = false
 
-                    if storage.PData[player.index].score then
-                        -- Compensate for game speed
-                        storage.PData[player.index].score =
-                            storage.PData[player.index].score + (600.0 / game.speed) -- Same as loop time
-                        if storage.PData[player.index].lastOnline then
-                            storage.PData[player.index].lastOnline = game.tick
-                        end
-                    else
-                        -- INIT
-                        storage.PData[player.index].score = 0
-                    end
+                -- Increase score for moving this tick
+                pdata.score = (pdata.score or 0) + (600.0 / game.speed)
+                if pdata.lastOnline then
+                    pdata.lastOnline = game.tick
                 end
             else
-                -- INIT
-                storage.PData[player.index].moving = false
+                -- Ensure flag exists
+                pdata.moving = false
             end
         end
     end
