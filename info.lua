@@ -258,7 +258,7 @@ function INFO_InfoWin(player)
             tab1_info_center.style.horizontally_stretchable = true
             tab1_info_center.add {
                 type = "label",
-                caption = "[color=orange][font=default-large-bold]Regulars/Vets: Trolls/griefers?[/font][/color]"
+                caption = "[color=orange][font=default-large-bold]Regulars & Vets: Trolls causing trouble?[/font][/color]"
             }
             tab1_info_center.add {
                 type = "sprite",
@@ -266,7 +266,7 @@ function INFO_InfoWin(player)
             }
             tab1_info_center.add {
                 type = "label",
-                caption = "[color=orange][font=default-large-bold]You can banish them![/font][/color]"
+                caption = "[color=orange][font=default-large-bold]Use BANISH! [item=rocket-launcher][/font][/color]"
             }
             tab1_info_center.add {
                 type = "label",
@@ -316,11 +316,11 @@ function INFO_InfoWin(player)
             end
             tab1_info_top.add {
                 type = "label",
-                caption = "[entity=character]  [color=yellow][font=default-large-bold]NEW PLAYERS start with some restrictions![/font][/color]"
+                caption = "[entity=character]  [color=yellow][font=default-large-bold]New recruits have some restrictions.[/font][/color]"
             }
             local friendly_fire = tab1_info_top.add {
                 type = "label",
-                caption = "[recipe=combat-shotgun] [font=default-large-bold]Friendly fire is OFF, for players and buildings.[/font]"
+                caption = "[recipe=combat-shotgun] [font=default-large-bold]Friendly fire is OFF; your buddies and bases are safe.[/font]"
             }
             if storage.SM_Store.oneLifeMode then
                 tab1_info_top.add {
@@ -517,11 +517,11 @@ function INFO_InfoWin(player)
 
             tab2_main_frame.add {
                 type = "label",
-                caption = "[font=default-large-bold]New players do not have full game permissions.[/font]"
+                caption = "[font=default-large-bold]New players start with limited permissions.[/font]"
             }
             tab2_main_frame.add {
                 type = "label",
-                caption = "[font=default-large-bold]Level 3+ players can BANISH you with ONE vote point.[/font]"
+                caption = "[font=default-large-bold]Regulars (Level 3+) can BANISH you with one vote.[/font]"
             }
             tab2_main_frame.add {
                 type = "label",
@@ -549,15 +549,15 @@ function INFO_InfoWin(player)
             }
             tab2_main_frame.add {
                 type = "label",
-                caption = "[font=default-large]Permissions restrictions are lifted.[/font]"
+                caption = "[font=default-large]All restrictions lifted.[/font]"
             }
             tab2_main_frame.add {
                 type = "label",
-                caption = "[font=default-large-bold]Access to deconstruction planner (with warning msg).[/font]"
+                caption = "[font=default-large-bold]Deconstruction planner unlocked (with warning).[/font]"
             }
             tab2_main_frame.add {
                 type = "label",
-                caption = "[font=default-large-bold][color=green]Access to members-only servers.[/color][/font]"
+                caption = "[font=default-large-bold][color=green]Join our members-only servers.[/color][/font]"
             }
             tab2_main_frame.add {
                 type = "label",
@@ -585,15 +585,15 @@ function INFO_InfoWin(player)
             }
             tab2_main_frame.add {
                 type = "label",
-                caption = "[font=default-large-bold]Allowed to BANISH other players, and vote points needed to BANISH you increases to TWO.[/font]"
+                caption = "[font=default-large-bold]You can BANISH others, and it now takes two votes to banish you.[/font]"
             }
             tab2_main_frame.add {
                 type = "label",
-                caption = "[font=default-large]Deconstruction planner warning removed.[/font]"
+                caption = "[font=default-large]No more deconstruction planner warnings.[/font]"
             }
             tab2_main_frame.add {
                 type = "label",
-                caption = "[font=default-large]Access to vote-map command on Discord (after registration).[/font]"
+                caption = "[font=default-large]Unlock !vote-map on Discord (after registration).[/font]"
             }
             tab2_main_frame.add {
                 type = "label",
@@ -620,11 +620,11 @@ function INFO_InfoWin(player)
             }
             tab2_main_frame.add {
                 type = "label",
-                caption = "[font=default-large-bold]Long-standing members of the community. Vote points needed to BANISH you increases to four.[/font]"
+                caption = "[font=default-large-bold]Veteran status: takes four votes to BANISH you.[/font]"
             }
             tab2_main_frame.add {
                 type = "label",
-                caption = "[font=default-large-bold]Your votes increase to two points each.[/font]"
+                caption = "[font=default-large-bold]Your vote counts double.[/font]"
             }
             tab2_main_frame.add {
                 type = "label",
@@ -660,11 +660,7 @@ function INFO_InfoWin(player)
             tab3_main_frame.style.horizontally_stretchable = true
             tab3_main_frame.add {
                 type = "label",
-                caption = ""
-            }
-            tab3_main_frame.add {
-                type = "label",
-                caption = "[font=default-large-bold]1: [recipe=cluster-grenade] No griefing, use common sense. Don't be toxic or annoying.[/font]"
+                caption = "[item=rail-signal] [font=default-large-bold]Server Rules - Break them and the [entity=behemoth-biter] gets you![/font]"
             }
             tab3_main_frame.add {
                 type = "label",
@@ -672,7 +668,7 @@ function INFO_InfoWin(player)
             }
             tab3_main_frame.add {
                 type = "label",
-                caption = "[font=default-large-bold]2: [item=programmable-speaker] Don't advertise or link other servers.[/font]"
+                caption = "[font=default-large-bold]1: [recipe=cluster-grenade] Don't be a jerk. Use common sense.[/font]"
             }
             tab3_main_frame.add {
                 type = "label",
@@ -680,7 +676,7 @@ function INFO_InfoWin(player)
             }
             tab3_main_frame.add {
                 type = "label",
-                caption = "[font=default-large-bold]3: [item=blueprint-book] Read the Welcome, Rules and Membership tabs before asking for help.[/font]"
+                caption = "[font=default-large-bold]2: [item=programmable-speaker] Don't bug the mods. Try /banish or #moderation-help.[/font]"
             }
             tab3_main_frame.add {
                 type = "label",
@@ -688,7 +684,7 @@ function INFO_InfoWin(player)
             }
             tab3_main_frame.add {
                 type = "label",
-                caption = "[font=default-large-bold]4: [item=repair-pack] Use [/font][font=default-game]BANISH[/font] [font=default-large-bold]if there are problem-players. (online menu, top-left)[/font]"
+                caption = "[font=default-large-bold]3: [virtual-signal=signal-everything] No ads or self-promo. Keep crypto and invites elsewhere.[/font]"
             }
             tab3_main_frame.add {
                 type = "label",
@@ -696,11 +692,39 @@ function INFO_InfoWin(player)
             }
             tab3_main_frame.add {
                 type = "label",
-                caption = "[font=default-large-bold]5: [fluid=steam] This is a multiplayer server, try to cooperate with other players.[/font]"
+                caption = "[font=default-large-bold]4: [item=repair-pack] Player problem? Use [font=default-game]BANISH[/font] first.[/font]"
             }
             tab3_main_frame.add {
                 type = "label",
-                caption = "[font=default-large-bold]   If you want everything your way, go play single player.[/font]"
+                caption = ""
+            }
+            tab3_main_frame.add {
+                type = "label",
+                caption = "[font=default-large-bold]5: [fluid=steam] Not your private server. Compromise or play single player.[/font]"
+            }
+            tab3_main_frame.add {
+                type = "label",
+                caption = ""
+            }
+            tab3_main_frame.add {
+                type = "label",
+                caption = "[font=default-large-bold]6: [item=radar] Nothing here is private. Public server rules apply.[/font]"
+            }
+            tab3_main_frame.add {
+                type = "label",
+                caption = ""
+            }
+            tab3_main_frame.add {
+                type = "label",
+                caption = "[font=default-large-bold]7: [item=blueprint-book] Read the info tabs and help channel before asking.[/font]"
+            }
+            tab3_main_frame.add {
+                type = "label",
+                caption = ""
+            }
+            tab3_main_frame.add {
+                type = "label",
+                caption = "[font=default-large-bold]8: [item=locomotive] Links: m45sci.xyz, /r/M45Sci, Steam group.[/font]"
             }
 
             -- Close Button Frame
