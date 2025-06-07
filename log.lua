@@ -485,6 +485,8 @@ function LOG_ConsoleCmd(event)
 
         if event.command then
             command = event.command
+        else
+            return
         end
 
         if event.parameters then
@@ -493,7 +495,7 @@ function LOG_ConsoleCmd(event)
 
         if event.player_index then
             local player = game.players[event.player_index]
-            print(string.format("[CMD] NAME: %s, COMMAND: %s, ARGS: %s", player.name, command, args))
+            print(string.format("[CMD] %s ran /%s %s", player.name, command, args))
         end
     end
 end
