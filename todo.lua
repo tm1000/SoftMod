@@ -226,7 +226,7 @@ local function makeTodoSubmenu(player, i, edit_mode)
                             name = "m45_todo_submenu_close_button",
                             sprite = "utility/close",
                             style = "frame_action_button",
-                            tooltip = "Close this window"
+                            tooltip = {"strings.todo_submenu_close_tooltip"}
                         }
 
                         local todo_submenu_main = main_flow.add {
@@ -238,7 +238,7 @@ local function makeTodoSubmenu(player, i, edit_mode)
 
                         todo_submenu_main.add {
                             type = "label",
-                            caption = "[font=default-large-bold]Priority: [/font]"
+                            caption = {"strings.todo_priority_label"}
                         }
                         local priority_textbox = todo_submenu_main.add {
                             type = "text-box",
@@ -253,7 +253,7 @@ local function makeTodoSubmenu(player, i, edit_mode)
                         priority_textbox.style.width = 100
                         todo_submenu_main.add {
                             type = "label",
-                            caption = "[font=default-large-bold]Subject: [/font]"
+                            caption = {"strings.todo_subject_label"}
                         }
                         local subject_textbox = todo_submenu_main.add {
                             type = "text-box",
@@ -283,10 +283,10 @@ local function makeTodoSubmenu(player, i, edit_mode)
 
                         local todo_lock = todo_submenu_main.add {
                             type = "checkbox",
-                            caption = "Protected",
+                            caption = {"strings.todo_protected_label"},
                             name = "todo_protected",
                             state = (not target.can_edit),
-                            tooltip = "Toggles if other players can edit your todo item."
+                            tooltip = {"strings.todo_protected_tooltip"}
                         }
                         if (no_edit or not is_owner) and not player.admin then
                             todo_lock.enabled = false
@@ -339,8 +339,7 @@ local function makeTodoSubmenu(player, i, edit_mode)
                             if whoedit ~= "" then
                                 local edit_note = todo_save_frame.add {
                                     type = "label",
-                                    caption = "[font=default-large-bold][color=red]CURRENTLY BEING EDITED BY: " ..
-                                        whoedit .. "[/color][/font]"
+                                    caption = {"strings.todo_edit_warning", whoedit}
                                 }
                                 local lock_spacer = todo_save_frame.add {
                                     type = "empty-widget"
@@ -350,7 +349,7 @@ local function makeTodoSubmenu(player, i, edit_mode)
                             if target.hidden then
                                 local delete_button = todo_save_frame.add {
                                     type = "button",
-                                    caption = "Unhide",
+                                    caption = {"strings.todo_unhide"},
                                     style = "red_button",
                                     name = "m45_todo_hide," .. storage.todo_player_editing_id[player.index]
                                 }
@@ -360,7 +359,7 @@ local function makeTodoSubmenu(player, i, edit_mode)
                             else
                                 local delete_button = todo_save_frame.add {
                                     type = "button",
-                                    caption = "Hide",
+                                    caption = {"strings.todo_hide"},
                                     style = "red_button",
                                     name = "m45_todo_hide," .. storage.todo_player_editing_id[player.index]
                                 }
@@ -374,7 +373,7 @@ local function makeTodoSubmenu(player, i, edit_mode)
                             lock_spacer.style.width = 16
                             local save_button = todo_save_frame.add {
                                 type = "button",
-                                caption = "Save",
+                                caption = {"strings.todo_save"},
                                 style = "green_button",
                                 name = "m45_todo_save," .. storage.todo_player_editing_id[player.index]
                             }
@@ -420,7 +419,7 @@ function TODO_MakeWindow(player)
                 type = "label",
                 name = "online_title",
                 style = "frame_title",
-                caption = "To-Do List:"
+                caption = {"strings.todo_window_title"}
             }
             local pusher = todo_titlebar.add {
                 type = "empty-widget"
@@ -434,10 +433,10 @@ function TODO_MakeWindow(player)
 
             local show_hidden = todo_titlebar.add {
                 type = "checkbox",
-                caption = "Show hidden  ",
+                caption = {"strings.todo_show_hidden"},
                 name = "m45_todo_show_hidden",
                 state = state,
-                tooltip = "Toggle show hidden notes."
+                tooltip = {"strings.todo_show_hidden_tooltip"}
             }
 
             -- CLOSE BUTTON--
@@ -452,7 +451,7 @@ function TODO_MakeWindow(player)
                 name = "m45_todo_close_button",
                 sprite = "utility/close",
                 style = "frame_action_button",
-                tooltip = "Close this window"
+                tooltip = {"strings.todo_submenu_close_tooltip"}
             }
 
             local pframe = main_flow.add {
@@ -543,7 +542,7 @@ function TODO_MakeWindow(player)
                             sprite = "utility/search",
                             style = "frame_action_button",
                             name = "m45_todo_submenu_view," .. i, -- pass-item
-                            tooltip = "View this item"
+                            tooltip = {"strings.todo_view_tooltip"}
                         }
                         submenu_view.style.size = { 36, 36 }
                         submenu_view.style.padding = 4
@@ -553,7 +552,7 @@ function TODO_MakeWindow(player)
                             sprite = "utility/rename_icon",
                             style = "frame_action_button",
                             name = "m45_todo_submenu_edit," .. i, -- pass-item
-                            tooltip = "Edit this item"
+                            tooltip = {"strings.todo_edit_tooltip"}
                         }
                         submenu_edit.style.size = { 36, 36 }
                         submenu_edit.style.padding = 4
@@ -635,7 +634,7 @@ function TODO_MakeWindow(player)
                             sprite = "file/img/todo/up.png",
                             name = "m45_todo_moveup," .. i, -- pass-item
                             style = "frame_action_button",
-                            tooltip = "move up"
+                            tooltip = {"strings.todo_move_up_tooltip"}
                         }
                         moveup.style.size = { 18, 18 }
 
@@ -644,7 +643,7 @@ function TODO_MakeWindow(player)
                             sprite = "file/img/todo/down.png",
                             name = "m45_todo_movedown," .. i, -- pass-item
                             style = "frame_action_button",
-                            tooltip = "move down"
+                            tooltip = {"strings.todo_move_down_tooltip"}
                         }
                         movedown.style.size = { 18, 18 }
 
@@ -691,7 +690,7 @@ function TODO_MakeWindow(player)
             end
             local add_note = add_frame.add {
                 type = "label",
-                caption = "Add item"
+                caption = {"strings.todo_add_item"}
             }
             add.style.size = { 24, 24 }
             notes_label.style.rich_text_setting = defines.rich_text_setting.highlight
@@ -722,7 +721,7 @@ function TODO_Setup(player)
             type = "sprite-button",
             name = "todo_button",
             sprite = "file/img/buttons/todo2-64.png",
-            tooltip = "Read or edit the To-Do list."
+            tooltip = {"strings.todo_button_tooltip"}
         }
         todo_64.style.size = { 64, 64 }
         if not storage.todo_unread then
@@ -767,7 +766,7 @@ local function guiClick(event)
                     table.insert(storage.todo_list, i - 1, table.remove(storage.todo_list, i))
                     updateTODOWindows()
                 else
-                    UTIL_SmartPrint(player, "It is already the first item!")
+                    UTIL_SmartPrint(player, {"strings.todo_first_item"})
                 end
                 local moved_item = todo_key(i)
                 UTIL_ConsolePrint("[TODO] " .. player.name .. " moved item " .. todo_key(i) .. " up.")
@@ -782,7 +781,7 @@ local function guiClick(event)
                     table.insert(storage.todo_list, i + 1, table.remove(storage.todo_list, i))
                     updateTODOWindows()
                 else
-                    UTIL_SmartPrint(player, "It is already at the end of the list.")
+                    UTIL_SmartPrint(player, {"strings.todo_last_item"})
                 end
                 UTIL_ConsolePrint("[TODO] " .. player.name .. " moved item " .. todo_key(i) .. " down.")
             elseif args and args[2] and args[1] == "m45_todo_submenu_edit" then
@@ -814,7 +813,7 @@ local function guiClick(event)
                 -- edit/create throttle
                 if storage.todo_throttle[player.index] then
                     if game.tick - storage.todo_throttle[player.index] < (60 * 5) then -- 10 seconds
-                        UTIL_SmartPrint(player, "(SYSTEM) Please wait 5 seconds before attempting to make a new item.")
+                        UTIL_SmartPrint(player, {"strings.todo_make_throttle"})
                         -- storage.todo_throttle[player.index] = game.tick --Reset timer, prevent spamming
                         return
                     end
@@ -828,7 +827,7 @@ local function guiClick(event)
                     if storage.todo_max[player.index] < 25 then
                         storage.todo_max[player.index] = storage.todo_max[player.index] + 1
                     else
-                        UTIL_SmartPrint(player, "You have personally created 25 todo items, limit reached.")
+                        UTIL_SmartPrint(player, {"strings.todo_limit_reached"})
                         return
                     end
                 else
@@ -868,7 +867,7 @@ local function guiClick(event)
                         if storage.todo_throttle[player.index] then
                             if game.tick - storage.todo_throttle[player.index] < (60 * 5) then -- 10 seconds
                                 UTIL_SmartPrintColor(player,
-                                    "(SYSTEM) CHANGES NOT SAVED, PLEASE WAIT 5 SECONDS BEFORE TRYING TO SAVE AGAIN.")
+                                    {"strings.todo_changes_throttle"})
 
                                 return
                             end
@@ -896,10 +895,10 @@ local function guiClick(event)
                     else
                         -- Something is broken
                         UTIL_SmartPrint(player,
-                            "Sorry, something went wrong, unable to delete. Please report this issue.")
+                            {"strings.todo_delete_error"})
                     end
                 else
-                    UTIL_SmartPrint(player, "Error: Could not find note id: " .. id)
+                    UTIL_SmartPrint(player, {"strings.todo_id_error", id})
                 end
             elseif args and args[2] and args[1] == "m45_todo_save" then
                 ----------------------------------------------------------------
@@ -930,7 +929,7 @@ local function guiClick(event)
                             if storage.todo_throttle[player.index] then
                                 if game.tick - storage.todo_throttle[player.index] < (60 * 5) then -- 5 seconds
                                     UTIL_SmartPrintColor(player,
-                                        "(SYSTEM) CHANGES NOT SAVED, PLEASE WAIT 5 SECONDS BEFORE TRYING TO SAVE AGAIN.")
+                                        {"strings.todo_changes_throttle"})
                                     return
                                 end
                             else
@@ -974,14 +973,14 @@ local function guiClick(event)
                             storage.todo_player_editing_id[player.index] = nil
                         else
                             -- Nothing changed
-                            UTIL_SmartPrint(player, "No changes to save.")
+                            UTIL_SmartPrint(player, {"strings.todo_no_changes"})
                         end
                     else
                         -- Something is broken
-                        UTIL_SmartPrint(player, "Sorry, something went wrong, unable to save. Please report this issue.")
+                        UTIL_SmartPrint(player, {"strings.todo_save_error"})
                     end
                 else
-                    UTIL_SmartPrint(player, "Error: Could not find note id: " .. id)
+                    UTIL_SmartPrint(player, {"strings.todo_id_error", id})
                 end
             elseif event.element.name == "m45_todo_close_button" then
                 ----------------------------------------------------------------
