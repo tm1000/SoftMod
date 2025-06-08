@@ -385,7 +385,9 @@ function BANISH_DoBanish(player, victim, reason)
                                 UTIL_SmartPrint(player, "You have used " .. votecount .. " of your 5 available votes.")
                             end
 
-                            table.insert(storage.SM_Store.votes, 0, {
+                            -- Insert newest vote at the start of the list
+                            -- index 1 is the first valid position in Lua
+                            table.insert(storage.SM_Store.votes, 1, {
                                 voter = player,
                                 victim = victim,
                                 reason = reason,
