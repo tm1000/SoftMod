@@ -3,6 +3,10 @@
 -- GitHub: https://github.com/M45-Science/SoftMod
 -- License: MPL 2.0
 
+-- Load command groups
+require "commands_banish"
+require "commands_stash"
+
 local function cleanSurface(psurface, pforce, delayTick, victim)
     -- Phase 1: Unchart all
     pforce.clear_chart(psurface)
