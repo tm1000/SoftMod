@@ -13,7 +13,7 @@ function INFO_MakeClock(player)
             type = "button",
             name = "reset_clock",
             style = "red_button",
-            tooltip = "Map reset schedule. Control-right-click to minimize.",
+            tooltip = {"strings.reset_clock_tooltip"},
             visible = false,
         }
 
@@ -30,7 +30,7 @@ function INFO_MakeButton(player)
             type = "sprite-button",
             name = "m45_button",
             sprite = "file/img/buttons/m45-64.png",
-            tooltip = "Open help and info about M45-Science."
+            tooltip = {"strings.m45_button_tooltip"}
         }
         m45_32.style.size = { 64, 64 }
     end
@@ -83,14 +83,14 @@ function INFO_InfoWin(player)
                     type = "label",
                     name = "online_title",
                     style = "frame_title",
-                    caption = "Welcome!"
+                    caption = {"strings.info_title_welcome"}
                 }
             else
                 info_titlebar.add {
                     type = "label",
                     name = "online_title",
                     style = "frame_title",
-                    caption = "Welcome! --  Map: " .. storage.SM_Store.serverName
+                    caption = {"strings.info_title_map", storage.SM_Store.serverName}
                 }
             end
             local pusher = info_titlebar.add {
@@ -102,7 +102,7 @@ function INFO_InfoWin(player)
                 type = "label",
                 name = "online_title_note",
                 style = "frame_title",
-                caption = "  please read before closing  "
+                caption = {"strings.info_title_note"}
             }
 
             pusher.style.vertically_stretchable = true
@@ -114,7 +114,7 @@ function INFO_InfoWin(player)
                 name = "m45_info_close_button",
                 sprite = "utility/close",
                 style = "frame_action_button",
-                tooltip = "Close this window"
+                tooltip = {"strings.info_close_tooltip"}
             }
 
             local info_pane = main_flow.add {
@@ -125,23 +125,23 @@ function INFO_InfoWin(player)
 
             local tab1 = info_pane.add {
                 type = "tab",
-                caption = "[virtual-signal=signal-info] Welcome"
+                caption = {"strings.info_tab_welcome"}
             }
             local tab2 = info_pane.add {
                 type = "tab",
-                caption = "[entity=item-request-proxy] Membership"
+                caption = {"strings.info_tab_membership"}
             }
             local tab3 = info_pane.add {
                 type = "tab",
-                caption = "[virtual-signal=signal-deny] Rules"
+                caption = {"strings.info_tab_rules"}
             }
             local tab5 = info_pane.add {
                 type = "tab",
-                caption = "[item=lab] Discord"
+                caption = {"strings.info_tab_discord"}
             }
             local tab6 = info_pane.add {
                 type = "tab",
-                caption = "[item=production-science-pack] Patreon"
+                caption = {"strings.info_tab_patreon"}
             }
 
             -- Tab 1 -- Welcome
@@ -357,7 +357,7 @@ function INFO_InfoWin(player)
                 type = "text-box",
                 name = "server_list",
                 text = "http://factorio.go-game.net/?tag=M45",
-                tooltip = "COPY: Click text then Control-C"
+                tooltip = {"strings.copy_tooltip"}
             }
             tab1_info_top.server_list.style.font = "default-large"
             tab1_info_top.server_list.style.minimal_width = 350
@@ -374,7 +374,7 @@ function INFO_InfoWin(player)
                 type = "text-box",
                 name = "relay_url",
                 text = "http://eu.m45sci.xyz",
-                tooltip = "COPY: Click text then Control-C"
+                tooltip = {"strings.copy_tooltip"}
             }
             tab1_info_top.relay_url.style.font = "default-large"
             tab1_info_top.relay_url.style.minimal_width = 350
@@ -429,7 +429,7 @@ function INFO_InfoWin(player)
                 type = "text-box",
                 name = "discord_url",
                 text = "https://discord.gg/rQANzBheVh",
-                tooltip = "COPY: Click text then Control-C"
+                tooltip = {"strings.copy_tooltip"}
             }
 
             -- URL Style
@@ -444,7 +444,7 @@ function INFO_InfoWin(player)
             -- Tab 1 Main -- Discord -- Bottom Info Text
             tab1_discord_sub2_frame.add {
                 type = "button",
-                caption = "Get QR Code",
+                caption = {"strings.info_get_qr"},
                 style = "rounded_button",
                 name = "qr_button"
             }
@@ -762,7 +762,7 @@ function INFO_InfoWin(player)
                 type = "text-box",
                 text = "https://discord.gg/rQANzBheVh",
                 name = "discord_url",
-                tooltip = "COPY: Click text then Control-C"
+                tooltip = {"strings.copy_tooltip"}
             }
             durl.style.minimal_width = 350
             tab5_qr_frame.add {
@@ -811,7 +811,7 @@ function INFO_InfoWin(player)
                 type = "text-box",
                 text = "https://www.patreon.com/m45sci",
                 name = "patreon_url",
-                tooltip = "COPY: Click text then Control-C"
+                tooltip = {"strings.copy_tooltip"}
             }
             purl.style.minimal_width = 350
             tab6_qr_frame.add {
