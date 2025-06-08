@@ -65,6 +65,59 @@ function PERMS_MakeVeteran(player, victim)
 end
 
 -- Create player groups if they don't exist, and create storage links to them
+-- Actions that the default group should never be allowed to perform
+local DEF_GROUP_ALWAYS_DISABLED = {
+    defines.input_action.deconstruct,
+    defines.input_action.activate_paste,
+    defines.input_action.copy_large_opened_item,
+    defines.input_action.copy_large_opened_blueprint,
+}
+
+-- Input actions toggled in PERMS_SetPermissions for the default group
+local DEF_GROUP_TOGGLED = {
+    defines.input_action.change_programmable_speaker_alert_parameters,
+    defines.input_action.change_programmable_speaker_circuit_parameters,
+    defines.input_action.change_programmable_speaker_parameters,
+    defines.input_action.launch_rocket,
+    --defines.input_action.cancel_research, -- intentionally disabled
+    defines.input_action.cancel_upgrade,
+    defines.input_action.upgrade,
+    -- Added 1-2022
+    defines.input_action.delete_blueprint_library,
+    defines.input_action.drop_blueprint_record,
+    defines.input_action.import_blueprint,
+    defines.input_action.import_blueprint_string,
+    defines.input_action.import_blueprints_filtered,
+    defines.input_action.reassign_blueprint,
+    defines.input_action.cancel_deconstruct,
+}
+
+-- Blueprint related actions that can be toggled per permission group
+local BLUEPRINT_ACTIONS = {
+    defines.input_action.alt_select_blueprint_entities,
+    defines.input_action.cancel_new_blueprint,
+    defines.input_action.copy_opened_blueprint,
+    defines.input_action.cycle_blueprint_book_backwards,
+    defines.input_action.cycle_blueprint_book_forwards,
+    defines.input_action.delete_blueprint_library,
+    defines.input_action.delete_blueprint_record,
+    defines.input_action.drop_blueprint_record,
+    defines.input_action.edit_blueprint_tool_preview,
+    defines.input_action.export_blueprint,
+    defines.input_action.grab_blueprint_record,
+    defines.input_action.import_blueprint,
+    defines.input_action.import_blueprint_string,
+    defines.input_action.import_blueprints_filtered,
+    defines.input_action.open_blueprint_library_gui,
+    defines.input_action.open_blueprint_record,
+    defines.input_action.reassign_blueprint,
+    defines.input_action.select_blueprint_entities,
+    defines.input_action.setup_blueprint,
+    defines.input_action.setup_single_blueprint_record,
+    defines.input_action.upgrade_opened_blueprint_by_item,
+    defines.input_action.upgrade_opened_blueprint_by_record,
+}
+
 function PERMS_MakeUserGroups()
     storage.SM_Store.jailGroup = game.permissions.get_group("Jailed")
     storage.SM_Store.defGroup = game.permissions.get_group("Default")
@@ -105,12 +158,9 @@ function PERMS_MakeUserGroups()
     storage.SM_Store.modGroup  = game.permissions.get_group("Moderators")
 
     --Always disabled
-    -- Added 10-2024
-    storage.SM_Store.defGroup.set_allows_action(defines.input_action.deconstruct, false)
-    storage.SM_Store.defGroup.set_allows_action(defines.input_action.activate_paste, false)
-    -- Added 11-2024
-    storage.SM_Store.defGroup.set_allows_action(defines.input_action.copy_large_opened_item, false)
-    storage.SM_Store.defGroup.set_allows_action(defines.input_action.copy_large_opened_blueprint, false)
+    for _, action in pairs(DEF_GROUP_ALWAYS_DISABLED) do
+        storage.SM_Store.defGroup.set_allows_action(action, false)
+    end
 
     local actionList = {
         defines.input_action.activate_interrupt,
@@ -386,29 +436,9 @@ end
 
 function PERMS_SetBlueprintsAllowed(group, option)
     if group then
-        group.set_allows_action(defines.input_action.alt_select_blueprint_entities, option)
-        group.set_allows_action(defines.input_action.cancel_new_blueprint, option)
-        group.set_allows_action(defines.input_action.copy_opened_blueprint, option)
-        group.set_allows_action(defines.input_action.copy_opened_blueprint, option)
-        group.set_allows_action(defines.input_action.cycle_blueprint_book_backwards, option)
-        group.set_allows_action(defines.input_action.cycle_blueprint_book_forwards, option)
-        group.set_allows_action(defines.input_action.delete_blueprint_library, option)
-        group.set_allows_action(defines.input_action.delete_blueprint_record, option)
-        group.set_allows_action(defines.input_action.drop_blueprint_record, option)
-        group.set_allows_action(defines.input_action.edit_blueprint_tool_preview, option)
-        group.set_allows_action(defines.input_action.export_blueprint, option)
-        group.set_allows_action(defines.input_action.grab_blueprint_record, option)
-        group.set_allows_action(defines.input_action.import_blueprint, option)
-        group.set_allows_action(defines.input_action.import_blueprint_string, option)
-        group.set_allows_action(defines.input_action.import_blueprints_filtered, option)
-        group.set_allows_action(defines.input_action.open_blueprint_library_gui, option)
-        group.set_allows_action(defines.input_action.open_blueprint_record, option)
-        group.set_allows_action(defines.input_action.reassign_blueprint, option)
-        group.set_allows_action(defines.input_action.select_blueprint_entities, option)
-        group.set_allows_action(defines.input_action.setup_blueprint, option)
-        group.set_allows_action(defines.input_action.setup_single_blueprint_record, option)
-        group.set_allows_action(defines.input_action.upgrade_opened_blueprint_by_item, option)
-        group.set_allows_action(defines.input_action.upgrade_opened_blueprint_by_record, option)
+        for _, action in pairs(BLUEPRINT_ACTIONS) do
+            group.set_allows_action(action, option)
+        end
     end
 end
 
@@ -424,24 +454,9 @@ function PERMS_SetPermissions()
             option = false
         end
 
-        storage.SM_Store.defGroup.set_allows_action(defines.input_action.change_programmable_speaker_alert_parameters,
-            option)
-        storage.SM_Store.defGroup.set_allows_action(defines.input_action.change_programmable_speaker_circuit_parameters,
-            option)
-        storage.SM_Store.defGroup.set_allows_action(defines.input_action.change_programmable_speaker_parameters, option)
-        storage.SM_Store.defGroup.set_allows_action(defines.input_action.launch_rocket, option)
-        --storage.SM_Store.defGroup.set_allows_action(defines.input_action.cancel_research, option)
-        storage.SM_Store.defGroup.set_allows_action(defines.input_action.cancel_upgrade, option)
-        storage.SM_Store.defGroup.set_allows_action(defines.input_action.upgrade, option)
-
-        -- Added 1-2022
-        storage.SM_Store.defGroup.set_allows_action(defines.input_action.delete_blueprint_library, option)
-        storage.SM_Store.defGroup.set_allows_action(defines.input_action.drop_blueprint_record, option)
-        storage.SM_Store.defGroup.set_allows_action(defines.input_action.import_blueprint, option)
-        storage.SM_Store.defGroup.set_allows_action(defines.input_action.import_blueprint_string, option)
-        storage.SM_Store.defGroup.set_allows_action(defines.input_action.import_blueprints_filtered, option)
-        storage.SM_Store.defGroup.set_allows_action(defines.input_action.reassign_blueprint, option)
-        storage.SM_Store.defGroup.set_allows_action(defines.input_action.cancel_deconstruct, option)
+        for _, action in pairs(DEF_GROUP_TOGGLED) do
+            storage.SM_Store.defGroup.set_allows_action(action, option)
+        end
     end
 end
 
