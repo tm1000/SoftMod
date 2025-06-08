@@ -5,6 +5,14 @@
 ### LUA scripts for M45's Factorio servers. ( softmod / scenario scripts )
 <br>Currently approximately 3700 lines of lua.
 <br>
+This mod keeps all persistent state in a global table named `storage`. See
+[`docs/storage.md`](docs/storage.md) for an overview of its layout. A basic
+`luacheck` configuration is provided for optional linting:
+
+```bash
+luacheck *.lua
+```
+
 *banish.lua*<br>
 Allows regulars to vote-ban players,<br>
 <br>
