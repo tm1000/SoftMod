@@ -438,6 +438,8 @@ script.on_load(function()
                 return
             end
 
+            STORAGE_CreateGlobal()
+
             if param.parameter then
                 storage.SM_Store.serverName = param.parameter
 
