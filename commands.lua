@@ -3,6 +3,10 @@
 -- GitHub: https://github.com/M45-Science/SoftMod
 -- License: MPL 2.0
 
+-- Load command groups
+require "commands_banish"
+require "commands_stash"
+
 local function cleanSurface(psurface, pforce, delayTick, victim)
     -- Phase 1: Unchart all
     pforce.clear_chart(psurface)
@@ -34,9 +38,18 @@ function CMD_ModsOnly(param)
         if CMD_NoBanished(player) then
             return true
         end
-        if player and not player.admin then
-            UTIL_SmartPrint(player, "That command is for moderators only.")
-            return true
+        if player then
+            if not player.admin then
+                UTIL_SmartPrint(player, "That command is for moderators only.")
+                return true
+            else
+                local args = ""
+                if param.parameter then
+                    args = param.parameter
+                end
+                local cmd_name = param.name or "unknown"
+                UTIL_ConsolePrint(string.format("[AUDIT] %s ran /%s %s", player.name, cmd_name, args))
+            end
         end
     end
     return false
