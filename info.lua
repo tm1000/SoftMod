@@ -405,7 +405,7 @@ function INFO_InfoWin(player)
                 tooltip = {"strings.copy_tooltip"}
             }
             tab1_info_top.locale_url.style.font = "default-large"
-            tab1_info_top.locale_url.style.minimal_width = 350
+            tab1_info_top.locale_url.style.minimal_width = 500
             tab1_info_top.add {
                 type = "label",
                 caption = "  "
