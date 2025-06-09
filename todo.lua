@@ -236,10 +236,11 @@ local function makeTodoSubmenu(player, i, edit_mode)
                         }
                         todo_submenu_main.style.horizontal_align = "center"
 
-                        todo_submenu_main.add {
+                        local pri_label = todo_submenu_main.add {
                             type = "label",
                             caption = {"strings.todo_priority_label"}
                         }
+                        pri_label.style.font = "default-large-bold"
                         local priority_textbox = todo_submenu_main.add {
                             type = "text-box",
                             text = target.priority,
@@ -251,10 +252,11 @@ local function makeTodoSubmenu(player, i, edit_mode)
                         end
 
                         priority_textbox.style.width = 100
-                        todo_submenu_main.add {
+                        local subject_label = todo_submenu_main.add {
                             type = "label",
                             caption = {"strings.todo_subject_label"}
                         }
+                        subject_label.style.font = "default-large-bold"
                         local subject_textbox = todo_submenu_main.add {
                             type = "text-box",
                             text = target.subject,

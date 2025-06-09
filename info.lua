@@ -168,10 +168,11 @@ function INFO_InfoWin(player)
                 sprite = "file/img/info-win/m45-128.png",
                 tooltip = ""
             }
-            tab1_lframe.add {
+            local m45_label = tab1_lframe.add {
                 type = "label",
                 caption = {"strings.info_m45_science"}
             }
+            m45_label.style.font = "default-large-bold"
             tab1_lframe.add {
                 type = "label",
                 caption = " "
@@ -179,10 +180,11 @@ function INFO_InfoWin(player)
 
             -- PATREON
             if storage.SM_Store.patreonCredits[1] then
-                tab1_lframe.add {
+                local supporters_label = tab1_lframe.add {
                     type = "label",
                     caption = {"strings.info_supporters"}
                 }
+                supporters_label.style.font_color = { r = 0.5, g = 0, b = 0.5 }
                 local i = 1
                 while storage.SM_Store.patreonCredits[i] do
                     if storage.SM_Store.patreonCredits[i + 1] then
@@ -209,10 +211,11 @@ function INFO_InfoWin(player)
 
             -- NITRO
             if storage.SM_Store.nitroCredits[1] then
-                tab1_lframe.add {
+                local nitro_label = tab1_lframe.add {
                     type = "label",
                     caption = {"strings.info_discord_nitro"}
                 }
+                nitro_label.style.font_color = { r = 0, g = 1, b = 1 }
                 local i = 1
                 while storage.SM_Store.nitroCredits[i] do
                     if storage.SM_Store.nitroCredits[i + 1] then
@@ -256,18 +259,22 @@ function INFO_InfoWin(player)
             tab1_info_center.style.horizontal_align = "center"
 
             tab1_info_center.style.horizontally_stretchable = true
-            tab1_info_center.add {
+            local tip1 = tab1_info_center.add {
                 type = "label",
                 caption = {"strings.info_regulars_tip1"}
             }
+            tip1.style.font = "default-large-bold"
+            tip1.style.font_color = { r = 1, g = 0.55, b = 0 }
             tab1_info_center.add {
                 type = "sprite",
                 sprite = "file/img/info-win/tips/onetwothree.png"
             }
-            tab1_info_center.add {
+            local tip2 = tab1_info_center.add {
                 type = "label",
                 caption = {"", {"strings.info_regulars_tip2"}, " [item=rocket-launcher]"}
             }
+            tip2.style.font = "default-large-bold"
+            tip2.style.font_color = { r = 1, g = 0.55, b = 0 }
             tab1_info_center.add {
                 type = "label",
                 caption = " "
@@ -349,10 +356,11 @@ function INFO_InfoWin(player)
                 type = "label",
                 caption = ""
             }
-            tab1_info_top.add {
+            local maps_label = tab1_info_top.add {
                 type = "label",
                 caption = {"strings.info_other_maps_label"}
             }
+            maps_label.style.font = "default-large"
             tab1_info_top.add {
                 type = "text-box",
                 name = "server_list",
@@ -366,10 +374,11 @@ function INFO_InfoWin(player)
                 caption = "  "
             }
             -- relay url
-            tab1_info_top.add {
+            local relay_label = tab1_info_top.add {
                 type = "label",
                 caption = {"strings.info_relay_label"}
             }
+            relay_label.style.font = "default-large"
             tab1_info_top.add {
                 type = "text-box",
                 name = "relay_url",
@@ -378,6 +387,25 @@ function INFO_InfoWin(player)
             }
             tab1_info_top.relay_url.style.font = "default-large"
             tab1_info_top.relay_url.style.minimal_width = 350
+            tab1_info_top.add {
+                type = "label",
+                caption = "  "
+            }
+
+            -- localization contribution url
+            local locale_label = tab1_info_top.add {
+                type = "label",
+                caption = {"strings.info_locale_label"}
+            }
+            locale_label.style.font = "default-large"
+            tab1_info_top.add {
+                type = "text-box",
+                name = "locale_url",
+                text = "https://github.com/M45-Science/SoftMod/tree/main/locale",
+                tooltip = {"strings.copy_tooltip"}
+            }
+            tab1_info_top.locale_url.style.font = "default-large"
+            tab1_info_top.locale_url.style.minimal_width = 350
             tab1_info_top.add {
                 type = "label",
                 caption = "  "
@@ -396,22 +424,26 @@ function INFO_InfoWin(player)
             }
 
             -- Tab 1 Main -- Discord -- Info Text
-            tab1_discord_sub1_frame.add {
+            local commands_tip = tab1_discord_sub1_frame.add {
                 type = "label",
                 caption = {"strings.info_commands_tip"}
             }
-            tab1_discord_sub1_frame.add {
+            commands_tip.style.font = "default-large-bold"
+            local commands_usage = tab1_discord_sub1_frame.add {
                 type = "label",
                 caption = {"strings.info_commands_usage"}
             }
-            tab1_discord_sub1_frame.add {
+            commands_usage.style.font = "default-large"
+            local commands_newmap = tab1_discord_sub1_frame.add {
                 type = "label",
                 caption = {"strings.info_commands_newmap"}
             }
-            tab1_discord_sub1_frame.add {
+            commands_newmap.style.font = "default-large"
+            local commands_web = tab1_discord_sub1_frame.add {
                 type = "label",
                 caption = {"strings.info_commands_website"}
             }
+            commands_web.style.font = "default-large"
 
             -- Tab 1 Main -- Discord -- Logo/URL frame
             local tab1_discord_sub2_frame = tab1_discord_sub1_frame.add {
