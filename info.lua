@@ -90,7 +90,7 @@ function INFO_InfoWin(player)
                     type = "label",
                     name = "online_title",
                     style = "frame_title",
-                    caption = {"strings.info_title_map", storage.SM_Store.serverName}
+                    caption = {"", {"strings.info_title_map"}, " ", storage.SM_Store.serverName}
                 }
             end
             local pusher = info_titlebar.add {
@@ -125,23 +125,23 @@ function INFO_InfoWin(player)
 
             local tab1 = info_pane.add {
                 type = "tab",
-                caption = {"strings.info_tab_welcome"}
+                caption = {"", "[virtual-signal=signal-info] ", {"strings.info_tab_welcome"}}
             }
             local tab2 = info_pane.add {
                 type = "tab",
-                caption = {"strings.info_tab_membership"}
+                caption = {"", "[entity=item-request-proxy] ", {"strings.info_tab_membership"}}
             }
             local tab3 = info_pane.add {
                 type = "tab",
-                caption = {"strings.info_tab_rules"}
+                caption = {"", "[virtual-signal=signal-deny] ", {"strings.info_tab_rules"}}
             }
             local tab5 = info_pane.add {
                 type = "tab",
-                caption = {"strings.info_tab_discord"}
+                caption = {"", "[item=lab] ", {"strings.info_tab_discord"}}
             }
             local tab6 = info_pane.add {
                 type = "tab",
-                caption = {"strings.info_tab_patreon"}
+                caption = {"", "[item=production-science-pack] ", {"strings.info_tab_patreon"}}
             }
 
             -- Tab 1 -- Welcome
@@ -170,7 +170,7 @@ function INFO_InfoWin(player)
             }
             tab1_lframe.add {
                 type = "label",
-                caption = "[color=white][font=default-large-bold]M45-Science[/font][/color]"
+                caption = {"strings.info_m45_science"}
             }
             tab1_lframe.add {
                 type = "label",
@@ -181,7 +181,7 @@ function INFO_InfoWin(player)
             if storage.SM_Store.patreonCredits[1] then
                 tab1_lframe.add {
                     type = "label",
-                    caption = "[color=purple]SUPPORTERS:[/color]"
+                    caption = {"strings.info_supporters"}
                 }
                 local i = 1
                 while storage.SM_Store.patreonCredits[i] do
@@ -211,7 +211,7 @@ function INFO_InfoWin(player)
             if storage.SM_Store.nitroCredits[1] then
                 tab1_lframe.add {
                     type = "label",
-                    caption = "[color=cyan]DISCORD NITRO:[/color]"
+                    caption = {"strings.info_discord_nitro"}
                 }
                 local i = 1
                 while storage.SM_Store.nitroCredits[i] do
@@ -258,7 +258,7 @@ function INFO_InfoWin(player)
             tab1_info_center.style.horizontally_stretchable = true
             tab1_info_center.add {
                 type = "label",
-                caption = "[color=orange][font=default-large-bold]Regulars & Vets: Trolls causing trouble?[/font][/color]"
+                caption = {"strings.info_regulars_tip1"}
             }
             tab1_info_center.add {
                 type = "sprite",
@@ -266,7 +266,7 @@ function INFO_InfoWin(player)
             }
             tab1_info_center.add {
                 type = "label",
-                caption = "[color=orange][font=default-large-bold]Use BANISH! [item=rocket-launcher][/font][/color]"
+                caption = {"", {"strings.info_regulars_tip2"}, " [item=rocket-launcher]"}
             }
             tab1_info_center.add {
                 type = "label",
@@ -351,7 +351,7 @@ function INFO_InfoWin(player)
             }
             tab1_info_top.add {
                 type = "label",
-                caption = "[font=default-large]See other M45 maps:[/font]"
+                caption = {"strings.info_other_maps_label"}
             }
             tab1_info_top.add {
                 type = "text-box",
@@ -368,7 +368,7 @@ function INFO_InfoWin(player)
             -- relay url
             tab1_info_top.add {
                 type = "label",
-                caption = "[font=default-large]Connecting from Europe? Try the relay server:[/font]"
+                caption = {"strings.info_relay_label"}
             }
             tab1_info_top.add {
                 type = "text-box",
@@ -398,19 +398,19 @@ function INFO_InfoWin(player)
             -- Tab 1 Main -- Discord -- Info Text
             tab1_discord_sub1_frame.add {
                 type = "label",
-                caption = "[font=default-large-bold]See our [color=cyan]Discord Server[/color] for commands like vote-map![/font]"
+                caption = {"strings.info_commands_tip"}
             }
             tab1_discord_sub1_frame.add {
                 type = "label",
-                caption = "[font=default-large]Use Discord commands to vote for map rewinds or skip the next reset.[/font]"
+                caption = {"strings.info_commands_usage"}
             }
             tab1_discord_sub1_frame.add {
                 type = "label",
-                caption = "[font=default-large]You can even start a brand new map with a Discord vote.[/font]"
+                caption = {"strings.info_commands_newmap"}
             }
             tab1_discord_sub1_frame.add {
                 type = "label",
-                caption = "[font=default-large]Visit m45sci.xyz or copy-paste the link below:[/font]"
+                caption = {"strings.info_commands_website"}
             }
 
             -- Tab 1 Main -- Discord -- Logo/URL frame
@@ -780,7 +780,7 @@ function INFO_InfoWin(player)
             }
             tab5_qr_frame.add {
                 type = "label",
-                caption = "(Or scan this QR Code, it links to the address above)"
+                caption = {"strings.info_qr_hint"}
             }
 
             info_pane.add_tab(tab5, tab5_frame)
@@ -829,7 +829,7 @@ function INFO_InfoWin(player)
             }
             tab6_qr_frame.add {
                 type = "label",
-                caption = "(Or scan this QR Code, it links to the address above)"
+                caption = {"strings.info_qr_hint"}
             }
 
             info_pane.add_tab(tab6, tab6_frame)
