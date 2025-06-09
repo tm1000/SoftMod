@@ -1,5 +1,5 @@
 -- Helper: Check if player is valid and controlling a character
-local function is_player_valid(player)
+function is_player_valid(player)
     return player
        and player.valid
        and player.connected
@@ -9,13 +9,13 @@ local function is_player_valid(player)
 end
 
 -- Helper: Check if inventory is empty using get_item_count()
-local function is_inventory_empty(inventory)
+function is_inventory_empty(inventory)
     if not inventory then return true end
     return inventory.get_item_count() == 0
 end
 
 -- Ensure a particular stash is empty or create it fresh
-local function ensure_empty_stash(player_index, stash_name, size)
+function ensure_empty_stash(player_index, stash_name, size)
     if storage.PData[player_index][stash_name] then
         local stash = storage.PData[player_index][stash_name]
         if not stash.is_empty() then
@@ -30,7 +30,7 @@ local function ensure_empty_stash(player_index, stash_name, size)
 end
 
 -- Stash items from a source inventory into a target stash inventory, using can_insert()
-local function stash_inventory(source_inv, stash_inv)
+function stash_inventory(source_inv, stash_inv)
     if not source_inv or not stash_inv then return false, false end
     local stashed_anything = false
     local stash_full = false
@@ -61,7 +61,7 @@ local function stash_inventory(source_inv, stash_inv)
 end
 
 -- Unstash items from a stash inventory into a target player inventory, using can_insert()
-local function unstash_inventory(stash_inv, target_inv)
+function unstash_inventory(stash_inv, target_inv)
     if not stash_inv or not target_inv then return false, false end
     local unstashed_anything = false
     local player_inventory_full = false
@@ -92,7 +92,7 @@ local function unstash_inventory(stash_inv, target_inv)
 end
 
 -- Stash armor and its equipment, using can_insert
-local function stash_armor(player)
+function stash_armor(player)
     local armor_inventory = player.get_inventory(defines.inventory.character_armor)
     if not armor_inventory or armor_inventory.is_empty() then
         return false, false
@@ -144,7 +144,7 @@ local function stash_armor(player)
 end
 
 -- Unstash armor and restore equipment, using can_insert
-local function unstash_armor(player)
+function unstash_armor(player)
     local armor_inventory = player.get_inventory(defines.inventory.character_armor)
     local armor_stash = storage.PData[player.index].armor_stash
     if not armor_stash then return false, false end
@@ -193,7 +193,7 @@ local function unstash_armor(player)
 end
 
 -- Helper: Move items from one inventory to another if possible, otherwise leave them
-local function move_items_to_inventory_or_leave(source_inv, target_inv)
+function move_items_to_inventory_or_leave(source_inv, target_inv)
     if not source_inv or not target_inv then return end
     for i = 1, #source_inv do
         local stack = source_inv[i]
