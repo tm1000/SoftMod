@@ -247,18 +247,15 @@ function LOG_Decon(event)
         if player and area and area.left_top then
             local decon_size = UTIL_Distance(area.left_top, area.right_bottom)
 
-            -- Ignore if only rocks or trees are selected for deconstruction
-            local only_trees_rocks = true
+            -- Ignore if the selection only contains naturally generated entities
+            local only_natural = true
             for _, ent in pairs(surface.find_entities_filtered { area = area }) do
-                if ent.valid then
-                    local name = ent.name or ""
-                    if not string.find(name, "tree") and not string.find(name, "rock") then
-                        only_trees_rocks = false
-                        break
-                    end
+                if ent.valid and not UTIL_IsNatural(ent) then
+                    only_natural = false
+                    break
                 end
             end
-            if only_trees_rocks then
+            if only_natural then
                 return
             end
 
@@ -333,8 +330,7 @@ function LOG_MarkDecon(event)
         local obj = event.entity
 
         if player then
-            local name = obj and obj.name or ""
-            if string.find(name, "tree") or string.find(name, "rock") then
+            if UTIL_IsNatural(obj) then
                 return
             end
             local msg = "[ACT] " .. player.name .. " decon " .. obj.name .. " at " .. UTIL_GPSObj(obj)
