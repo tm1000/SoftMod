@@ -79,8 +79,7 @@ function STORAGE_CreateGlobal()
         storage.SM_Store.tickDiv = 0
     end
 
-    --Fix existing players
-    for _, victim in pairs(game.players) do 
+    for _, victim in pairs(game.players) do
         STORAGE_MakePlayerStorage(victim)
     end
 end

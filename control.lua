@@ -17,6 +17,12 @@ require "utility"  -- Widely used general utility
 require "quickbar" -- Save or Restore Quickbar
 require "stash" -- Save or Restore Weapon/Ammo/Armor
 
+
+script.on_init(function()
+    storage.SM_Store = {}
+    game.print("M45 Soft-Mod v"..storage.SM_Version.." loaded.")
+  end)
+
 function RunSetup()
     storage.SM_Version = "650-06.09.2025-0722p"
 

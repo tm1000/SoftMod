@@ -485,6 +485,8 @@ function PERMS_PromotePlayer(player)
         return
     end
 
+    PERMS_MakeUserGroups()
+
     if not player.permission_group then
         --Fix nil permissions
         if storage.SM_Store.defGroup then
