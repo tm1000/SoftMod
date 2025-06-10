@@ -507,7 +507,9 @@ function INFO_InfoWin(player)
                 caption = {
                     "",
                     "[color=orange][font=default-large-bold]",
-                    {"strings.info_score_current", tostring(math.floor(storage.PData[player.index].score / 60 / 60))},
+                    {"strings.info_score_current"},
+                    " ",
+                    tostring(math.floor(storage.PData[player.index].score / 60 / 60)),
                     "[/font][/color]"
                 }
             }
