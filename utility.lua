@@ -200,6 +200,18 @@ function UTIL_ConsolePrint(message)
     end
 end
 
+-- Determine if an entity is part of the natural world rather than
+-- something placed by a player. Natural entities generally belong to
+-- the neutral force or have no force at all.
+function UTIL_IsNatural(entity)
+    if entity and entity.valid then
+        if not entity.force or (entity.force and entity.force.name == "neutral") then
+            return true
+        end
+    end
+    return false
+end
+
 -- Smart/safe Print
 function UTIL_SmartPrint(player, message)
     if message then
