@@ -26,8 +26,6 @@ script.on_init(function()
 function RunSetup()
     storage.SM_Version = "651-06.14.2025-1145p"
 
-    storage.SM_OldVersion = storage.SM_Version
-
     if not storage.SM_OldVersion then
         storage.SM_OldVersion = "OldVersion"
     end
@@ -35,8 +33,8 @@ function RunSetup()
     --Only rerun on version change
     if not storage.SM_Store or storage.SM_OldVersion ~= storage.SM_Version then
         STORAGE_CreateGlobal()
-        BANISH_MakeJail()
         TODO_Init()
+        BANISH_MakeJail()
         LOGO_DrawLogo(true)
         UTIL_MapPin()
 
@@ -47,4 +45,5 @@ function RunSetup()
         game.disable_replay()                       -- Smaller saves, prevent desync on script upgrade
         game.surfaces[1].show_clouds = false
     end
+
 end
