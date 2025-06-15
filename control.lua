@@ -24,7 +24,7 @@ script.on_init(function()
   end)
 
 function RunSetup()
-    storage.SM_Version = "650-06.09.2025-0722p"
+    storage.SM_Version = "651-06.14.2025-1145p"
 
     storage.SM_OldVersion = storage.SM_Version
 
