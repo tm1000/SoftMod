@@ -55,4 +55,4 @@ commonly needed utility functions<br>
 permadeath-onelife mode<br>
 <br>
 *quickbar.lua*<br>
-save/restore quickbar via chatwire. Exchange strings now use the `M45-QB2` format and include item quality names (e.g. `iron-plate:legendary`).<br>
+save/restore quickbar via chatwire. Exchange strings now use the `M45-QB2` format. Qualities are omitted for normal items and shortened using aliases (`u`, `r`, `e`, `l`) when present (e.g. `iron-plate:l`).<br>
