@@ -3,6 +3,18 @@
 -- GitHub: https://github.com/M45-Science/SoftMod
 -- License: MPL 2.0
 
+local QUALITY_ALIAS = {
+    uncommon = "u",
+    rare = "r",
+    epic = "e",
+    legendary = "l",
+}
+
+local QUALITY_FROM_ALIAS = {}
+for k, v in pairs(QUALITY_ALIAS) do
+    QUALITY_FROM_ALIAS[v] = k
+end
+
 function ExportQuickbar(player, limit)
     if not player or not player.valid then
         return
@@ -18,7 +30,15 @@ function ExportQuickbar(player, limit)
         local slot = player.get_quick_bar_slot(i)
         if slot ~= nil then
             local quality = slot.quality or "normal"
-            outbuf = outbuf .. slot.name .. ":" .. quality
+            outbuf = outbuf .. slot.name
+            if quality ~= "normal" then
+                local alias = QUALITY_ALIAS[quality]
+                if alias then
+                    outbuf = outbuf .. ":" .. alias
+                else
+                    outbuf = outbuf .. ":" .. quality
+                end
+            end
         end
         outbuf = outbuf .. ","
     end
@@ -97,14 +117,17 @@ function ImportQuickbar(player, data)
             if version == "M45-QB2" then
                 local parts = UTIL_SplitStr(entry, ":")
                 item = parts[1] or ""
-                quality = parts[2] or "normal"
+                local qalias = parts[2]
+                if qalias ~= nil then
+                    quality = QUALITY_FROM_ALIAS[qalias] or qalias
+                end
             end
 
             local valid_item = prototypes.item and prototypes.item[item]
             local valid_quality = prototypes.quality and prototypes.quality[quality]
 
             if valid_item and valid_quality then
-                if version == "M45-QB2" and quality ~= "normal" then
+                if quality ~= "normal" then
                     player.set_quick_bar_slot(i, { name = item, quality = quality })
                 else
                     player.set_quick_bar_slot(i, item)
