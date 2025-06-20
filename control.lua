@@ -32,12 +32,12 @@ function RunSetup()
 
     --Only rerun on version change
     if not storage.SM_Store or storage.SM_OldVersion ~= storage.SM_Version then
+        storage.SM_OldVersion = storage.SM_Version
         STORAGE_CreateGlobal()
         TODO_Init()
         BANISH_MakeJail()
         LOGO_DrawLogo(true)
         UTIL_MapPin()
-        QUICKBAR_GenerateItemAliases()
 
         PERMS_MakeUserGroups()
         PERMS_SetPermissions()
