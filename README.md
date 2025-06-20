@@ -56,3 +56,4 @@ permadeath-onelife mode<br>
 <br>
 *quickbar.lua*<br>
 save/restore quickbar via chatwire. Exchange strings now use the `M45-QB2` format. Item names are shortened to two-letter aliases (AA, AB, ...) from a predefined list and qualities use (`u`, `r`, `e`, `l`) when present (e.g. `IP:l` for `iron-plate`).<br>
+[Quickbar Format](https://raw.githubusercontent.com/M45-Science/QuickbarExchange/)
