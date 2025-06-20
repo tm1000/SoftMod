@@ -17,13 +17,14 @@ function ExportQuickbar(player, limit)
     for i = 1, maxExport do
         local slot = player.get_quick_bar_slot(i)
         if slot ~= nil then
-            outbuf = outbuf .. slot.name
+            local quality = slot.quality or "normal"
+            outbuf = outbuf .. slot.name .. ":" .. quality
         end
         outbuf = outbuf .. ","
     end
 
     UTIL_SmartPrint(player,"Quickbar Exported!")
-    return helpers.encode_string("M45-QB1=" .. outbuf)
+    return helpers.encode_string("M45-QB2=" .. outbuf)
 end
 
 
@@ -68,7 +69,9 @@ function ImportQuickbar(player, data)
         UTIL_SmartPrint(player, "That isn't a valid M45 quickbar exchange string! (No Header)")
         return false
     end
-    if header[1] ~= "M45-QB1" then
+
+    local version = header[1]
+    if version ~= "M45-QB1" and version ~= "M45-QB2" then
         UTIL_SmartPrint(player, "That isn't a valid M45 quickbar exchange string! (Invalid Header)")
         return false
     end
@@ -82,25 +85,47 @@ function ImportQuickbar(player, data)
     local items = SplitStr(header[2], ",")
 
     local error_list = ""
-    for i, item in ipairs(items) do
+    for i, entry in ipairs(items) do
         if i > 100 then
             return
         end
 
-        --If item is valid
-        if prototypes.item[item] then
-            player.set_quick_bar_slot(i, item)
-        else
-            if error_list ~= "" then
-                error_list = error_list .. ", "
+        if entry ~= "" then
+            local item = entry
+            local quality = "normal"
+
+            if version == "M45-QB2" then
+                local parts = UTIL_SplitStr(entry, ":")
+                item = parts[1] or ""
+                quality = parts[2] or "normal"
             end
-            error_list = error_list .. item
+
+            local valid_item = prototypes.item and prototypes.item[item]
+            local valid_quality = prototypes.quality and prototypes.quality[quality]
+
+            if valid_item and valid_quality then
+                if version == "M45-QB2" and quality ~= "normal" then
+                    player.set_quick_bar_slot(i, { name = item, quality = quality })
+                else
+                    player.set_quick_bar_slot(i, item)
+                end
+            else
+                if error_list ~= "" then
+                    error_list = error_list .. ", "
+                end
+                if not valid_item then
+                    error_list = error_list .. item
+                else
+                    error_list = error_list .. item .. ":" .. quality
+                end
+            end
         end
     end
+
     if error_list ~= "" then
-        UTIL_SmartPrint(player, "Quickbar Import: Invalid items skipped: " .. error_list)
+        UTIL_SmartPrint(player, "Quickbar Import: Invalid items/qualities skipped: " .. error_list)
     else
-        UTIL_SmartPrint(player,"Quickbar imported!")
+        UTIL_SmartPrint(player, "Quickbar imported!")
     end
 
     return true
