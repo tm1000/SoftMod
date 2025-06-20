@@ -3,7 +3,7 @@
 
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
 ### LUA scripts for M45's Factorio servers. ( softmod / scenario scripts )
-<br>Currently approximately 3700 lines of lua.
+<br>Currently approximately 8700 lines of lua.
 <br>
 This mod keeps all persistent state in a global table named `storage`. See
 [`docs/storage.md`](docs/storage.md) for an overview of its layout. A basic
