@@ -37,6 +37,7 @@ function RunSetup()
         BANISH_MakeJail()
         LOGO_DrawLogo(true)
         UTIL_MapPin()
+        QUICKBAR_GenerateItemAliases()
 
         PERMS_MakeUserGroups()
         PERMS_SetPermissions()
