@@ -7,4 +7,13 @@ Translations for SoftMod live in this folder. If you spot problems or want to ad
 3. Commit your changes and open a pull request.
 
 Even small fixes are welcome!
+en - English
+de - Deutsch
+es - Spanish
+fr - French
+it - Italian
+pt - Portuguese
 
+-- Contributed by PHIDIAS
+zh-CN - Chinese (Mainland)
+zh-TW - CHinese (Taiwan)
