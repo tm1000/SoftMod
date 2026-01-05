@@ -4,8 +4,17 @@
 -- License: MPL 2.0
 -- Safe console print
 
-local function UTIL_HasValidItemPrototype(name)
-    return game and type(name) == "string" and game.item_prototypes[name]
+local function UTIL_HasValidItemPrototype(name, quality)
+    if not game or type(name) ~= "string" then
+        return false
+    end
+    if not game.item_prototypes[name] then
+        return false
+    end
+    if quality ~= nil then
+        return type(quality) == "string" and game.quality_prototypes and game.quality_prototypes[quality] ~= nil
+    end
+    return true
 end
 
 local function UTIL_InsertContentsIntoCorpse(inv_corpse, contents, player)
@@ -14,20 +23,36 @@ local function UTIL_InsertContentsIntoCorpse(inv_corpse, contents, player)
     end
 
     local player_name = player and player.name or "<unknown>"
-    local item_names = {}
-    for name in pairs(contents) do
-        table.insert(item_names, name)
-    end
-    table.sort(item_names)
+    local entries = {}
 
-    for _, name in ipairs(item_names) do
-        if UTIL_HasValidItemPrototype(name) then
-            inv_corpse.insert {
-                name = name,
-                count = contents[name]
-            }
+    -- Factorio 2.0: LuaInventory.get_contents() returns ItemWithQualityCounts (array of {name, quality, count}).
+    for _, entry in ipairs(contents) do
+        if entry and entry.name and entry.count and entry.count > 0 then
+            table.insert(entries, {
+                name = entry.name,
+                quality = entry.quality,
+                count = entry.count,
+            })
+        end
+    end
+
+    table.sort(entries, function(a, b)
+        if a.name ~= b.name then
+            return a.name < b.name
+        end
+        return tostring(a.quality or "") < tostring(b.quality or "")
+    end)
+
+    for _, entry in ipairs(entries) do
+        if UTIL_HasValidItemPrototype(entry.name, entry.quality) then
+            if entry.quality ~= nil then
+                inv_corpse.insert { name = entry.name, quality = entry.quality, count = entry.count }
+            else
+                inv_corpse.insert { name = entry.name, count = entry.count }
+            end
         else
-            log("UTIL_DumpInv: skipping invalid item '" .. tostring(name) .. "' from " .. player_name)
+            log("UTIL_DumpInv: skipping invalid item '" .. tostring(entry.name) .. ":" .. tostring(entry.quality) ..
+                "' from " .. player_name)
         end
     end
 end
