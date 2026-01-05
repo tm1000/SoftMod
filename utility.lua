@@ -25,7 +25,7 @@ local function UTIL_InsertContentsIntoCorpse(inv_corpse, contents, player)
     local player_name = player and player.name or "<unknown>"
     local entries = {}
 
-    -- Factorio 2.0: LuaInventory.get_contents() returns ItemWithQualityCounts (array of {name, quality, count}).
+    -- Factorio 2.0: get_contents() returns array entries of {name, quality?, count}.
     for _, entry in ipairs(contents) do
         if entry and entry.name and entry.count and entry.count > 0 then
             table.insert(entries, {
@@ -51,7 +51,7 @@ local function UTIL_InsertContentsIntoCorpse(inv_corpse, contents, player)
                 inv_corpse.insert { name = entry.name, count = entry.count }
             end
         else
-            log("UTIL_DumpInv: skipping invalid item '" .. tostring(entry.name) .. ":" .. tostring(entry.quality) ..
+            UTIL_ConsolePrint("UTIL_DumpInv: skipping invalid item '" .. tostring(entry.name) .. ":" .. tostring(entry.quality) ..
                 "' from " .. player_name)
         end
     end
@@ -144,7 +144,6 @@ function UTIL_DumpInv(player, force)
     end
 
 
-    -- Mark as cleaned up.
     if storage and storage.PData then
         storage.PData[player.index] = storage.PData[player.index] or {}
         storage.PData[player.index].cleaned = true
@@ -154,7 +153,7 @@ function UTIL_DumpInv(player, force)
 end
 
 function UTIL_MapPin()
-    --Migrate old maps
+    -- Migrate old map pin
     if (storage.servertag and storage.servertag.valid) then
         storage.servertag.destroy()
         storage.servertag = nil

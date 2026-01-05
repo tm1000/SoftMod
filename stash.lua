@@ -1,4 +1,3 @@
--- Helper: Check if player is valid and controlling a character
 function is_player_valid(player)
     return player
        and player.valid
@@ -8,7 +7,6 @@ function is_player_valid(player)
        and player.controller_type == defines.controllers.character
 end
 
--- Helper: Check if inventory is empty using get_item_count()
 function is_inventory_empty(inventory)
     if not inventory then return true end
     return inventory.get_item_count() == 0
@@ -40,22 +38,19 @@ local function stack_definition_from_stack(stack)
     return def
 end
 
--- Ensure a particular stash is empty or create it fresh
 function ensure_empty_stash(player_index, stash_name, size)
     if storage.PData[player_index][stash_name] then
         local stash = storage.PData[player_index][stash_name]
         if not stash.is_empty() then
-            return false -- It's not empty
-        else
-            return true
+            return false
         end
+        return true
     else
         storage.PData[player_index][stash_name] = game.create_inventory(size)
         return true
     end
 end
 
--- Stash items from a source inventory into a target stash inventory, using can_insert()
 function stash_inventory(source_inv, stash_inv)
     if not source_inv or not stash_inv then return false, false end
     local stashed_anything = false
@@ -86,7 +81,6 @@ function stash_inventory(source_inv, stash_inv)
     return stashed_anything, stash_full
 end
 
--- Unstash items from a stash inventory into a target player inventory, using can_insert()
 function unstash_inventory(stash_inv, target_inv)
     if not stash_inv or not target_inv then return false, false end
     local unstashed_anything = false
@@ -117,7 +111,6 @@ function unstash_inventory(stash_inv, target_inv)
     return unstashed_anything, player_inventory_full
 end
 
--- Stash armor and its equipment, using can_insert
 function stash_armor(player)
     local armor_inventory = player.get_inventory(defines.inventory.character_armor)
     if not armor_inventory or armor_inventory.is_empty() then
@@ -178,7 +171,6 @@ function stash_armor(player)
     return stashed_anything, stash_full
 end
 
--- Unstash armor and restore equipment, using can_insert
 function unstash_armor(player)
     local armor_inventory = player.get_inventory(defines.inventory.character_armor)
     local armor_stash = storage.PData[player.index].armor_stash
@@ -227,29 +219,18 @@ function unstash_armor(player)
     return unstashed_anything, player_inventory_full
 end
 
--- Helper: Move items from one inventory to another if possible, otherwise leave them
 function move_items_to_inventory_or_leave(source_inv, target_inv)
     if not source_inv or not target_inv then return end
     for i = 1, #source_inv do
         local stack = source_inv[i]
         if stack.valid_for_read then
             local stack_to_transfer = stack_definition_from_stack(stack)
-            -- Check if we can fully insert into target_inv
             if target_inv.can_insert(stack_to_transfer) then
                 local inserted = target_inv.insert(stack_to_transfer)
                 if inserted > 0 then
                     stack.clear()
                 end
-                -- If somehow inserted < stack.count even though can_insert was true, 
-                -- that would be odd, but in theory can_insert should ensure full insertion.
-            else
-                -- Cannot insert this stack fully, leave it as is.
             end
         end
     end
-end
-
--- Command registration moved to commands_stash.lua
-function STASH_AddStashCommands()
-    -- see commands_stash.lua
 end

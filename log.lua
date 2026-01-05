@@ -3,6 +3,20 @@
 -- GitHub: https://github.com/M45-Science/SoftMod
 -- License: MPL 2.0
 
+local DISCONNECT_REASON = {
+    "(quit)",
+    "(dropped)",
+    "(reconnecting)",
+    "(wrong input)",
+    "(too many desync)",
+    "(cannot keep up)",
+    "(afk)",
+    "(kicked)",
+    "(kicked and deleted)",
+    "(banned)",
+    "(switching servers)",
+    "(unknown reason)",
+}
 
 local function protectPin(event)
     local player = game.players[event.player_index]
@@ -31,7 +45,6 @@ local function rejectPin(event)
     return false
 end
 
--- Create map tag -- log
 function LOG_TagAdded(event)
     if not event or not event.player_index or not event.tag then
         return
@@ -51,7 +64,6 @@ function LOG_TagAdded(event)
     end
 end
 
--- Edit map tag -- log
 function LOG_TagMod(event)
     if not event or not event.player_index or not event.tag then
         return
@@ -75,7 +87,6 @@ function LOG_TagMod(event)
     end
 end
 
--- Delete map tag -- log
 function LOG_TagDel(event)
     if not event or not event.player_index or not event.tag then
         return
@@ -95,7 +106,6 @@ function LOG_TagDel(event)
     end
 end
 
--- Player disconnect messages, with reason (Fact >= v1.1)
 function LOG_PlayerLeft(event)
     if not event or not event.player_index or not storage.PData or not storage.PData[event.player_index] then
         return
@@ -106,10 +116,8 @@ function LOG_PlayerLeft(event)
     local player = game.players[event.player_index]
 
     if event.reason then
-        local reason = { "(quit)", "(dropped)", "(reconnecting)", "(wrong input)", "(too many desync)",
-            "(cannot keep up)", "(afk)", "(kicked)", "(kicked and deleted)", "(banned)",
-            "(switching servers)", "(unknown reason)" }
-        UTIL_MsgDiscord(player.name .. " disconnected. " .. reason[event.reason + 1])
+        local reason = DISCONNECT_REASON[event.reason + 1] or "(unknown reason)"
+        UTIL_MsgDiscord(player.name .. " disconnected. " .. reason)
     else
         UTIL_MsgDiscord(player.name .. " disconnected!")
     end

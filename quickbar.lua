@@ -476,7 +476,7 @@ function ImportQuickbar(player, data)
 
     --Clear all bars
     for i = 1, 100 do
-        local slot = player.set_quick_bar_slot(i, nil)
+        player.set_quick_bar_slot(i, nil)
     end
 
     --Restore from string
