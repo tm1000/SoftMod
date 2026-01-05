@@ -1,7 +1,7 @@
 -- Stash-related command registrations
 
 function STASH_AddStashCommands()
-    commands.add_command("stash", "Donator-only: Stash current weapons, ammo and armor.",
+    CMD_AddCommand("stash", "Donator-only: Stash current weapons, ammo and armor.",
         function(param)
             if not param or not param.player_index then return end
             local player = game.players[param.player_index]
@@ -55,7 +55,7 @@ function STASH_AddStashCommands()
         end
     )
 
-    commands.add_command("unstash", "Donator-only: Unstash weapons, ammo and armor.",
+    CMD_AddCommand("unstash", "Donator-only: Unstash weapons, ammo and armor.",
         function(param)
             if not param or not param.player_index then return end
             local player = game.players[param.player_index]

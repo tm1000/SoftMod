@@ -56,7 +56,7 @@ function BANISH_UpdateVotes()
     local banishedtemp = {}
 
     -- Loop through votes, tally them
-    for _, vote in pairs(storage.SM_Store.votes) do
+    for _, vote in ipairs(storage.SM_Store.votes) do
         -- only if everything seems to exist
         if vote and vote.voter and vote.victim then
             -- only if data exists
@@ -90,7 +90,13 @@ function BANISH_UpdateVotes()
     end
 
     -- Loop though players, look for matches
-    for _, victim in pairs(game.players) do
+    local player_indices = {}
+    for player_index, _ in pairs(game.players) do
+        table.insert(player_indices, player_index)
+    end
+    table.sort(player_indices)
+    for _, player_index in ipairs(player_indices) do
+        local victim = game.players[player_index]
         local prevstate = 0
         local newstate = 0
         if storage.PData[victim.index].banished then
@@ -350,7 +356,7 @@ function BANISH_DoBanish(player, victim, reason)
                             -- Check if we already voted against them
                             if storage.SM_Store.votes and storage.SM_Store.votes ~= {} then
                                 local votecount = 1
-                                for _, vote in pairs(storage.SM_Store.votes) do
+                                for _, vote in ipairs(storage.SM_Store.votes) do
                                     if vote and vote.voter and vote.victim then
                                         -- Count player's total votes, cap them
                                         if vote.voter == player then
@@ -417,12 +423,12 @@ end
 
 function BANISH_SendToSurface(player)
     -- Anything queued?
-    if storage.SM_Store.sendToSurface then
+    if storage.SM_Store and storage.SM_Store.sendToSurface then
         -- Valid player?
         if player and player.valid and player.character and player.character.valid then
             local index = nil
             -- Check list
-            for i, item in pairs(storage.SM_Store.sendToSurface) do
+            for i, item in ipairs(storage.SM_Store.sendToSurface) do
                 -- Check if item is valid
                 if item and item.victim and item.victim.character then
                     -- Check if names match

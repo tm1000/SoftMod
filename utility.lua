@@ -82,15 +82,25 @@ function UTIL_DumpInv(player, force)
     end
 
     if inv_main_contents then
-        for name, count in pairs(inv_main_contents) do
-            inv_corpse.insert { name = name, count = count }
+        local main_item_names = {}
+        for name, _ in pairs(inv_main_contents) do
+            table.insert(main_item_names, name)
+        end
+        table.sort(main_item_names)
+        for _, name in ipairs(main_item_names) do
+            inv_corpse.insert { name = name, count = inv_main_contents[name] }
         end
 
         inv_main.clear()
     end
     if inv_trash_contents then
-        for name, count in pairs(inv_trash_contents) do
-            inv_corpse.insert { name = name, count = count }
+        local trash_item_names = {}
+        for name, _ in pairs(inv_trash_contents) do
+            table.insert(trash_item_names, name)
+        end
+        table.sort(trash_item_names)
+        for _, name in ipairs(trash_item_names) do
+            inv_corpse.insert { name = name, count = inv_trash_contents[name] }
         end
 
         inv_trash.clear()
@@ -284,7 +294,7 @@ function UTIL_SendPlayers(victim)
     if not victim then
         buf = "[ONLINE2] "
         if storage.SM_Store.playerList then
-            for i, target in pairs(storage.SM_Store.playerList) do
+            for _, target in ipairs(storage.SM_Store.playerList) do
                 if target and target.victim and target.victim.connected then
                     buf = buf .. target.victim.name .. "," .. math.floor(target.score / 60 / 60) .. "," ..
                         math.floor(target.time / 60 / 60) .. "," .. target.type .. "," .. target.afk .. ";"
@@ -301,7 +311,7 @@ function UTIL_SendPlayers(victim)
     end
 
     if storage.SM_Store.playerList then
-        for i, target in pairs(storage.SM_Store.playerList) do
+        for _, target in ipairs(storage.SM_Store.playerList) do
             if target and target.victim and target.victim.connected then
                 buf = buf ..
                     string.format("~%16s: - Score: %4d - Online: %4dm - (%s)%s\n", target.victim.name,

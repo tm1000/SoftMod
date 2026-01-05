@@ -126,7 +126,7 @@ end
 
 
 local function updateTODOWindows()
-    for _, player in pairs(game.connected_players) do
+    for _, player in ipairs(game.connected_players) do
         -- Already handles destroying
         if player.gui and player.gui.screen then
             if player.gui.top and player.gui.top.todo_button then
@@ -325,22 +325,28 @@ local function makeTodoSubmenu(player, i, edit_mode)
                         todo_save_frame.style.horizontal_align = "right"
                         todo_save_frame.style.horizontally_stretchable = true
 
-                        if edit_mode then
-                            local whoedit = ""
-                            local c = 0
-                            for _, victim in pairs(game.players) do
-                                if victim.index ~= player.index and storage.todo_player_editing_id[victim.index] ==
-                                    storage.todo_player_editing_id[player.index] then
-                                    c = c + 1
-                                    if c > 1 then
-                                        whoedit = whoedit .. ", "
+	                        if edit_mode then
+	                            local whoedit = ""
+	                            local c = 0
+	                            local player_indices = {}
+	                            for player_index, _ in pairs(game.players) do
+	                                table.insert(player_indices, player_index)
+	                            end
+	                            table.sort(player_indices)
+	                            for _, victim_index in ipairs(player_indices) do
+	                                local victim = game.players[victim_index]
+	                                if victim.index ~= player.index and storage.todo_player_editing_id[victim.index] ==
+	                                    storage.todo_player_editing_id[player.index] then
+	                                    c = c + 1
+	                                    if c > 1 then
+	                                        whoedit = whoedit .. ", "
                                     end
-                                    whoedit = whoedit .. victim.name
-                                end
-                            end
-                            if whoedit ~= "" then
-                                local edit_note = todo_save_frame.add {
-                                    type = "label",
+	                                    whoedit = whoedit .. victim.name
+	                                end
+	                            end
+	                            if whoedit ~= "" then
+	                                local edit_note = todo_save_frame.add {
+	                                    type = "label",
                                     caption = {"strings.todo_edit_warning", whoedit}
                                 }
                                 local lock_spacer = todo_save_frame.add {

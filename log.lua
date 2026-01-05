@@ -7,7 +7,8 @@
 local function protectPin(event)
     local player = game.players[event.player_index]
 
-    if storage.SM_Store.mapPin.tag_number == event.tag.tag_number then
+    local map_pin = storage.SM_Store and storage.SM_Store.mapPin
+    if map_pin and map_pin.valid and event.tag and event.tag.valid and map_pin.tag_number == event.tag.tag_number then
         UTIL_MapPin()
         UTIL_SmartPrint(player, "*** You can not edit or delete the discord invite pin.")
         return true
@@ -131,7 +132,7 @@ function LOG_Redo(event)
     end
 
     local buf = ""
-    for _, act in pairs(event.actions) do
+    for _, act in ipairs(event.actions) do
         if buf ~= "" then
             buf = buf .. ", "
         end
@@ -155,7 +156,7 @@ function LOG_Undo(event)
     end
 
     local buf = ""
-    for _, act in pairs(event.actions) do
+    for _, act in ipairs(event.actions) do
         if buf ~= "" then
             buf = buf .. ", "
         end
@@ -204,14 +205,16 @@ function LOG_PickedItem(event)
             return
         end
 
+        local stack = event.item_stack
         local buf = ""
-        for _, item in pairs(event.item_stack) do
-            if buf ~= "" then
-                buf = buf .. " "
-            end
-            if item then
-                buf = buf .. item
-            end
+        if stack.name then
+            buf = buf .. stack.name
+        end
+        if stack.quality then
+            buf = buf .. " " .. stack.quality
+        end
+        if stack.count then
+            buf = buf .. " " .. stack.count
         end
 
         if buf ~= "" then

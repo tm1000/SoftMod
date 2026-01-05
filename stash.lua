@@ -108,12 +108,21 @@ function stash_armor(player)
             if stack.grid and stack.grid.valid then
                 local equipment_data = {}
                 for _, eq in pairs(stack.grid.equipment) do
-                    table.insert(equipment_data, {
+                    equipment_data[#equipment_data + 1] = {
                         name = eq.name,
                         position = eq.position,
                         energy = eq.energy
-                    })
+                    }
                 end
+                table.sort(equipment_data, function(a, b)
+                    if a.position.y ~= b.position.y then
+                        return a.position.y < b.position.y
+                    end
+                    if a.position.x ~= b.position.x then
+                        return a.position.x < b.position.x
+                    end
+                    return a.name < b.name
+                end)
                 storage.PData[player.index].armor_equipment_data = equipment_data
             else
                 storage.PData[player.index].armor_equipment_data = nil
@@ -171,7 +180,7 @@ function unstash_armor(player)
                     if storage.PData[player.index].armor_equipment_data then
                         local new_armor_stack = armor_inventory[1] -- The inserted armor should be here
                         if new_armor_stack and new_armor_stack.valid_for_read and new_armor_stack.grid then
-                            for _, eq_data in pairs(storage.PData[player.index].armor_equipment_data) do
+                            for _, eq_data in ipairs(storage.PData[player.index].armor_equipment_data) do
                                 local eq = new_armor_stack.grid.put({ name = eq_data.name, position = eq_data.position })
                                 if eq then
                                     eq.energy = eq_data.energy

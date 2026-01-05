@@ -4,7 +4,7 @@
 -- License: MPL 2.0
 
 local function update_online_windows()
-    for _, player in pairs(game.connected_players) do
+    for _, player in ipairs(game.connected_players) do
         if player.gui and player.gui.screen and player.gui.left.m45_online then
             ONLINE_Window(player)
         end
@@ -36,7 +36,13 @@ function ONLINE_UpdatePlayerList()
 
 
     -- Make a table with active time, handle missing data
-    for i, victim in pairs(game.players) do
+    local player_indices = {}
+    for player_index, _ in pairs(game.players) do
+        table.insert(player_indices, player_index)
+    end
+    table.sort(player_indices)
+    for _, player_index in ipairs(player_indices) do
+        local victim = game.players[player_index]
         local utag
 
         -- Catch all
@@ -120,10 +126,13 @@ function ONLINE_UpdatePlayerList()
     end
 
     table.sort(results, function(k1, k2)
-        return k1.score > k2.score
+        if k1.score ~= k2.score then
+            return k1.score > k2.score
+        end
+        return k1.victim.index < k2.victim.index
     end)
 
-    for _, item in pairs(results) do
+    for _, item in ipairs(results) do
         if item.victim.gui and item.victim.gui.top and item.victim.gui.top.online_button then
             item.victim.gui.top.online_button.number = count
         end
@@ -474,7 +483,7 @@ function ONLINE_Window(player)
                 afk_label.style.width = 50
             end
 
-            for i, target in pairs(storage.SM_Store.playerList) do
+            for _, target in ipairs(storage.SM_Store.playerList) do
                 local skip = false
                 local is_offline = false
 

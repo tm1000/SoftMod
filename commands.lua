@@ -9,6 +9,11 @@ require "commands_stash"
 
 local SM_VERSION = require("version")
 
+function CMD_AddCommand(name, help, handler)
+    commands.remove_command(name)
+    commands.add_command(name, help, handler)
+end
+
 local function cleanSurface(psurface, pforce, delayTick, victim)
     -- Phase 1: Unchart all
     pforce.clear_chart(psurface)
@@ -81,14 +86,12 @@ function CMD_NoSys(param)
 end
 
 -- Custom commands
-script.on_load(function()
-    -- Only add if no commands yet
-    if (not commands.commands.server_interface) then
-        BANISH_AddBanishCommands()
-        STASH_AddStashCommands()
+function CMD_RegisterCommands()
+    BANISH_AddBanishCommands()
+    STASH_AddStashCommands()
 
         -- Reset interval message
-        commands.add_command("resetdur", "System use only.", function(param)
+        CMD_AddCommand("resetdur", "System use only.", function(param)
             if CMD_SysOnly(param) then
                 return
             end
@@ -117,7 +120,7 @@ script.on_load(function()
         end)
 
         -- Reset interval message
-        commands.add_command("resetint", "System use only.", function(param)
+        CMD_AddCommand("resetint", "System use only.", function(param)
             if CMD_SysOnly(param) then
                 return
             end
@@ -130,7 +133,7 @@ script.on_load(function()
         end)
 
         -- Enable / disable friendly fire
-        commands.add_command("friendlyfire", "System use only.", function(param)
+        CMD_AddCommand("friendlyfire", "System use only.", function(param)
             local player
             if CMD_SysOnly(param) then
                 return
@@ -154,7 +157,7 @@ script.on_load(function()
         end)
 
         -- Enable / disable blueprints
-        commands.add_command("blueprints", "System use only.", function(param)
+        CMD_AddCommand("blueprints", "System use only.", function(param)
             local player
             if CMD_SysOnly(param) then
                 return
@@ -188,7 +191,7 @@ script.on_load(function()
         end)
 
         -- Enable / disable cheat mode
-        commands.add_command("enablecheats", "System use only.", function(param)
+        CMD_AddCommand("enablecheats", "System use only.", function(param)
             local player
             if CMD_SysOnly(param) then
                 return
@@ -219,7 +222,7 @@ script.on_load(function()
         end)
 
         -- Enable / disable cheat mode
-        commands.add_command("onelife", "Moderators Only: One life mode on/off or <playerName> for revive.",
+        CMD_AddCommand("onelife", "Moderators Only: One life mode on/off or <playerName> for revive.",
             function(param)
                 local player
 
@@ -268,7 +271,7 @@ script.on_load(function()
             end)
 
         -- adjust run speed
-        commands.add_command("run", "Moderators only: speed: -1 to 100, 0 = normal speed", function(param)
+        CMD_AddCommand("run", "Moderators only: speed: -1 to 100, 0 = normal speed", function(param)
             local player
 
             if param and param.player_index then
@@ -307,7 +310,7 @@ script.on_load(function()
         end)
 
         -- turn invincible
-        commands.add_command("immortal", "Moderators only: optional: <name> (toggle player immortality, default self)",
+        CMD_AddCommand("immortal", "Moderators only: optional: <name> (toggle player immortality, default self)",
             function(param)
                 local player
                 local victim
@@ -347,7 +350,7 @@ script.on_load(function()
             end)
 
         -- change new player restrictions
-        commands.add_command("restrict", "System Use Only.", function(param)
+        CMD_AddCommand("restrict", "System Use Only.", function(param)
             local player
             if CMD_SysOnly(param) then
                 return
@@ -372,7 +375,7 @@ script.on_load(function()
         end)
 
         -- register command
-        commands.add_command("register", "<code> (Requires a registration code from discord)", function(param)
+        CMD_AddCommand("register", "<code> (Requires a registration code from discord)", function(param)
             local player
 
             if param and param.player_index then
@@ -415,7 +418,7 @@ script.on_load(function()
         end)
 
         -- softmod version
-        commands.add_command("sversion", "System use only.", function(param)
+        CMD_AddCommand("sversion", "System use only.", function(param)
             local player
             if CMD_SysOnly(param) then
                 return
@@ -433,7 +436,7 @@ script.on_load(function()
         end)
 
         -- Server name
-        commands.add_command("cname", "System use only.", function(param)
+        CMD_AddCommand("cname", "System use only.", function(param)
             if CMD_SysOnly(param) then
                 return
             end
@@ -448,7 +451,7 @@ script.on_load(function()
         end)
 
         -- Server chat
-        commands.add_command("cchat", "System use only.", function(param)
+        CMD_AddCommand("cchat", "System use only.", function(param)
             if CMD_SysOnly(param) then
                 return
             end
@@ -459,7 +462,7 @@ script.on_load(function()
         end)
 
         -- Server whisper
-        commands.add_command("cwhisper", "System use only.", function(param)
+        CMD_AddCommand("cwhisper", "System use only.", function(param)
             if CMD_SysOnly(param) then
                 return
             end
@@ -483,7 +486,7 @@ script.on_load(function()
         end)
 
         -- Reset players's time and status
-        commands.add_command("reset", "Moderators only: <player> -- (Set player to NEW)", function(param)
+        CMD_AddCommand("reset", "Moderators only: <player> -- (Set player to NEW)", function(param)
             local player
 
             if param and param.player_index then
@@ -503,7 +506,7 @@ script.on_load(function()
         end)
 
         -- Trust player
-        commands.add_command("member", "Moderators only: <player> -- (Makes the player a member)", function(param)
+        CMD_AddCommand("member", "Moderators only: <player> -- (Makes the player a member)", function(param)
             local player
 
             if param and param.player_index then
@@ -526,7 +529,7 @@ script.on_load(function()
         end)
 
         -- Set player to veteran
-        commands.add_command("veteran", "System use only.", function(param)
+        CMD_AddCommand("veteran", "System use only.", function(param)
             local player
 
             if CMD_SysOnly(param) then
@@ -545,7 +548,7 @@ script.on_load(function()
         end)
 
         -- Set player to regular
-        commands.add_command("regular", "System use only.", function(param)
+        CMD_AddCommand("regular", "System use only.", function(param)
             local player
             if CMD_SysOnly(param) then
                 return
@@ -563,7 +566,7 @@ script.on_load(function()
         end)
 
         -- Set player to patreon
-        commands.add_command("patreon", "System use only.", function(param)
+        CMD_AddCommand("patreon", "System use only.", function(param)
             local player
             if CMD_SysOnly(param) then
                 return
@@ -594,7 +597,7 @@ script.on_load(function()
         end)
 
         -- Set player to nitro
-        commands.add_command("nitro", "System use only.", function(param)
+        CMD_AddCommand("nitro", "System use only.", function(param)
             local player
             if CMD_SysOnly(param) then
                 return
@@ -622,7 +625,7 @@ script.on_load(function()
         end)
 
         -- Add player to patreon credits
-        commands.add_command("patreonlist", "System use only.", function(param)
+        CMD_AddCommand("patreonlist", "System use only.", function(param)
             local player
             if CMD_SysOnly(param) then
                 return
@@ -635,7 +638,7 @@ script.on_load(function()
         end)
 
         -- Add player to nitro credits
-        commands.add_command("nitrolist", "System use only.", function(param)
+        CMD_AddCommand("nitrolist", "System use only.", function(param)
             local player
             if CMD_SysOnly(param) then
                 return
@@ -648,7 +651,7 @@ script.on_load(function()
         end)
 
         -- Change default spawn point
-        commands.add_command("cspawn",
+        CMD_AddCommand("cspawn",
             "Moderators only: <x,y> -- (OPTIONAL) (Sets spawn point to <x,y>, or where you stand by default)",
             function(param)
                 local victim
@@ -701,7 +704,7 @@ script.on_load(function()
             end)
 
         -- Reveal map
-        commands.add_command("reveal",
+        CMD_AddCommand("reveal",
             "Moderators only: <size> [x,y]|[gps=x,y]|[gps=x,y,surface] -- Reveals map from a given position or the center of map. Size is in tiles. Default size 1024. Min 128, Max 8192.",
             function(param)
                 if CMD_ModsOnly(param) then
@@ -774,7 +777,7 @@ script.on_load(function()
             end)
 
 
-        commands.add_command("rechart",
+        CMD_AddCommand("rechart",
             "Moderators only: Recharts known chunks. Usage: /rechart [surface] [force]",
             function(param)
                 if CMD_ModsOnly(param) then return end
@@ -825,7 +828,7 @@ script.on_load(function()
                 end
             end)
 
-        commands.add_command("clean-surface",
+        CMD_AddCommand("clean-surface",
             "Moderators only: Uncharts and later deletes unused chunks. Optional: <surface> or <all>",
             function(param)
                 if CMD_ModsOnly(param) then return end
@@ -877,7 +880,7 @@ script.on_load(function()
 
 
         -- Online
-        commands.add_command("online", "See who is online", function(param)
+        CMD_AddCommand("online", "See who is online", function(param)
             local victim
 
             if param and param.player_index then
@@ -894,7 +897,7 @@ script.on_load(function()
         end)
 
         -- Game speed, without walk speed mod
-        commands.add_command("aspeed", "Moderators only: <x.x> -- Set game UPS, and do not adjust walk speed.",
+        CMD_AddCommand("aspeed", "Moderators only: <x.x> -- Set game UPS, and do not adjust walk speed.",
             function(param)
                 local player
 
@@ -927,7 +930,7 @@ script.on_load(function()
             end)
 
         -- Game speed
-        commands.add_command("gspeed",
+        CMD_AddCommand("gspeed",
             "Moderators only: <x.x> -- Changes game speed. Default speed: 1.0 (60 UPS), Min 0.01 (0.6 UPS), Max  10.0 (600 UPS)",
             function(param)
                 local player
@@ -984,7 +987,7 @@ script.on_load(function()
             end)
 
         -- Teleport to
-        commands.add_command("goto", "Moderators only: goto to <player>", function(param)
+        CMD_AddCommand("goto", "Moderators only: goto to <player>", function(param)
             local player
 
             if param and param.player_index then
@@ -1026,7 +1029,7 @@ script.on_load(function()
             end
         end)
 
-        commands.add_command("tp", "Moderators only: teleport to <x,y>, <surface>, or [gps=x,y] or [gps=x,y,surface]",
+        CMD_AddCommand("tp", "Moderators only: teleport to <x,y>, <surface>, or [gps=x,y] or [gps=x,y,surface]",
             function(param)
                 local player
                 if param and param.player_index then
@@ -1096,7 +1099,7 @@ script.on_load(function()
             end)
 
         -- Teleport player to me
-        commands.add_command("summon", "Moderators only: summon <player> to me", function(param)
+        CMD_AddCommand("summon", "Moderators only: summon <player> to me", function(param)
             local player
             if param and param.player_index then
                 player = game.players[param.player_index]
@@ -1138,7 +1141,7 @@ script.on_load(function()
         end)
 
         -- Teleport victim to x,y
-        commands.add_command("transport",
+        CMD_AddCommand("transport",
             "Moderators only: transport <player> <x,y>, <surface>, or [gps=x,y] or [gps=x,y,surface]", function(param)
                 if CMD_ModsOnly(param) then
                     return
@@ -1225,7 +1228,7 @@ script.on_load(function()
             end)
 
         -- List surfaces
-        commands.add_command("surfaces", "Moderators only, list game surfaces and players on them.",
+        CMD_AddCommand("surfaces", "Moderators only, list game surfaces and players on them.",
             function(param)
                 local player
 
@@ -1266,5 +1269,6 @@ script.on_load(function()
 
                 UTIL_SmartPrint(player, buf)
             end)
-    end
-end)
+end
+
+CMD_RegisterCommands()

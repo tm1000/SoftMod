@@ -547,7 +547,7 @@ function PERMS_PromoteAllPlayers()
     PERMS_MakeUserGroups()
 
     -- Check all connected players
-    for _, player in pairs(game.connected_players) do
+    for _, player in ipairs(game.connected_players) do
         if (player and player.valid) then
             PERMS_PromotePlayer(player)
         end

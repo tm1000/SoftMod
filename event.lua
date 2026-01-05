@@ -96,7 +96,7 @@ script.on_nth_tick(599, function(event)
 
     -- Add time to connected players
     if storage.PData then
-        for _, player in pairs(game.connected_players) do
+        for _, player in ipairs(game.connected_players) do
             -- Banish if some mod eats respawn event
             BANISH_SendToSurface(player)
 

@@ -1,7 +1,7 @@
 -- Banish-related command registrations
 
 function BANISH_AddBanishCommands()
-    commands.add_command("jail", "<player> (/unjail to unjail)",
+    CMD_AddCommand("jail", "<player> (/unjail to unjail)",
         function(param)
             local player
             if param and param.player_index then
@@ -33,7 +33,7 @@ function BANISH_AddBanishCommands()
                 UTIL_SmartPrint(player, "Who do you want to jail?")
             end
         end)
-    commands.add_command("unjail", "<player>",
+    CMD_AddCommand("unjail", "<player>",
         function(param)
             local player
             if param and param.player_index then
@@ -56,7 +56,7 @@ function BANISH_AddBanishCommands()
                         return
                     end
                     storage.PData[victim.index].banished = 0
-                    for _, vote in pairs(storage.SM_Store.votes) do
+                    for _, vote in ipairs(storage.SM_Store.votes) do
                         if vote and vote.victim then
                             if vote.victim.index == victim.index then
                                 vote.overruled = true
@@ -79,7 +79,7 @@ function BANISH_AddBanishCommands()
             end
         end)
     -- Mod vote overrrule
-    commands.add_command("overrule",
+    CMD_AddCommand("overrule",
         "Moderators only: <defendant>\n(overrule votes against defendant)\n<clear>\n(clear all votes, will unbanish all)",
         function(param)
             local player
@@ -110,7 +110,7 @@ function BANISH_AddBanishCommands()
                     -- If victim found
                     if victim then
                         local count = 0
-                        for _, vote in pairs(storage.SM_Store.votes) do
+                        for _, vote in ipairs(storage.SM_Store.votes) do
                             if vote and vote.victim then
                                 if vote.victim == victim and not vote.overruled then
                                     vote.overruled = true
@@ -121,7 +121,7 @@ function BANISH_AddBanishCommands()
                         if count > 0 then
                             UTIL_SmartPrint(player, "Overruled " .. count .. " votes against " .. victim.name)
                         else
-                            for _, vote in pairs(storage.SM_Store.votes) do
+                            for _, vote in ipairs(storage.SM_Store.votes) do
                                 if vote and vote.victim then
                                     if vote.victim == victim and vote.overruled then
                                         vote.overruled = false
@@ -147,7 +147,7 @@ function BANISH_AddBanishCommands()
         end)
 
     -- Print votes
-    commands.add_command("votes", "(Shows banish votes)", function(param)
+    CMD_AddCommand("votes", "(Shows banish votes)", function(param)
         if param and param.player_index then
             local player = game.players[param.player_index]
 
@@ -159,7 +159,7 @@ function BANISH_AddBanishCommands()
             if storage.SM_Store and storage.SM_Store.votes then
                 -- Print votes
                 local pcount = 0
-                for _, vote in pairs(storage.SM_Store.votes) do
+                for _, vote in ipairs(storage.SM_Store.votes) do
                     if vote and vote.voter and vote.voter.valid and vote.victim then
                         local notes = ""
                         if vote.withdrawn then
@@ -177,9 +177,16 @@ function BANISH_AddBanishCommands()
                 -- Tally votes before proceeding
                 BANISH_UpdateVotes()
 
+                local player_indices = {}
+                for player_index, _ in pairs(game.players) do
+                    table.insert(player_indices, player_index)
+                end
+                table.sort(player_indices)
+
                 -- Print accused
                 if storage.PData then
-                    for _, victim in pairs(game.players) do
+                    for _, victim_index in ipairs(player_indices) do
+                        local victim = game.players[victim_index]
                         if storage.PData[victim.index].banished and storage.PData[victim.index].banished > 0 then
                             UTIL_SmartPrint(player, victim.name .. " has had " .. storage.PData[victim.index].banished ..
                                 " complaints against them.")
@@ -189,9 +196,10 @@ function BANISH_AddBanishCommands()
                 end
                 -- Show summery of votes against them
                 if storage.SM_Store.votes then
-                    for _, victim in pairs(game.players) do
+                    for _, victim_index in ipairs(player_indices) do
+                        local victim = game.players[victim_index]
                         local votecount = 0
-                        for _, vote in pairs(storage.SM_Store.votes) do
+                        for _, vote in ipairs(storage.SM_Store.votes) do
                             if victim == vote.voter then
                                 votecount = votecount + 1
                             end
@@ -217,7 +225,7 @@ function BANISH_AddBanishCommands()
     end)
 
     -- Banish command
-    commands.add_command("unbanish", "<player>\n(Withdraws a banish vote)", function(param)
+    CMD_AddCommand("unbanish", "<player>\n(Withdraws a banish vote)", function(param)
         if param and param.player_index then
             local player = game.players[param.player_index]
             if CMD_NoBanished(player) then
@@ -238,7 +246,7 @@ function BANISH_AddBanishCommands()
                         if victim and victim.character and victim.character.valid then
                             -- Check if we voted against them
                             if storage.SM_Store.votes and storage.SM_Store.votes ~= {} then
-                                for _, vote in pairs(storage.SM_Store.votes) do
+                                for _, vote in ipairs(storage.SM_Store.votes) do
                                     if vote and vote.voter and vote.victim then
                                         if vote.voter == player and vote.victim == victim then
                                             if vote.withdrawn then
@@ -279,7 +287,7 @@ function BANISH_AddBanishCommands()
     end)
 
     -- Banish command
-    commands.add_command("banish", "<player> <reason for banishment>\n(Sends player to a confined area, off-map)",
+    CMD_AddCommand("banish", "<player> <reason for banishment>\n(Sends player to a confined area, off-map)",
         function(param)
             if param and param.player_index then
                 local player = game.players[param.player_index]
@@ -296,12 +304,7 @@ function BANISH_AddBanishCommands()
                 local victim = game.players[args[1]]
 
                 -- Quick arg combine
-                local reason = args[2]
-                for n, arg in pairs(args) do
-                    if n > 2 and n < 100 then -- at least two words, max 100
-                        reason = reason .. " " .. args[n]
-                    end
-                end
+                local reason = table.concat(args, " ", 2)
 
                 if UTIL_Is_Banished(victim) then
                     UTIL_SmartPrint(player, "They are already banished!")
@@ -313,7 +316,7 @@ function BANISH_AddBanishCommands()
         end)
 
     -- User report command
-    commands.add_command("report", "<detailed report here>\n(Sends in a report to the moderators)", function(param)
+    CMD_AddCommand("report", "<detailed report here>\n(Sends in a report to the moderators)", function(param)
         if param and param.player_index then
             local player = game.players[param.player_index]
             if CMD_NoBanished(player) then
