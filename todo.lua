@@ -328,16 +328,16 @@ local function makeTodoSubmenu(player, i, edit_mode)
 	                        if edit_mode then
 	                            local whoedit = ""
 	                            local c = 0
-	                            local player_indices = {}
-	                            for player_index, _ in pairs(game.players) do
-	                                table.insert(player_indices, player_index)
-	                            end
-	                            table.sort(player_indices)
-	                            for _, victim_index in ipairs(player_indices) do
-	                                local victim = game.players[victim_index]
-	                                if victim.index ~= player.index and storage.todo_player_editing_id[victim.index] ==
-	                                    storage.todo_player_editing_id[player.index] then
-	                                    c = c + 1
+		                            local player_indices = {}
+		                            for _, victim in ipairs(game.connected_players) do
+		                                table.insert(player_indices, victim.index)
+		                            end
+		                            table.sort(player_indices)
+		                            for _, victim_index in ipairs(player_indices) do
+		                                local victim = game.players[victim_index]
+		                                if victim.index ~= player.index and storage.todo_player_editing_id[victim.index] ==
+		                                    storage.todo_player_editing_id[player.index] then
+		                                    c = c + 1
 	                                    if c > 1 then
 	                                        whoedit = whoedit .. ", "
                                     end

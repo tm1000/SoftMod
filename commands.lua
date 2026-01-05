@@ -205,14 +205,14 @@ function CMD_RegisterCommands()
                 if pforce then
                     if string.lower(param.parameter) == "off" then
                         storage.SM_Store.cheats = false
-                        for _, player in pairs(game.players) do
-                            player.cheat_mode = false
+                        for _, victim in ipairs(game.connected_players) do
+                            victim.cheat_mode = false
                         end
                         UTIL_SmartPrint(player, "cheats disabled...")
                     elseif string.lower(param.parameter) == "on" then
                         storage.SM_Store.cheats = true
-                        for _, player in pairs(game.players) do
-                            player.cheat_mode = true
+                        for _, victim in ipairs(game.connected_players) do
+                            victim.cheat_mode = true
                         end
                         pforce.research_all_technologies()
                         UTIL_SmartPrint(player, "cheats enabled...")
@@ -240,14 +240,14 @@ function CMD_RegisterCommands()
                         storage.SM_Store.oneLifeMode = true
                         UTIL_SmartPrint(player, "One-life mode enabled.")
                         UTIL_MsgAll("One-life mode enabled.")
-                        for _, victim in pairs(game.players) do
+                        for _, victim in ipairs(game.connected_players) do
                             ONELIFE_MakeButton(victim)
                         end
                     elseif param.parameter == "off" and storage.SM_Store.oneLifeMode then
                         storage.SM_Store.oneLifeMode = false
                         UTIL_SmartPrint(player, "One-life mode disabled.")
                         UTIL_MsgAll("One-life mode disabled.")
-                        for _, victim in pairs(game.players) do
+                        for _, victim in ipairs(game.connected_players) do
                             ONELIFE_MakeButton(victim)
                         end
                     elseif storage.SM_Store.oneLifeMode then

@@ -176,8 +176,8 @@ function EVENT_PlayerInit(player)
     if storage.PData then
         storage.PData[player.index].lastOnline = game.tick
     end
-    if storage.SM_Store.cheats then
-        player.cheat_mode = true
+    if storage.SM_Store and storage.SM_Store.cheats ~= nil then
+        player.cheat_mode = storage.SM_Store.cheats and true or false
     end
 end
 

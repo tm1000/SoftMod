@@ -162,4 +162,12 @@ function STORAGE_MakePlayerStorage(player)
     if not storage.PData[player.index].level then
         storage.PData[player.index].level = 0
     end
+
+    --promotion throttle
+    if not storage.PData[player.index].nextPromoTick then
+        storage.PData[player.index].nextPromoTick = 0
+    end
+    if not storage.PData[player.index].lastPromoScore then
+        storage.PData[player.index].lastPromoScore = 0
+    end
 end

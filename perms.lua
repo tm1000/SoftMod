@@ -573,7 +573,34 @@ function PERMS_PromoteAllPlayers()
     -- Check all connected players
     for _, player in ipairs(game.connected_players) do
         if (player and player.valid) then
-            PERMS_PromotePlayer(player)
+            if not storage.PData or not storage.PData[player.index] then
+                STORAGE_MakePlayerStorage(player)
+            end
+
+            local pdata = storage.PData and storage.PData[player.index]
+            if pdata then
+                local next_tick = pdata.nextPromoTick or 0
+                if game.tick >= next_tick then
+                    -- Only reevaluate when score changes (unless admin/banished/uninitialized group)
+                    local score = pdata.score or 0
+                    local should_check = true
+                    if player.permission_group and (not player.admin) and (not UTIL_Is_Banished(player)) then
+                        if pdata.lastPromoScore == score then
+                            should_check = false
+                        end
+                    end
+
+                    if should_check or (not player.permission_group) then
+                        pdata.lastPromoScore = score
+                        PERMS_PromotePlayer(player)
+                    end
+
+                    -- Default cadence: once per minute per online player
+                    pdata.nextPromoTick = game.tick + (60 * 60)
+                end
+            else
+                PERMS_PromotePlayer(player)
+            end
         end
     end
 end
