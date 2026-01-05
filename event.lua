@@ -293,16 +293,9 @@ script.on_event(
             if player and player.valid and player.connected and storage.PData and storage.PData[event.player_index] then
                 -- Only mark active on movement if walking
                 if event.name == defines.events.on_player_changed_position then
-                    if player.walking_state then
-                        if player.walking_state.walking and
-                            (player.walking_state.direction == defines.direction.north or player.walking_state.direction ==
-                                defines.direction.northeast or player.walking_state.direction == defines.direction.east or
-                                player.walking_state.direction == defines.direction.southeast or
-                                player.walking_state.direction == defines.direction.south or player.walking_state.direction ==
-                                defines.direction.southwest or player.walking_state.direction == defines.direction.west or
-                                player.walking_state.direction == defines.direction.northwest) then
-                            PERMS_SetPlayerMoving(player)
-                        end
+                    local walking_state = player.walking_state
+                    if walking_state and walking_state.walking then
+                        PERMS_SetPlayerMoving(player)
                     end
                 else
                     PERMS_SetPlayerActive(player)

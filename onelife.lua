@@ -70,7 +70,7 @@ function ONELIFE_Clicks(event)
         return
     end
     if not player.character or not player.character.valid then
-        UTIL_SmartPrint("You are already dead!")
+        UTIL_SmartPrint(player, "You are already dead!")
         return
     end
     if event.element and event.element.valid and event.element.name == "spec_button" then

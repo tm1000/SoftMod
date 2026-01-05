@@ -98,7 +98,7 @@ function BANISH_AddBanishCommands()
                 local args = UTIL_SplitStr(param.parameter, " ")
 
                 -- Must have arguments
-                if args ~= {} and args[1] then
+                if args and args[1] ~= "" then
                     if args[1] == "clear" then
                         storage.SM_Store.votes = {}
                         UTIL_SmartPrint(player, "All votes cleared.")
@@ -239,13 +239,13 @@ function BANISH_AddBanishCommands()
                     local args = UTIL_SplitStr(param.parameter, " ")
 
                     -- Must have arguments
-                    if args ~= {} and args[1] then
+                    if args and args[1] ~= "" then
                         local victim = game.players[args[1]]
 
                         -- Must have valid victim
                         if victim and victim.character and victim.character.valid then
                             -- Check if we voted against them
-                            if storage.SM_Store.votes and storage.SM_Store.votes ~= {} then
+                            if storage.SM_Store.votes then
                                 for _, vote in ipairs(storage.SM_Store.votes) do
                                     if vote and vote.voter and vote.victim then
                                         if vote.voter == player and vote.victim == victim then

@@ -477,7 +477,7 @@ function CMD_RegisterCommands()
                 local args = UTIL_SplitStr(param.parameter, " ")
 
                 -- Require two args
-                if args ~= {} and args[1] and args[2] then
+                if args and args[1] ~= "" and args[2] then
                     -- Find player
                     for _, player in pairs(game.connected_players) do
                         if player.name == args[1] then
@@ -685,7 +685,7 @@ function CMD_RegisterCommands()
                 -- Location supplied
                 if param.parameter then
                     local xytable = UTIL_SplitStr(param.parameter, ",")
-                    if xytable ~= {} and tonumber(xytable[1]) and tonumber(xytable[2]) then
+                    if tonumber(xytable[1]) and tonumber(xytable[2]) then
                         new_pos_x = tonumber(xytable[1])
                         new_pos_y = tonumber(xytable[2])
                     else

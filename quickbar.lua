@@ -461,14 +461,11 @@ function ImportQuickbar(player, data)
         return false
     end
 
-    local header = UTIL_SplitStr(decoded, "=")
-
-    if not header or not header[1] then
+    local version, payload = decoded:match("^([^=]+)=(.*)$")
+    if not version then
         UTIL_SmartPrint(player, "That isn't a valid M45 quickbar exchange string! (No Header)")
         return false
     end
-
-    local version = header[1]
     if version ~= "M45-QB1" and version ~= "M45-QB2" then
         UTIL_SmartPrint(player, "That isn't a valid M45 quickbar exchange string! (Invalid Header)")
         return false
@@ -480,7 +477,7 @@ function ImportQuickbar(player, data)
     end
 
     --Restore from string
-    local items = SplitStr(header[2], ",")
+    local items = SplitStr(payload or "", ",")
 
     local error_list = ""
     for i, entry in ipairs(items) do

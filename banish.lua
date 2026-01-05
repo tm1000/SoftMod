@@ -44,7 +44,7 @@ function BANISH_DoReport(player, report)
             UTIL_SmartPrint(player, "Report sent! You have now used " .. storage.PData[player.index].reports ..
                 " of your 5 available reports.")
         else
-            UTIL_SmartPrint("You are not allowed to send any more reports.")
+            UTIL_SmartPrint(player, "You are not allowed to send any more reports.")
         end
     else
         UTIL_SmartPrint(player, "Usage: /report (your message to moderators here)")
@@ -354,7 +354,7 @@ function BANISH_DoBanish(player, victim, reason)
                         -- Victim can not be an moderator
                         if not victim.admin then
                             -- Check if we already voted against them
-                            if storage.SM_Store.votes and storage.SM_Store.votes ~= {} then
+                            if storage.SM_Store.votes then
                                 local votecount = 1
                                 for _, vote in ipairs(storage.SM_Store.votes) do
                                     if vote and vote.voter and vote.victim then
@@ -469,7 +469,7 @@ function BANISH_SendToSurface(player)
             end
             -- Remove item we processed
             if index then
-                UTIL_ConsolePrint("[ERROR] send_to_surface: item removed: " .. index)
+                UTIL_ConsolePrint("send_to_surface: processed queue item " .. index)
                 table.remove(storage.SM_Store.sendToSurface, index)
             end
         end

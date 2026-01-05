@@ -8,5 +8,8 @@ globals = {
   "defines",
   "remote",
   "rendering",
-  "storage"
+  "rcon",
+  "settings",
+  "storage",
+  "helpers"
 }
