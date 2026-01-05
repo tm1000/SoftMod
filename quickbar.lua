@@ -393,8 +393,16 @@ function ExportQuickbar(player, limit)
     for i = 1, maxExport do
         local slot = player.get_quick_bar_slot(i)
         if slot ~= nil then
-            local quality = slot.quality or "normal"
+            local quality = slot.quality
+            if quality ~= nil and type(quality) ~= "string" and quality.name then
+                quality = quality.name
+            end
+            quality = quality or "normal"
+
             local name = slot.name
+            if name ~= nil and type(name) ~= "string" and name.name then
+                name = name.name
+            end
             local ialias = ITEM_ALIAS[name]
             if ialias then
                 outbuf = outbuf .. ialias
@@ -496,8 +504,8 @@ function ImportQuickbar(player, data)
                 item = ITEM_FROM_ALIAS[item] or item
             end
 
-            local valid_item = prototypes.item and prototypes.item[item]
-            local valid_quality = prototypes.quality and prototypes.quality[quality]
+            local valid_item = game.item_prototypes and game.item_prototypes[item]
+            local valid_quality = game.quality_prototypes and game.quality_prototypes[quality]
 
             if valid_item and valid_quality then
                 if quality ~= "normal" then

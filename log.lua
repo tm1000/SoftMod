@@ -211,7 +211,11 @@ function LOG_PickedItem(event)
             buf = buf .. stack.name
         end
         if stack.quality then
-            buf = buf .. " " .. stack.quality
+            local quality = stack.quality
+            if quality ~= nil and type(quality) ~= "string" and quality.name then
+                quality = quality.name
+            end
+            buf = buf .. " " .. tostring(quality)
         end
         if stack.count then
             buf = buf .. " " .. stack.count

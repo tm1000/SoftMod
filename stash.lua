@@ -14,6 +14,32 @@ function is_inventory_empty(inventory)
     return inventory.get_item_count() == 0
 end
 
+local function quality_id_from_stack(stack)
+    if not stack then
+        return nil
+    end
+    local quality = stack.quality
+    if quality == nil then
+        return nil
+    end
+    if type(quality) == "string" then
+        return quality
+    end
+    if quality.name then
+        return quality.name
+    end
+    return nil
+end
+
+local function stack_definition_from_stack(stack)
+    local def = { name = stack.name, count = stack.count }
+    local quality = quality_id_from_stack(stack)
+    if quality ~= nil then
+        def.quality = quality
+    end
+    return def
+end
+
 -- Ensure a particular stash is empty or create it fresh
 function ensure_empty_stash(player_index, stash_name, size)
     if storage.PData[player_index][stash_name] then
@@ -38,7 +64,7 @@ function stash_inventory(source_inv, stash_inv)
     for i = 1, #source_inv do
         local stack = source_inv[i]
         if stack.valid_for_read then
-            local stack_to_insert = { name = stack.name, count = stack.count }
+            local stack_to_insert = stack_definition_from_stack(stack)
             if stash_inv.can_insert(stack_to_insert) then
                 local inserted_count = stash_inv.insert(stack_to_insert)
                 if inserted_count > 0 then
@@ -69,7 +95,7 @@ function unstash_inventory(stash_inv, target_inv)
     for i = 1, #stash_inv do
         local stack = stash_inv[i]
         if stack.valid_for_read then
-            local stack_to_insert = { name = stack.name, count = stack.count }
+            local stack_to_insert = stack_definition_from_stack(stack)
             if target_inv.can_insert(stack_to_insert) then
                 local inserted_count = target_inv.insert(stack_to_insert)
                 if inserted_count > 0 then
@@ -129,7 +155,7 @@ function stash_armor(player)
             end
 
             local armor_stash = storage.PData[player.index].armor_stash
-            local stack_to_insert = { name = stack.name, count = stack.count }
+            local stack_to_insert = stack_definition_from_stack(stack)
             if armor_stash.can_insert(stack_to_insert) then
                 local inserted_count = armor_stash.insert(stack_to_insert)
                 if inserted_count > 0 then
@@ -164,7 +190,7 @@ function unstash_armor(player)
     for i = 1, #armor_stash do
         local stack = armor_stash[i]
         if stack.valid_for_read then
-            local stack_to_insert = { name = stack.name, count = stack.count }
+            local stack_to_insert = stack_definition_from_stack(stack)
             if armor_inventory.can_insert(stack_to_insert) then
                 local inserted_count = armor_inventory.insert(stack_to_insert)
                 if inserted_count > 0 then
@@ -207,7 +233,7 @@ function move_items_to_inventory_or_leave(source_inv, target_inv)
     for i = 1, #source_inv do
         local stack = source_inv[i]
         if stack.valid_for_read then
-            local stack_to_transfer = { name = stack.name, count = stack.count }
+            local stack_to_transfer = stack_definition_from_stack(stack)
             -- Check if we can fully insert into target_inv
             if target_inv.can_insert(stack_to_transfer) then
                 local inserted = target_inv.insert(stack_to_transfer)
