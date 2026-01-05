@@ -4,6 +4,34 @@
 -- License: MPL 2.0
 -- Safe console print
 
+local function UTIL_HasValidItemPrototype(name)
+    return game and type(name) == "string" and game.item_prototypes[name]
+end
+
+local function UTIL_InsertContentsIntoCorpse(inv_corpse, contents, player)
+    if not inv_corpse or not contents then
+        return
+    end
+
+    local player_name = player and player.name or "<unknown>"
+    local item_names = {}
+    for name in pairs(contents) do
+        table.insert(item_names, name)
+    end
+    table.sort(item_names)
+
+    for _, name in ipairs(item_names) do
+        if UTIL_HasValidItemPrototype(name) then
+            inv_corpse.insert {
+                name = name,
+                count = contents[name]
+            }
+        else
+            log("UTIL_DumpInv: skipping invalid item '" .. tostring(name) .. "' from " .. player_name)
+        end
+    end
+end
+
 function UTIL_CheckAbandoned()
     local player_indices = {}
     for player_index, _ in pairs(game.players) do
@@ -82,27 +110,11 @@ function UTIL_DumpInv(player, force)
     end
 
     if inv_main_contents then
-        local main_item_names = {}
-        for name, _ in pairs(inv_main_contents) do
-            table.insert(main_item_names, name)
-        end
-        table.sort(main_item_names)
-        for _, name in ipairs(main_item_names) do
-            inv_corpse.insert { name = name, count = inv_main_contents[name] }
-        end
-
+        UTIL_InsertContentsIntoCorpse(inv_corpse, inv_main_contents, player)
         inv_main.clear()
     end
     if inv_trash_contents then
-        local trash_item_names = {}
-        for name, _ in pairs(inv_trash_contents) do
-            table.insert(trash_item_names, name)
-        end
-        table.sort(trash_item_names)
-        for _, name in ipairs(trash_item_names) do
-            inv_corpse.insert { name = name, count = inv_trash_contents[name] }
-        end
-
+        UTIL_InsertContentsIntoCorpse(inv_corpse, inv_trash_contents, player)
         inv_trash.clear()
     end
 
