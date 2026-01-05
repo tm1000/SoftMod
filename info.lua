@@ -60,6 +60,13 @@ function INFO_InfoWin(player)
             player.gui.screen.m45_info_window.destroy()
         end
         if not player.gui.screen.m45_info_window then
+            if STORAGE_EnsureGlobal then
+                STORAGE_EnsureGlobal()
+            end
+            if STORAGE_MakePlayerStorage then
+                STORAGE_MakePlayerStorage(player)
+            end
+
             local main_flow = player.gui.screen.add {
                 type = "frame",
                 name = "m45_info_window",
@@ -872,7 +879,38 @@ function INFO_InfoWin(player)
 
             info_pane.add_tab(tab6, tab6_frame)
         end
-        player.gui.screen.m45_info_window.m45_info_window_tabs.selected_tab_index = 1
+        local tab_index = 1
+        if storage and storage.PData and storage.PData[player.index] and storage.PData[player.index].info_tab_index then
+            tab_index = storage.PData[player.index].info_tab_index
+        end
+        if tab_index < 1 or tab_index > 5 then
+            tab_index = 1
+        end
+        player.gui.screen.m45_info_window.m45_info_window_tabs.selected_tab_index = tab_index
+    end
+end
+
+function INFO_TabChanged(event)
+    if not event or not event.player_index or not event.element or not event.element.valid then
+        return
+    end
+    if event.element.name ~= "m45_info_window_tabs" then
+        return
+    end
+    local player = game.players[event.player_index]
+    if not player or not player.valid then
+        return
+    end
+
+    if STORAGE_EnsureGlobal then
+        STORAGE_EnsureGlobal()
+    end
+    if STORAGE_MakePlayerStorage then
+        STORAGE_MakePlayerStorage(player)
+    end
+
+    if storage and storage.PData and storage.PData[player.index] then
+        storage.PData[player.index].info_tab_index = event.element.selected_tab_index
     end
 end
 
@@ -903,10 +941,16 @@ function INFO_Clicks(event)
                 player.gui.screen.m45_info_window then
                 -- QR changetab button (info window)
                 player.gui.screen.m45_info_window.m45_info_window_tabs.selected_tab_index = 5
+                if storage and storage.PData and storage.PData[player.index] then
+                    storage.PData[player.index].info_tab_index = 5
+                end
             elseif event.element.name == "qr_button" and player.gui and player.gui.center and
                 player.gui.screen.m45_info_window then
                 -- QR Discord button
                 player.gui.screen.m45_info_window.m45_info_window_tabs.selected_tab_index = 4
+                if storage and storage.PData and storage.PData[player.index] then
+                    storage.PData[player.index].info_tab_index = 4
+                end
             elseif event.element.name == "m45_button" then
                 -- Online window toggle
                 if player.gui and player.gui.center and player.gui.screen.m45_info_window then

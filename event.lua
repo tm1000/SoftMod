@@ -265,15 +265,16 @@ end
 
 -- Main event handler
 script.on_event(
-    {
-        defines.events.on_player_created, defines.events.on_pre_player_died, defines.events.on_player_respawned, defines
-        .events.on_player_joined_game, defines.events.on_player_left_game, defines.events
-        .on_player_main_inventory_changed, defines.events.on_player_changed_position, defines.events.on_console_chat,
-        defines.events.on_player_repaired_entity, defines.events.on_gui_click, defines.events.on_gui_text_changed,
-        defines.events.on_player_fast_transferred, defines.events.on_console_command, defines.events
-        .on_chart_tag_removed, defines.events.on_chart_tag_modified, defines.events.on_chart_tag_added, defines.events
-        .on_research_finished, defines.events.on_redo_applied, defines.events.on_undo_applied, defines.events
-        .on_train_schedule_changed, defines.events.on_entity_died, defines.events.on_cancelled_upgrade, defines.events
+	    {
+	        defines.events.on_player_created, defines.events.on_pre_player_died, defines.events.on_player_respawned, defines
+	        .events.on_player_joined_game, defines.events.on_player_left_game, defines.events
+	        .on_player_main_inventory_changed, defines.events.on_player_changed_position, defines.events.on_console_chat,
+	        defines.events.on_player_repaired_entity, defines.events.on_gui_click, defines.events.on_gui_text_changed,
+	        defines.events.on_gui_selected_tab_changed,
+	        defines.events.on_player_fast_transferred, defines.events.on_console_command, defines.events
+	        .on_chart_tag_removed, defines.events.on_chart_tag_modified, defines.events.on_chart_tag_added, defines.events
+	        .on_research_finished, defines.events.on_redo_applied, defines.events.on_undo_applied, defines.events
+	        .on_train_schedule_changed, defines.events.on_entity_died, defines.events.on_cancelled_upgrade, defines.events
         .on_picked_up_item, defines.events.on_player_dropped_item, defines.events.on_player_deconstructed_area, defines
         .events.on_marked_for_upgrade, defines.events.on_rocket_launch_ordered,
         defines.events.on_marked_for_deconstruction, defines.events.on_cancelled_deconstruction, defines.events
@@ -332,14 +333,16 @@ script.on_event(
             QUICKBAR_Clicks(event) --quickbar.lua
             ONLINE_Clicks(event)   -- online.lua
             ONELIFE_Clicks(event)  --onelife.lua
-        elseif event.name == defines.events.on_gui_text_changed then
-            -- log
-            INFO_TextChanged(event) --info.lua
-            QUICKBAR_TextChanged(event)
-        elseif event.name == defines.events.on_console_command then
-            LOG_ConsoleCmd(event)
-        elseif event.name == defines.events.on_chart_tag_removed then
-            LOG_TagDel(event)
+	        elseif event.name == defines.events.on_gui_text_changed then
+	            -- log
+	            INFO_TextChanged(event) --info.lua
+	            QUICKBAR_TextChanged(event)
+	        elseif event.name == defines.events.on_gui_selected_tab_changed then
+	            INFO_TabChanged(event)
+	        elseif event.name == defines.events.on_console_command then
+	            LOG_ConsoleCmd(event)
+	        elseif event.name == defines.events.on_chart_tag_removed then
+	            LOG_TagDel(event)
         elseif event.name == defines.events.on_chart_tag_modified then
             LOG_TagMod(event)
         elseif event.name == defines.events.on_chart_tag_added then

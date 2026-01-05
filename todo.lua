@@ -5,6 +5,20 @@
 
 local loremipsum = "Lorem ipsum dolor sit amet"
 
+local function ensureTodoUIState(player_index)
+    if not storage.todo_ui_state then
+        storage.todo_ui_state = {}
+    end
+    if not storage.todo_ui_state[player_index] then
+        storage.todo_ui_state[player_index] = {
+            selected_id = nil,
+            selected_edit = false,
+            reopen_submenu = false,
+        }
+    end
+    return storage.todo_ui_state[player_index]
+end
+
 local function markNoteIDRead(victim, id)
     --Note valid
     if not storage.todo_list or not storage.todo_list[id] then
@@ -112,7 +126,7 @@ local function unreadCount(victim)
 
     --Count notes
     local count = 0
-    for id, note in pairs(storage.todo_list) do
+    for id, note in ipairs(storage.todo_list) do
         if isUnreadVictim(victim, id) then
             count = count + 1
         end
@@ -152,7 +166,7 @@ end
 
 local function id_to_index(id)
     if storage.todo_list then
-        for i, item in pairs(storage.todo_list) do
+        for i, item in ipairs(storage.todo_list) do
             if item and item.id then
                 if item.id == id then
                     return i
@@ -161,6 +175,18 @@ local function id_to_index(id)
         end
     end
     UTIL_ConsolePrint("[ERROR] todo_id_to_index: could not find note id: " .. id)
+    return -1
+end
+
+local function find_index_by_id(id)
+    if not id or not storage.todo_list then
+        return -1
+    end
+    for i, item in ipairs(storage.todo_list) do
+        if item and item.id == id then
+            return i
+        end
+    end
     return -1
 end
 
@@ -400,6 +426,8 @@ end
 -- M45 ToDo Window
 function TODO_MakeWindow(player)
     if player.gui and player.gui.screen then
+        local ui = ensureTodoUIState(player.index)
+
         if player.gui.screen.m45_todo then
             player.gui.screen.m45_todo.destroy()
         end
@@ -471,7 +499,8 @@ function TODO_MakeWindow(player)
 
             local todo_main = main_flow.add {
                 type = "scroll-pane",
-                direction = "vertical"
+                direction = "vertical",
+                name = "todo_main"
             }
 
             pframe.style.horizontally_stretchable = true
@@ -515,7 +544,7 @@ function TODO_MakeWindow(player)
 
 
             storage.vis_todo_count = 0
-            for i, target in pairs(storage.todo_list) do
+            for i, target in ipairs(storage.todo_list) do
                 if not target.hidden or (storage.show_hidden_notes and storage.show_hidden_notes[player.index]) then
                     storage.vis_todo_count = storage.vis_todo_count + 1
                 end
@@ -523,7 +552,13 @@ function TODO_MakeWindow(player)
 
             if storage.vis_todo_count and storage.vis_todo_count > 0 then
                 local position = 0
-                for i, target in pairs(storage.todo_list) do
+                local scroll_target_index = -1
+                if ui and ui.selected_id then
+                    scroll_target_index = find_index_by_id(ui.selected_id)
+                end
+                local scroll_target_row = nil
+
+                for i, target in ipairs(storage.todo_list) do
                     -- Skip hidden items
                     if not target.hidden or (storage.show_hidden_notes and storage.show_hidden_notes[player.index]) then
                         position = position + 1
@@ -536,6 +571,7 @@ function TODO_MakeWindow(player)
                             type = "flow",
                             direction = "horizontal"
                         }
+                        pframe.name = "m45_todo_row," .. i
                         if isUnreadVictim(player, i) then
                             local unread_label = pframe.add {
                                 type = "label",
@@ -618,6 +654,9 @@ function TODO_MakeWindow(player)
                         notes_label.style.horizontally_squashable = true
                         notes_label.style.minimal_width = 300
                         notes_label.style.horizontal_align = "left"
+                        if i == scroll_target_index then
+                            scroll_target_row = pframe
+                        end
                         local spacer = pframe.add {
                             type = "empty-widget"
                         }
@@ -677,6 +716,10 @@ function TODO_MakeWindow(player)
                         notes_label.style.horizontally_stretchable = false
                     end
                 end
+
+                if todo_main and todo_main.valid and scroll_target_row and scroll_target_row.valid then
+                    todo_main.scroll_to_element(scroll_target_row)
+                end
             end
 
             -- ADD LINE
@@ -709,7 +752,7 @@ end
 
 local function updateTodoCount()
     storage.vis_todo_count = 0
-    for _, item in pairs(storage.todo_list) do
+    for _, item in ipairs(storage.todo_list) do
         if not item.hidden then
             storage.vis_todo_count = storage.vis_todo_count + 1
         end
@@ -751,6 +794,7 @@ local function guiClick(event)
             if UTIL_Is_Banished(player) then
                 return
             end
+            local ui = ensureTodoUIState(player.index)
 
             -- Grab target if we have one
             if event.element.name == "m45_todo_submenu_close_button" then
@@ -764,6 +808,7 @@ local function guiClick(event)
                         storage.todo_player_editing_id[player.index] = nil
                     end
                 end
+                ui.reopen_submenu = false
             elseif event.element.name == "m45_todo_show_hidden" then
                 storage.show_hidden_notes[player.index] = event.element.state
                 TODO_MakeWindow(player)
@@ -782,7 +827,7 @@ local function guiClick(event)
                 ----------------------------------------------------------------
                 local i = tonumber(args[2])
                 local count = 0
-                for _, _ in pairs(storage.todo_list) do
+                for _, _ in ipairs(storage.todo_list) do
                     count = count + 1
                 end
                 if i < count then
@@ -800,6 +845,9 @@ local function guiClick(event)
                         -- Save what ID we are editing for updates
                         local item = storage.todo_list[i]
                         storage.todo_player_editing_id[player.index] = storage.todo_list[i].id
+                        ui.selected_id = storage.todo_list[i].id
+                        ui.selected_edit = true
+                        ui.reopen_submenu = true
                         makeTodoSubmenu(player, i, true)
                     else
                         local error = "[ERROR] m45_todo_submenu_edit: Unable to find item: " .. i
@@ -812,6 +860,9 @@ local function guiClick(event)
                 if player and player.valid and player.character and player.character.valid then
                     local i = tonumber(args[2])
                     if storage.todo_list and storage.todo_list[i] then
+                        ui.selected_id = storage.todo_list[i].id
+                        ui.selected_edit = false
+                        ui.reopen_submenu = true
                         makeTodoSubmenu(player, i, false)
                     end
                 end
@@ -996,6 +1047,9 @@ local function guiClick(event)
                     if player.gui.screen.m45_todo then
                         if storage.todo_player_editing_id and storage.todo_player_editing_id[player.index] then
                             local id = storage.todo_player_editing_id[player.index]
+                            ui.selected_id = id
+                            ui.selected_edit = true
+                            ui.reopen_submenu = true
                             storage.todo_player_editing_id[player.index] = nil
                         end
                         player.gui.screen.m45_todo.destroy()
@@ -1008,6 +1062,12 @@ local function guiClick(event)
                     player.gui.left.m45_todo.destroy()
                 else
                     TODO_MakeWindow(player)
+                    if ui and ui.reopen_submenu and ui.selected_id then
+                        local i = find_index_by_id(ui.selected_id)
+                        if i and i > 0 and storage.todo_list and storage.todo_list[i] then
+                            makeTodoSubmenu(player, i, ui.selected_edit)
+                        end
+                    end
                 end
             end
         end

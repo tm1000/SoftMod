@@ -170,4 +170,9 @@ function STORAGE_MakePlayerStorage(player)
     if not storage.PData[player.index].lastPromoScore then
         storage.PData[player.index].lastPromoScore = 0
     end
+
+    --ui state
+    if not storage.PData[player.index].info_tab_index then
+        storage.PData[player.index].info_tab_index = 1
+    end
 end
