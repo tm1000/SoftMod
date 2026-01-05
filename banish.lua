@@ -284,7 +284,7 @@ function BANISH_DoJail(victim)
         position = newpos
     })
     BANISH_SendToSurface(victim)
-    ONLINE_UpdatePlayerList()
+    ONLINE_MarkDirty()
 end
 
 function BANISH_MakeJail()
@@ -452,7 +452,7 @@ function BANISH_SendToSurface(player)
                                 UTIL_ConsolePrint(
                                     "[ERROR] send_to_surface(respawn): unable to find non_colliding_position.")
                             end
-                            ONLINE_UpdatePlayerList()
+                            ONLINE_MarkDirty()
 
                             index = i
                             break
@@ -461,7 +461,7 @@ function BANISH_SendToSurface(player)
                             UTIL_ConsolePrint(
                                 "[ERROR] send_to_surface(respawn): invalid position!")
                             index = i
-                            ONLINE_UpdatePlayerList()
+                            ONLINE_MarkDirty()
                             break
                         end
                     end

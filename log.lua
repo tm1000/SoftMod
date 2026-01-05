@@ -114,7 +114,7 @@ function LOG_PlayerLeft(event)
         UTIL_MsgDiscord(player.name .. " disconnected!")
     end
 
-    ONLINE_UpdatePlayerList()
+    ONLINE_MarkDirty()
 end
 
 function LOG_Redo(event)
@@ -246,6 +246,16 @@ function LOG_Decon(event)
         if not player or not player.character then
             return
         end
+
+        local pdata = storage and storage.PData and storage.PData[player.index]
+        if not pdata then
+            return
+        end
+        pdata.last_decon_check = pdata.last_decon_check or 0
+        if game.tick < pdata.last_decon_check + 60 then
+            return
+        end
+        pdata.last_decon_check = game.tick
 
         if player and area and area.left_top then
             local decon_size = UTIL_Distance(area.left_top, area.right_bottom)

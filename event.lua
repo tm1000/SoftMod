@@ -78,12 +78,14 @@ end
 
 script.on_nth_tick(599, function(event)
     -- Tick divider, one minute
-    RunSetup()
+    STORAGE_EnsureGlobal()
     storage.SM_Store.tickDiv = (storage.SM_Store.tickDiv or 0) + 1
 
     --1 min
     if storage.SM_Store.tickDiv % 6 == 0 then
-        ONLINE_UpdatePlayerList() -- online.lua
+        if storage.SM_Store.online_dirty then
+            ONLINE_UpdatePlayerList() -- online.lua
+        end
     end
 
     --15 mins
@@ -165,7 +167,7 @@ local function makeUI(player)
 end
 
 function EVENT_PlayerInit(player)
-    STORAGE_CreateGlobal()
+    STORAGE_EnsureGlobal()
     STORAGE_MakePlayerStorage(player)
     TODO_Init()
     PERMS_PromotePlayer(player)

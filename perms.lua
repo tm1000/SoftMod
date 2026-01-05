@@ -27,7 +27,7 @@ function PERMS_MakeMember(player, victim)
                 storage.PData[victim.index].level = 1
             end
             storage.SM_Store.memGroup.add_player(victim)
-            ONLINE_UpdatePlayerList() -- online.lua
+            ONLINE_MarkDirty()
             return
         end
     end
@@ -43,7 +43,7 @@ function PERMS_MakeRegular(player, victim)
                 storage.PData[victim.index].level = 2
             end
             storage.SM_Store.regGroup.add_player(victim)
-            ONLINE_UpdatePlayerList() -- online.lua
+            ONLINE_MarkDirty()
             return
         end
     end
@@ -58,7 +58,7 @@ function PERMS_MakeVeteran(player, victim)
                 storage.PData[victim.index].level = 3
             end
             storage.SM_Store.vetGroup.add_player(victim)
-            ONLINE_UpdatePlayerList() -- online.lua
+            ONLINE_MarkDirty()
             return
         end
     end
@@ -504,12 +504,12 @@ function PERMS_PromotePlayer(player)
             if player.permission_group.name ~= storage.SM_Store.jailGroup.name then
                 storage.SM_Store.jailGroup.add_player(player)
                 UTIL_MsgAll(player.name .. " moved to jailed group.")       
-                ONLINE_UpdatePlayerList()
+                ONLINE_MarkDirty()
             end
         elseif (player.admin and player.permission_group.name ~= storage.SM_Store.modGroup.name) then
             storage.SM_Store.modGroup.add_player(player)
             UTIL_MsgAll(player.name .. " moved to moderators group")
-            ONLINE_UpdatePlayerList()
+            ONLINE_MarkDirty()
             if storage.PData and storage.PData[player.index] then
                 storage.PData[player.index].level = 255
             end
@@ -520,7 +520,7 @@ function PERMS_PromotePlayer(player)
                     player.permission_group.name ~= storage.SM_Store.vetGroup.name) then
                 storage.SM_Store.regGroup.add_player(player)
                 UTIL_MsgAll(player.name .. " is now a regular!")
-                ONLINE_UpdatePlayerList()
+                ONLINE_MarkDirty()
                 PERMS_WelcomeMember(player)
                 if storage.PData and storage.PData[player.index] then
                     storage.PData[player.index].level = 2
@@ -532,7 +532,7 @@ function PERMS_PromotePlayer(player)
             if not UTIL_Is_Veteran(player) and not UTIL_Is_Regular(player) and not UTIL_Is_Member(player) and UTIL_Is_New(player) then
                 storage.SM_Store.memGroup.add_player(player)
                 UTIL_MsgAll(player.name .. " is now a member!")
-                ONLINE_UpdatePlayerList()
+                ONLINE_MarkDirty()
                 if storage.PData and storage.PData[player.index] then
                     storage.PData[player.index].level = 1
                 end

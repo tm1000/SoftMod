@@ -441,7 +441,7 @@ function CMD_RegisterCommands()
                 return
             end
 
-            STORAGE_CreateGlobal()
+            STORAGE_EnsureGlobal()
 
             if param.parameter then
                 storage.SM_Store.serverName = param.parameter
@@ -589,7 +589,7 @@ function CMD_RegisterCommands()
                             UTIL_SmartPrint(victim,
                                 "It is very similar to putting them in a box at spawn, but they are safe from being lost or taken.")
                             victim.tag = "(supporter)"
-                            ONLINE_UpdatePlayerList() -- online.lua
+                            ONLINE_MarkDirty()
                         end
                     end
                 end
@@ -612,7 +612,7 @@ function CMD_RegisterCommands()
                         if not storage.PData[victim.index].nitro then
                             storage.PData[victim.index].nitro = true
                             UTIL_SmartPrint(player, "Player given nitro status.")
-                            ONLINE_UpdatePlayerList() -- online.lua
+                            ONLINE_MarkDirty()
                         else
                             UTIL_SmartPrint(player, "Player already has nitro status.")
                         end

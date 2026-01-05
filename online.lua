@@ -11,6 +11,15 @@ local function update_online_windows()
     end
 end
 
+function ONLINE_MarkDirty()
+    if STORAGE_EnsureGlobal then
+        STORAGE_EnsureGlobal()
+    end
+    if storage.SM_Store then
+        storage.SM_Store.online_dirty = true
+    end
+end
+
 function ONLINE_MakeOnlineButton(player)
     -- Online button--
     if player.gui.top.online_button then
@@ -29,6 +38,10 @@ end
 
 -- Count online players, store
 function ONLINE_UpdatePlayerList()
+    if STORAGE_EnsureGlobal then
+        STORAGE_EnsureGlobal()
+    end
+
     -- Sort by active time
     local results = {}
     local count = 0
@@ -140,6 +153,7 @@ function ONLINE_UpdatePlayerList()
     storage.SM_Store.pcount = count
     storage.SM_Store.tcount = tcount
     storage.SM_Store.playerList = results
+    storage.SM_Store.online_dirty = false
     UTIL_SendPlayers(nil)
     update_online_windows()
 end

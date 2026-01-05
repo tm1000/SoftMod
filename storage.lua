@@ -2,8 +2,7 @@
 -- carlotto81@gmail.com
 -- GitHub: https://github.com/M45-Science/SoftMod
 -- License: MPL 2.0
--- Create storage, if needed
-function STORAGE_CreateGlobal()
+local function ensure_global_tables()
     if not storage.PData then
         storage.PData = {}
     end
@@ -11,21 +10,17 @@ function STORAGE_CreateGlobal()
         storage.SM_Store = {}
     end
 
-    --Map resets
     if not storage.SM_Store.resetDuration then
         storage.SM_Store.resetDuration = ""
     end
-    --Map chunk purges
     if not storage.SM_Store.purge_tasks then
         storage.SM_Store.purge_tasks = {}
     end
 
-    --Perms
     if not storage.SM_Store.restrictNew then
         storage.SM_Store.restrictNew = false
     end
 
-    --Credits
     if not storage.SM_Store.patreonCredits then
         storage.SM_Store.patreonCredits = {}
     end
@@ -33,7 +28,6 @@ function STORAGE_CreateGlobal()
         storage.SM_Store.nitroCredits = {}
     end
 
-    --Banish
     if not storage.SM_Store.votes then
         storage.SM_Store.votes = {}
     end
@@ -41,7 +35,6 @@ function STORAGE_CreateGlobal()
         storage.SM_Store.sendToSurface = {}
     end
 
-    --Game Modes
     if not storage.SM_Store.noBlueprints then
         storage.SM_Store.noBlueprints = false
     end
@@ -52,7 +45,6 @@ function STORAGE_CreateGlobal()
         storage.SM_Store.cheats = false
     end
 
-    --Players Online
     if not storage.SM_Store.onlineCache then
         storage.SM_Store.onlineCache = ""
     end
@@ -65,8 +57,10 @@ function STORAGE_CreateGlobal()
     if not storage.SM_Store.playerList then
         storage.SM_Store.playerList = {}
     end
+    if storage.SM_Store.online_dirty == nil then
+        storage.SM_Store.online_dirty = true
+    end
 
-    --Spawn Logo
     if not storage.SM_Store.redrawLogo then
         storage.SM_Store.redrawLogo = true
     end
@@ -74,11 +68,16 @@ function STORAGE_CreateGlobal()
         storage.SM_Store.serverName = ""
     end
 
-    --Tick divider
     if not storage.SM_Store.tickDiv then
         storage.SM_Store.tickDiv = 0
     end
+end
 
+function STORAGE_EnsureGlobal()
+    ensure_global_tables()
+end
+
+function STORAGE_EnsureAllPlayers()
     local player_indices = {}
     for player_index, _ in pairs(game.players) do
         table.insert(player_indices, player_index)
@@ -88,6 +87,12 @@ function STORAGE_CreateGlobal()
         local victim = game.players[player_index]
         STORAGE_MakePlayerStorage(victim)
     end
+end
+
+-- Create storage, if needed
+function STORAGE_CreateGlobal()
+    STORAGE_EnsureGlobal()
+    STORAGE_EnsureAllPlayers()
 end
 
 -- Create player storage, if needed

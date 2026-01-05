@@ -25,7 +25,7 @@ function ONELIFE_Main(event)
         type = defines.controllers.spectator
     }
     UTIL_SmartPrint(player, "Game over! you are now a spectator.")
-    ONLINE_UpdatePlayerList()
+    ONLINE_MarkDirty()
 
     if not player.character or not player.character.valid then
         return
@@ -107,7 +107,7 @@ function ONELIFE_MakeButton(player)
                 character = game.surfaces[1].create_entity({ name = "character", position = game.surfaces[1].find_non_colliding_position("character", { x = 0, y = 0 }, 1024, 1, false), force = game.forces.player })
             }
             UTIL_SmartPrint(player, "You have been revived!")
-            ONLINE_UpdatePlayerList()
+            ONLINE_MarkDirty()
         end
         return
     end

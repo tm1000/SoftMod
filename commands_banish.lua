@@ -11,7 +11,7 @@ function BANISH_AddBanishCommands()
                 return
             end
 
-            STORAGE_CreateGlobal()
+            STORAGE_EnsureGlobal()
 
             -- Only if name provided
             if param.parameter then
@@ -43,7 +43,7 @@ function BANISH_AddBanishCommands()
                 return
             end
 
-            STORAGE_CreateGlobal()
+            STORAGE_EnsureGlobal()
 
             -- Only if name provided
             if param.parameter then
@@ -90,7 +90,7 @@ function BANISH_AddBanishCommands()
                 return
             end
 
-            STORAGE_CreateGlobal()
+            STORAGE_EnsureGlobal()
 
             -- Moderator only
             if storage.SM_Store and storage.SM_Store.votes then
