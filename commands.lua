@@ -426,6 +426,9 @@ function CMD_RegisterCommands()
                 return
             end
 
+            -- ChatWire calls /sversion after boot; historically this also refreshed state for existing saves.
+            RunSetup()
+
             if param and param.player_index then
                 player = game.players[param.player_index]
             end

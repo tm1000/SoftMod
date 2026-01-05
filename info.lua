@@ -292,7 +292,7 @@ function INFO_InfoWin(player)
             }
             tab1_info_center.add {
                 type = "label",
-                caption = "v" .. storage.SM_Version
+                caption = "v" .. (storage.SM_Version or "?")
             }
 
             local tab1_cframe = { tab1_main_frame.add {
