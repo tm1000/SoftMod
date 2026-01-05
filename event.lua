@@ -79,7 +79,7 @@ end
 script.on_nth_tick(599, function(event)
     -- Tick divider, one minute
     RunSetup()
-    storage.SM_Store.tickDiv = storage.SM_Store.tickDiv + 1
+    storage.SM_Store.tickDiv = (storage.SM_Store.tickDiv or 0) + 1
 
     --1 min
     if storage.SM_Store.tickDiv % 6 == 0 then
@@ -167,6 +167,7 @@ end
 function EVENT_PlayerInit(player)
     STORAGE_CreateGlobal()
     STORAGE_MakePlayerStorage(player)
+    TODO_Init()
     PERMS_PromotePlayer(player)
     makeUI(player)
 
@@ -272,7 +273,7 @@ script.on_event(
         .on_research_finished, defines.events.on_redo_applied, defines.events.on_undo_applied, defines.events
         .on_train_schedule_changed, defines.events.on_entity_died, defines.events.on_cancelled_upgrade, defines.events
         .on_picked_up_item, defines.events.on_player_dropped_item, defines.events.on_player_deconstructed_area, defines
-        .events.on_marked_for_upgrade, defines.events.on_rocket_launch_ordered, defines.events.on_cancelled_upgrade,
+        .events.on_marked_for_upgrade, defines.events.on_rocket_launch_ordered,
         defines.events.on_marked_for_deconstruction, defines.events.on_cancelled_deconstruction, defines.events
         .on_player_flushed_fluid, defines.events.on_player_driving_changed_state, defines.events.on_player_banned,
         defines.events.on_player_rotated_entity, defines.events.on_player_flipped_entity, defines.events

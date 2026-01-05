@@ -79,7 +79,13 @@ function STORAGE_CreateGlobal()
         storage.SM_Store.tickDiv = 0
     end
 
-    for _, victim in pairs(game.players) do
+    local player_indices = {}
+    for player_index, _ in pairs(game.players) do
+        table.insert(player_indices, player_index)
+    end
+    table.sort(player_indices)
+    for _, player_index in ipairs(player_indices) do
+        local victim = game.players[player_index]
         STORAGE_MakePlayerStorage(victim)
     end
 end

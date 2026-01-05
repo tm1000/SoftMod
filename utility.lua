@@ -5,9 +5,16 @@
 -- Safe console print
 
 function UTIL_CheckAbandoned()
-    for _, player in pairs(game.players) do
+    local player_indices = {}
+    for player_index, _ in pairs(game.players) do
+        table.insert(player_indices, player_index)
+    end
+    table.sort(player_indices)
+    for _, player_index in ipairs(player_indices) do
+        local player = game.players[player_index]
         if not player.connected and UTIL_Is_New(player) then
-            if game.tick - storage.PData[player.index].lastOnline > 1 * 60 * 60 * 60 then
+            local pdata = storage and storage.PData and storage.PData[player.index]
+            if pdata and pdata.lastOnline and (game.tick - pdata.lastOnline > 1 * 60 * 60 * 60) then
                 if UTIL_DumpInv(player, false) then
                     UTIL_MsgAllSys("New player '" .. player.name ..
                         "' was not active long enough to become a member, and have been offline for some time. Their items are now considered abandoned, and have been placed at spawn.")
@@ -22,12 +29,8 @@ function UTIL_DumpInv(player, force)
         return false
     end
 
-    if not force then
-        if storage.PData[player.index].cleaned then
-            if storage.PData[player.index].cleaned then
-                return false
-            end
-        end
+    if not force and storage and storage.PData and storage.PData[player.index] and storage.PData[player.index].cleaned then
+        return false
     end
 
     local inv_main = player.get_inventory(defines.inventory.character_main)
@@ -56,10 +59,13 @@ function UTIL_DumpInv(player, force)
         return false
     end
 
-    local position = player.position
+    local drop_position = game.surfaces[1].find_non_colliding_position("character", UTIL_GetDefaultSpawn(), 1024, 1, false)
+    if not drop_position then
+        return false
+    end
     local corpse = game.surfaces[1].create_entity {
         name = "character-corpse",
-        position = game.surfaces[1].find_non_colliding_position("character", UTIL_GetDefaultSpawn(), 1024, 1, false),
+        position = drop_position,
         inventory_size = inv_corpse_size,
         player_index = player.index
     }
@@ -76,27 +82,26 @@ function UTIL_DumpInv(player, force)
     end
 
     if inv_main_contents then
-        for _, item in pairs(inv_main_contents) do
-            inv_corpse.insert(item)
+        for name, count in pairs(inv_main_contents) do
+            inv_corpse.insert { name = name, count = count }
         end
 
-        if inv_main_contents then
-            inv_main.clear()
-        end
+        inv_main.clear()
     end
     if inv_trash_contents then
-        for _, item in pairs(inv_trash_contents) do
-            inv_corpse.insert(item)
+        for name, count in pairs(inv_trash_contents) do
+            inv_corpse.insert { name = name, count = count }
         end
 
-        if inv_trash_contents then
-            inv_trash.clear()
-        end
+        inv_trash.clear()
     end
 
 
     -- Mark as cleaned up.
-    storage.PData[player.index].cleaned = true
+    if storage and storage.PData then
+        storage.PData[player.index] = storage.PData[player.index] or {}
+        storage.PData[player.index].cleaned = true
+    end
 
     return true
 end
@@ -137,8 +142,14 @@ function UTIL_MapPin()
 end
 
 function UTIL_WarnOkay(player_index)
-    if (storage.PData[player_index].lastWarned and game.tick ~= storage.PData[player_index].lastWarned) then
-        storage.PData[player_index].lastWarned = game.tick
+    local pdata = storage and storage.PData and storage.PData[player_index]
+    if not pdata then
+        return false
+    end
+
+    pdata.lastWarned = pdata.lastWarned or 0
+    if game.tick ~= pdata.lastWarned then
+        pdata.lastWarned = game.tick
         return true
     end
     return false
@@ -359,7 +370,7 @@ end
 
 -- Check if player is flagged patreon
 function UTIL_Is_Supporter(victim)
-    if victim and storage.PData[victim.index] and storage.PData[victim.index].patreon then
+    if victim and storage and storage.PData and storage.PData[victim.index] and storage.PData[victim.index].patreon then
         return storage.PData[victim.index].patreon
     else
         return false
@@ -368,7 +379,7 @@ end
 
 -- Check if player is flagged nitro
 function UTIL_Is_Nitro(victim)
-    if victim and storage.PData[victim.index] and storage.PData[victim.index].nitro then
+    if victim and storage and storage.PData and storage.PData[victim.index] and storage.PData[victim.index].nitro then
         return storage.PData[victim.index].nitro
     else
         return false
@@ -389,7 +400,7 @@ function UTIL_Is_Veteran(victim)
 
     --Workaround for mods that screw with permissions groups
     if not UTIL_Is_Banished(victim) then
-        if storage and storage.PData[victim.index] then
+        if storage and storage.PData and storage.PData[victim.index] then
             local level = storage.PData[victim.index].level
             if level == 3 then
                 return true
@@ -414,7 +425,7 @@ function UTIL_Is_Regular(victim)
 
     --Workaround for mods that screw with permissions groups
     if not UTIL_Is_Banished(victim) then
-        if storage and storage.PData[victim.index] then
+        if storage and storage.PData and storage.PData[victim.index] then
             local level = storage.PData[victim.index].level
             if level == 2 then
                 return true
@@ -438,7 +449,7 @@ function UTIL_Is_Member(victim)
 
     --Workaround for mods that screw with permissions groups
     if not UTIL_Is_Banished(victim) then
-        if storage and storage.PData[victim.index] then
+        if storage and storage.PData and storage.PData[victim.index] then
             local level = storage.PData[victim.index].level
             if level == 1 then
                 return true
@@ -491,7 +502,7 @@ function UTIL_Is_Banished(victim)
     end
 
 
-    if storage and storage.PData[victim.index] then
+    if storage and storage.PData and storage.PData[victim.index] then
         local pointsNeeded = 1
         local level = storage.PData[victim.index].level
 
@@ -591,7 +602,7 @@ function UTIL_DrawMapClock(target)
                 target.gui.top.reset_clock.visible = false
             end
 
-            if storage.PData and storage.PData[target.index].hideClock  then
+            if storage.PData and storage.PData[target.index] and storage.PData[target.index].hideClock then
                 target.gui.top.reset_clock.caption = ">"
                 target.gui.top.reset_clock.style      = "mini_tool_button_red"
             else

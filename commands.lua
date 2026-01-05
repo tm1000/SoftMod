@@ -7,6 +7,8 @@
 require "commands_banish"
 require "commands_stash"
 
+local SM_VERSION = require("version")
+
 local function cleanSurface(psurface, pforce, delayTick, victim)
     -- Phase 1: Unchart all
     pforce.clear_chart(psurface)
@@ -419,16 +421,14 @@ script.on_load(function()
                 return
             end
 
-            RunSetup()
-
             if param and param.player_index then
                 player = game.players[param.player_index]
             end
 
             if player then
-                UTIL_SmartPrint(player, "[SVERSION] " .. storage.SM_Version)
+                UTIL_SmartPrint(player, "[SVERSION] " .. (storage.SM_Version or SM_VERSION or "?"))
             else
-                print("[SVERSION] " .. storage.SM_Version)
+                print("[SVERSION] " .. (storage.SM_Version or SM_VERSION or "?"))
             end
         end)
 

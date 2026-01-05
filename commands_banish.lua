@@ -11,11 +11,14 @@ function BANISH_AddBanishCommands()
                 return
             end
 
+            STORAGE_CreateGlobal()
+
             -- Only if name provided
             if param.parameter then
                 local victim = game.players[param.parameter]
 
                 if (victim) then
+                    STORAGE_MakePlayerStorage(victim)
                     if player and victim.index == player.index then
                         UTIL_SmartPrint(player, "You can't put yourself in jail. Go touch grass.")
                         return
@@ -40,11 +43,14 @@ function BANISH_AddBanishCommands()
                 return
             end
 
+            STORAGE_CreateGlobal()
+
             -- Only if name provided
             if param.parameter then
                 local victim = game.players[param.parameter]
 
                 if (victim) then
+                    STORAGE_MakePlayerStorage(victim)
                     if player and victim and victim.index == player.index then
                         UTIL_SmartPrint(player, "You can't unjail yourself.")
                         return
@@ -83,6 +89,8 @@ function BANISH_AddBanishCommands()
             if CMD_ModsOnly(param) then
                 return
             end
+
+            STORAGE_CreateGlobal()
 
             -- Moderator only
             if storage.SM_Store and storage.SM_Store.votes then
@@ -317,4 +325,3 @@ function BANISH_AddBanishCommands()
         end
     end)
 end
-

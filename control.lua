@@ -2,6 +2,7 @@
 -- carlotto81@gmail.com
 -- GitHub: https://github.com/M45-Science/SoftMod
 -- License: MPL 2.0
+local SM_VERSION = require("version")
 require "banish"   -- Banish system
 require "commands" -- Slash commands
 require "event"    -- Event/tick handler
@@ -17,24 +18,26 @@ require "utility"  -- Widely used general utility
 require "quickbar" -- Save or Restore Quickbar
 require "stash" -- Save or Restore Weapon/Ammo/Armor
 
-
 script.on_init(function()
-    storage.SM_Store = {}
-    game.print("M45 Soft-Mod v"..storage.SM_Version.." loaded.")
-  end)
+    RunSetup()
+    game.print("M45 Soft-Mod v" .. (storage.SM_Version or SM_VERSION or "?") .. " loaded.")
+end)
+
+script.on_configuration_changed(function()
+    RunSetup()
+end)
 
 function RunSetup()
-    storage.SM_Version = "653-06.20.2025-0406"
+    storage.SM_Version = SM_VERSION
+    storage.SM_OldVersion = storage.SM_OldVersion or "OldVersion"
 
-    if not storage.SM_OldVersion then
-        storage.SM_OldVersion = "OldVersion"
-    end
+    -- Ensure state exists even when versions match (hot reload / partial upgrades)
+    STORAGE_CreateGlobal()
+    TODO_Init()
 
-    --Only rerun on version change
-    if not storage.SM_Store or storage.SM_OldVersion ~= storage.SM_Version then
-        storage.SM_OldVersion = storage.SM_Version
-        STORAGE_CreateGlobal()
-        TODO_Init()
+    -- Only rerun expensive setup on version change
+    if storage.SM_OldVersion ~= SM_VERSION then
+        storage.SM_OldVersion = SM_VERSION
         BANISH_MakeJail()
         LOGO_DrawLogo(true)
         UTIL_MapPin()
