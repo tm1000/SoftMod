@@ -260,37 +260,42 @@ function LOG_Decon(event)
         if player and area and area.left_top then
             local decon_size = UTIL_Distance(area.left_top, area.right_bottom)
 
-            -- Ignore if the selection only contains naturally generated entities
-            local only_natural = true
-            for _, ent in pairs(surface.find_entities_filtered { area = area }) do
-                if ent.valid and not UTIL_IsNatural(ent) then
-                    only_natural = false
-                    break
-                end
-            end
-            if only_natural then
+            -- Don't bother if selection is zero.
+            if decon_size < 1 then
                 return
             end
 
-            -- Don't bother if selection is zero.
-            if decon_size >= 1 then
-                local msg = ""
-                if event.alt then
-                    msg = "[ACT] " ..
-                        player.name .. " undecon " .. UTIL_Area(surface, decon_size, event.area)
-                else
-                    msg = "[ACT] " ..
-                        player.name .. " decon " .. UTIL_Area(surface, decon_size, event.area)
+            -- Ignore if the selection only contains naturally generated entities
+            local found_non_natural = false
+            local player_ents = surface.find_entities_filtered { area = area, force = "player", limit = 1 }
+            if player_ents and player_ents[1] then
+                found_non_natural = true
+            else
+                local enemy_ents = surface.find_entities_filtered { area = area, force = "enemy", limit = 1 }
+                if enemy_ents and enemy_ents[1] then
+                    found_non_natural = true
+                end
+            end
+            if not found_non_natural then
+                return
+            end
 
-                    if UTIL_Is_New(player) or UTIL_Is_Member(player) then -- Dont bother with regulars/moderators
-                        if not UTIL_Is_Banished(player) then              -- Don't let bansihed players use this to spam
-                            UTIL_MsgAll(msg)
-                        end
+            local msg = ""
+            if event.alt then
+                msg = "[ACT] " ..
+                    player.name .. " undecon " .. UTIL_Area(surface, decon_size, event.area)
+            else
+                msg = "[ACT] " ..
+                    player.name .. " decon " .. UTIL_Area(surface, decon_size, event.area)
+
+                if UTIL_Is_New(player) or UTIL_Is_Member(player) then -- Dont bother with regulars/moderators
+                    if not UTIL_Is_Banished(player) then              -- Don't let bansihed players use this to spam
+                        UTIL_MsgAll(msg)
                     end
                 end
-
-                UTIL_ConsolePrint(msg)
             end
+
+            UTIL_ConsolePrint(msg)
         end
     end
 end
