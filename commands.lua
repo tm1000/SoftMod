@@ -163,6 +163,8 @@ function CMD_RegisterCommands()
                 return
             end
 
+            PERMS_EnsureGroups()
+
             if param and param.parameter then
                 local pforce = game.forces["player"]
 

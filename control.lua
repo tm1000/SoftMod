@@ -34,6 +34,9 @@ function RunSetup()
     -- Ensure state exists even when versions match (hot reload / partial upgrades)
     STORAGE_CreateGlobal()
     TODO_Init()
+    PERMS_EnsureGroups()
+    PERMS_ApplyStaticPermissions()
+    PERMS_SetPermissions()
 
     -- Only rerun expensive setup on version change
     if storage.SM_OldVersion ~= SM_VERSION then
@@ -41,9 +44,6 @@ function RunSetup()
         BANISH_MakeJail()
         LOGO_DrawLogo(true)
         UTIL_MapPin()
-
-        PERMS_MakeUserGroups()
-        PERMS_SetPermissions()
 
         game.forces["player"].friendly_fire = false -- disable friendly fire
         game.disable_replay()                       -- Smaller saves, prevent desync on script upgrade

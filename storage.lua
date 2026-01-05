@@ -71,6 +71,10 @@ local function ensure_global_tables()
     if not storage.SM_Store.tickDiv then
         storage.SM_Store.tickDiv = 0
     end
+
+    if storage.SM_Store.perms_static_applied == nil then
+        storage.SM_Store.perms_static_applied = false
+    end
 end
 
 function STORAGE_EnsureGlobal()

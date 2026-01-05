@@ -118,48 +118,63 @@ local BLUEPRINT_ACTIONS = {
     defines.input_action.upgrade_opened_blueprint_by_record,
 }
 
-function PERMS_MakeUserGroups()
-    storage.SM_Store.jailGroup = game.permissions.get_group("Jailed")
-    storage.SM_Store.defGroup = game.permissions.get_group("Default")
-    storage.SM_Store.memGroup = game.permissions.get_group("Members")
-    storage.SM_Store.regGroup = game.permissions.get_group("Regulars")
-    storage.SM_Store.vetGroup = game.permissions.get_group("Veterans")
-    storage.SM_Store.modGroup = game.permissions.get_group("Moderators")
-
-    if (not storage.SM_Store.jailGroup) then
-        game.permissions.create_group("Jailed")
+function PERMS_EnsureGroups()
+    if STORAGE_EnsureGlobal then
+        STORAGE_EnsureGlobal()
+    end
+    if not storage or not storage.SM_Store then
+        return false
     end
 
-    if (not storage.SM_Store.defGroup) then
-        game.permissions.create_group("Default")
+    local created = false
+
+    local function ensure_group(name, store_key)
+        local group = game.permissions.get_group(name)
+        if not group then
+            game.permissions.create_group(name)
+            group = game.permissions.get_group(name)
+            created = true
+        end
+        storage.SM_Store[store_key] = group
     end
 
-    if (not storage.SM_Store.memGroup) then
-        game.permissions.create_group("Members")
+    ensure_group("Jailed", "jailGroup")
+    ensure_group("Default", "defGroup")
+    ensure_group("Members", "memGroup")
+    ensure_group("Regulars", "regGroup")
+    ensure_group("Veterans", "vetGroup")
+    ensure_group("Moderators", "modGroup")
+
+    if created then
+        storage.SM_Store.perms_static_applied = false
     end
 
-    if (not storage.SM_Store.regGroup) then
-        game.permissions.create_group("Regulars")
+    return created
+end
+
+function PERMS_ApplyStaticPermissions()
+    if STORAGE_EnsureGlobal then
+        STORAGE_EnsureGlobal()
+    end
+    if not storage or not storage.SM_Store then
+        return
     end
 
-    if (not storage.SM_Store.vetGroup) then
-        game.permissions.create_group("Veterans")
-    end
+    PERMS_EnsureGroups()
 
-    if (not storage.SM_Store.modGroup) then
-        game.permissions.create_group("Moderators")
+    if storage.SM_Store.perms_static_applied then
+        return
     end
-
-    storage.SM_Store.jailGroup = game.permissions.get_group("Jailed")
-    storage.SM_Store.defGroup  = game.permissions.get_group("Default")
-    storage.SM_Store.memGroup  = game.permissions.get_group("Members")
-    storage.SM_Store.regGroup  = game.permissions.get_group("Regulars")
-    storage.SM_Store.vetGroup  = game.permissions.get_group("Veterans")
-    storage.SM_Store.modGroup  = game.permissions.get_group("Moderators")
 
     --Always disabled
-    for _, action in pairs(DEF_GROUP_ALWAYS_DISABLED) do
-        storage.SM_Store.defGroup.set_allows_action(action, false)
+    if storage.SM_Store.defGroup then
+        for _, action in ipairs(DEF_GROUP_ALWAYS_DISABLED) do
+            storage.SM_Store.defGroup.set_allows_action(action, false)
+        end
+    end
+
+    if not storage.SM_Store.jailGroup then
+        return
     end
 
     local actionList = {
@@ -429,14 +444,22 @@ function PERMS_MakeUserGroups()
         defines.input_action.use_item,
         defines.input_action.wire_dragging,
     }
-    for _, item in pairs(actionList) do
+    for _, item in ipairs(actionList) do
         storage.SM_Store.jailGroup.set_allows_action(item, false)
     end
+
+    storage.SM_Store.perms_static_applied = true
+end
+
+-- Back-compat entrypoint for older call sites.
+function PERMS_MakeUserGroups()
+    PERMS_ApplyStaticPermissions()
 end
 
 function PERMS_SetBlueprintsAllowed(group, option)
+    PERMS_EnsureGroups()
     if group then
-        for _, action in pairs(BLUEPRINT_ACTIONS) do
+        for _, action in ipairs(BLUEPRINT_ACTIONS) do
             group.set_allows_action(action, option)
         end
     end
@@ -445,6 +468,7 @@ end
 -- Disable some permissions for new players, minimal mode
 function PERMS_SetPermissions()
     -- Auto set default group permissions
+    PERMS_EnsureGroups()
 
     if storage.SM_Store.defGroup then
         -- If new user restrictions are on, then disable all permissions
@@ -454,7 +478,7 @@ function PERMS_SetPermissions()
             option = false
         end
 
-        for _, action in pairs(DEF_GROUP_TOGGLED) do
+        for _, action in ipairs(DEF_GROUP_TOGGLED) do
             storage.SM_Store.defGroup.set_allows_action(action, option)
         end
     end
@@ -485,7 +509,7 @@ function PERMS_PromotePlayer(player)
         return
     end
 
-    PERMS_MakeUserGroups()
+    PERMS_EnsureGroups()
 
     if not player.permission_group then
         --Fix nil permissions
@@ -544,7 +568,7 @@ end
 
 -- Automatically promote users to higher levels
 function PERMS_PromoteAllPlayers()
-    PERMS_MakeUserGroups()
+    PERMS_EnsureGroups()
 
     -- Check all connected players
     for _, player in ipairs(game.connected_players) do
