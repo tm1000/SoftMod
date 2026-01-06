@@ -77,14 +77,15 @@ local function open_confirm_window(player, entity)
     local name = (pdata and pdata.force_delete_pending_name) or entity.name
     local gps = (pdata and pdata.force_delete_pending_gps) or UTIL_GPSObj(entity)
 
-    local main_flow = player.gui.screen.add {
+    local main_flow_def = {
         type = "frame",
         name = FORCEDEL_CONFIRM_WINDOW,
         direction = "vertical"
     }
+    local main_flow = player.gui.screen.add(main_flow_def)
     main_flow.style.horizontal_align = "center"
     main_flow.style.vertical_align = "center"
-    main_flow.force_auto_center()
+    main_flow.style.minimal_width = 420
     main_flow.style.padding = 4
 
     local titlebar = main_flow.add {
@@ -159,6 +160,8 @@ local function open_confirm_window(player, entity)
         caption = "Cancel",
         tooltip = "Cancel force-delete"
     }
+
+    main_flow.force_auto_center()
 end
 
 local function draw_button(player)
