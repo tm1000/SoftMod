@@ -18,13 +18,6 @@ local function set_armed(player, armed)
     STORAGE_MakePlayerStorage(player)
 
     storage.PData[player.index].force_delete_armed = armed and true or false
-
-    storage.SM_Store.force_delete_armed_players = storage.SM_Store.force_delete_armed_players or {}
-    if storage.PData[player.index].force_delete_armed then
-        storage.SM_Store.force_delete_armed_players[player.index] = true
-    else
-        storage.SM_Store.force_delete_armed_players[player.index] = nil
-    end
 end
 
 local function draw_button(player)
@@ -45,20 +38,13 @@ local function draw_button(player)
             type = "sprite-button",
             name = FORCEDEL_BUTTON_NAME,
             sprite = FORCEDEL_SPRITE,
-            tooltip = "Force delete (admin): enable, then try mining an unminable entity"
+            tooltip = "Force delete (admin): enable, then click an entity"
         }
-        button.style = "tool_button"
         button.style.size = { 64, 64 }
     end
 
-    if is_armed(player) then
-        button.number = 1
-        button.style = "mini_tool_button_red"
-    else
-        button.number = nil
-        button.style = "tool_button"
-        button.style.size = { 64, 64 }
-    end
+    -- Use toggled state for the orange highlight (matches other top-bar tool buttons).
+    button.toggled = is_armed(player) and true or false
 end
 
 function FORCEDEL_MakeButton(player)
@@ -98,38 +84,29 @@ local function force_delete_entity(player, entity)
     UTIL_SmartPrint(player, "[FORCE-DELETE] " .. name .. " " .. gps)
 end
 
-function FORCEDEL_OnTick()
-    if not (storage and storage.SM_Store and storage.SM_Store.force_delete_armed_players) then
+function FORCEDEL_OnGuiOpened(event)
+    if not (event and event.player_index) then
         return
     end
 
-    local armed_indices = {}
-    for player_index, _ in pairs(storage.SM_Store.force_delete_armed_players) do
-        armed_indices[#armed_indices + 1] = player_index
+    local player = game.players[event.player_index]
+    if not (player and player.valid and player.admin) then
+        return
     end
 
-    for i = 1, #armed_indices do
-        local player_index = armed_indices[i]
-        local player = game.players[player_index]
-        if not (player and player.valid and player.connected and player.admin) then
-            if player and player.valid then
-                set_armed(player, false)
-                draw_button(player)
-            else
-                storage.SM_Store.force_delete_armed_players[player_index] = nil
-            end
-        else
-            local ms = player.mining_state
-            local ent = ms and ms.mining and ms.entity
-            if ent and ent.valid and (not ent.minable) then
-                -- Debounce so one action only.
-                STORAGE_MakePlayerStorage(player)
-                local pdata = storage.PData[player.index]
-                if pdata.force_delete_last_tick ~= game.tick then
-                    pdata.force_delete_last_tick = game.tick
-                    force_delete_entity(player, ent)
-                end
-            end
+    if not is_armed(player) then
+        return
+    end
+
+    if event.gui_type ~= defines.gui_type.entity then
+        return
+    end
+
+    local entity = event.entity
+    if entity and entity.valid then
+        if player.opened == entity then
+            player.opened = nil
         end
+        force_delete_entity(player, entity)
     end
 end
