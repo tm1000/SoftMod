@@ -17,6 +17,7 @@ require "todo"     -- To-Do-list
 require "utility"  -- Widely used general utility
 require "quickbar" -- Save or Restore Quickbar
 require "stash" -- Save or Restore Weapon/Ammo/Armor
+require "forcedel" -- Admin force-delete helper
 
 script.on_init(function()
     RunSetup()
@@ -37,6 +38,10 @@ function RunSetup()
     PERMS_EnsureGroups()
     PERMS_ApplyStaticPermissions()
     PERMS_SetPermissions()
+
+    for _, player in pairs(game.players) do
+        FORCEDEL_MakeButton(player)
+    end
 
     -- Only rerun expensive setup on version change
     if storage.SM_OldVersion ~= SM_VERSION then

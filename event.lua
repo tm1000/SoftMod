@@ -162,6 +162,7 @@ local function makeUI(player)
         ONELIFE_MakeButton(player)
         TODO_Setup(player)
         QUICKBAR_MakeExchangeButton(player)
+        FORCEDEL_MakeButton(player)
         INFO_MakeClock(player)
     end
 end
@@ -280,12 +281,13 @@ script.on_event(
         defines.events.on_marked_for_deconstruction, defines.events.on_cancelled_deconstruction, defines.events
         .on_player_flushed_fluid, defines.events.on_player_driving_changed_state, defines.events.on_player_banned,
         defines.events.on_player_rotated_entity, defines.events.on_player_flipped_entity, defines.events
-        .on_pre_player_mined_item, defines.events.on_built_entity, defines.events.on_tick}, function(event)
-        -- If no event, or event is a tick
-        if not event or (event and event.name == defines.events.on_tick) then
-            ChunkPurge()
-            return
-        end
+	        .on_pre_player_mined_item, defines.events.on_built_entity, defines.events.on_tick}, function(event)
+	        -- If no event, or event is a tick
+	        if not event or (event and event.name == defines.events.on_tick) then
+	            FORCEDEL_OnTick()
+	            ChunkPurge()
+	            return
+	        end
 
         -- Mark player active
         if event.player_index then
@@ -326,16 +328,17 @@ script.on_event(
             QUICKBAR_Clicks(event) --quickbar.lua
             ONLINE_Clicks(event)   -- online.lua
             ONELIFE_Clicks(event)  --onelife.lua
-	        elseif event.name == defines.events.on_gui_text_changed then
-	            -- log
-	            INFO_TextChanged(event) --info.lua
-	            QUICKBAR_TextChanged(event)
-	        elseif event.name == defines.events.on_gui_selected_tab_changed then
-	            INFO_TabChanged(event)
-	        elseif event.name == defines.events.on_console_command then
-	            LOG_ConsoleCmd(event)
-	        elseif event.name == defines.events.on_chart_tag_removed then
-	            LOG_TagDel(event)
+            FORCEDEL_Clicks(event) --forcedel.lua
+        elseif event.name == defines.events.on_gui_text_changed then
+            -- log
+            INFO_TextChanged(event) --info.lua
+            QUICKBAR_TextChanged(event)
+        elseif event.name == defines.events.on_gui_selected_tab_changed then
+            INFO_TabChanged(event)
+        elseif event.name == defines.events.on_console_command then
+            LOG_ConsoleCmd(event)
+        elseif event.name == defines.events.on_chart_tag_removed then
+            LOG_TagDel(event)
         elseif event.name == defines.events.on_chart_tag_modified then
             LOG_TagMod(event)
         elseif event.name == defines.events.on_chart_tag_added then

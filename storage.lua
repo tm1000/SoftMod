@@ -16,6 +16,9 @@ local function ensure_global_tables()
     if not storage.SM_Store.purge_tasks then
         storage.SM_Store.purge_tasks = {}
     end
+    if not storage.SM_Store.force_delete_armed_players then
+        storage.SM_Store.force_delete_armed_players = {}
+    end
 
     if not storage.SM_Store.restrictNew then
         storage.SM_Store.restrictNew = false
@@ -174,5 +177,13 @@ function STORAGE_MakePlayerStorage(player)
     --ui state
     if not storage.PData[player.index].info_tab_index then
         storage.PData[player.index].info_tab_index = 1
+    end
+
+    --admin tools
+    if storage.PData[player.index].force_delete_armed == nil then
+        storage.PData[player.index].force_delete_armed = false
+    end
+    if not storage.PData[player.index].force_delete_last_tick then
+        storage.PData[player.index].force_delete_last_tick = 0
     end
 end
