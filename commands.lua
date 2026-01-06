@@ -134,7 +134,7 @@ function CMD_RegisterCommands()
 
         -- Enable / disable friendly fire
         CMD_AddCommand("friendlyfire", "System use only.", function(param)
-            local player
+            local player = (param and param.player_index) and game.players[param.player_index] or nil
             if CMD_SysOnly(param) then
                 return
             end
@@ -158,7 +158,7 @@ function CMD_RegisterCommands()
 
         -- Enable / disable blueprints
         CMD_AddCommand("blueprints", "System use only.", function(param)
-            local player
+            local player = (param and param.player_index) and game.players[param.player_index] or nil
             if CMD_SysOnly(param) then
                 return
             end
@@ -194,7 +194,7 @@ function CMD_RegisterCommands()
 
         -- Enable / disable cheat mode
         CMD_AddCommand("enablecheats", "System use only.", function(param)
-            local player
+            local player = (param and param.player_index) and game.players[param.player_index] or nil
             if CMD_SysOnly(param) then
                 return
             end

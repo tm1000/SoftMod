@@ -22,6 +22,9 @@ function INFO_MakeClock(player)
 end
 
 function INFO_MakeButton(player)
+    if not (player and player.valid and player.gui and player.gui.top) then
+        return
+    end
     if player.gui.top.m45_button then
         player.gui.top.m45_button.destroy()
     end

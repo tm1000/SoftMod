@@ -66,6 +66,12 @@ function ONELIFE_Clicks(event)
     if not player or not player.valid then
         return
     end
+    if STORAGE_EnsureGlobal then
+        STORAGE_EnsureGlobal()
+    end
+    if STORAGE_MakePlayerStorage then
+        STORAGE_MakePlayerStorage(player)
+    end
     if UTIL_Is_Banished(player) then
         return
     end
@@ -74,6 +80,9 @@ function ONELIFE_Clicks(event)
         return
     end
     if event.element and event.element.valid and event.element.name == "spec_button" then
+        if not (storage and storage.PData and storage.PData[player.index]) then
+            return
+        end
         -- Otherwise confirm
         if storage.PData[player.index].permDeath then
             if storage.PData[player.index].permDeath >= 2 then
@@ -93,14 +102,14 @@ function ONELIFE_Clicks(event)
 end
 
 function ONELIFE_MakeButton(player)
-    if not player then
+    if not (player and player.valid and player.gui and player.gui.top) then
         return
     end
     if player.gui.top.spec_button then
         player.gui.top.spec_button.destroy()
     end
 
-    if storage.SM_Store.oneLifeMode and storage.SM_Store.oneLifeMode == false then
+    if storage.SM_Store.oneLifeMode == false then
         if player.controller_type == defines.controllers.spectator then
             player.set_controller {
                 type = defines.controllers.character,
@@ -111,7 +120,7 @@ function ONELIFE_MakeButton(player)
         end
         return
     end
-    if storage.SM_Store.oneLifeMode and storage.SM_Store.oneLifeMode == true then
+    if storage.SM_Store.oneLifeMode == true then
         if not player.gui.top.spec_button then
             local m45_32 = player.gui.top.add {
                 type = "sprite-button",

@@ -5,6 +5,22 @@
 
 -- Add M45 Logo to spawn area
 function LOGO_DrawLogo(force)
+    local function pos_components(pos)
+        if not pos then
+            return nil, nil
+        end
+        if pos.x ~= nil and pos.y ~= nil then
+            return pos.x, pos.y
+        end
+        return pos[1], pos[2]
+    end
+
+    local function pos_equal(a, b)
+        local ax, ay = pos_components(a)
+        local bx, by = pos_components(b)
+        return ax ~= nil and bx ~= nil and ax == bx and ay == by
+    end
+
     local msurf = game.surfaces[1]
 
     if msurf then
@@ -33,7 +49,7 @@ function LOGO_DrawLogo(force)
         local newPos = UTIL_GetDefaultSpawn()
 
         --Just exit if position did not change, unless force redraw
-        if not force and oldPos == newPos then
+        if not force and pos_equal(oldPos, newPos) then
             return
         end
 

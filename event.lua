@@ -401,7 +401,7 @@ function EVENT_Loot(event)
 
     if ent and ent.type and ent.type == "character-corpse" then
         if ent and ent.character_corpse_player_index and event.player_index then
-            if event.character_corpse_player_index == event.player_index then
+            if ent.character_corpse_player_index == event.player_index then
                 return -- Dont warn if it is ours
             end
             local player = game.players[event.player_index]

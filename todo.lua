@@ -763,6 +763,9 @@ function TODO_Setup(player)
     if not player or not player.index then
         return
     end
+    if not (player.valid and player.gui and player.gui.top) then
+        return
+    end
     -- To-Do button--
     if player.gui.top.todo_button then
         player.gui.top.todo_button.destroy()

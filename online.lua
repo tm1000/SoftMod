@@ -5,7 +5,7 @@
 
 local function update_online_windows()
     for _, player in ipairs(game.connected_players) do
-        if player.gui and player.gui.screen and player.gui.left.m45_online then
+        if player.gui and player.gui.left and player.gui.left.m45_online then
             ONLINE_Window(player)
         end
     end
@@ -22,6 +22,9 @@ end
 
 function ONLINE_MakeOnlineButton(player)
     -- Online button--
+    if not (player and player.valid and player.gui and player.gui.top) then
+        return
+    end
     if player.gui.top.online_button then
         player.gui.top.online_button.destroy()
     end
@@ -347,7 +350,7 @@ function ONLINE_Window(player)
     if player then
         if player.gui.screen then
             if player.gui.screen.member_welcome then
-                if not player.gui.left.m45_online then
+                if not (player.gui and player.gui.left and player.gui.left.m45_online) then
                     player.gui.screen.member_welcome.destroy()
                 end
             end
@@ -358,12 +361,20 @@ function ONLINE_Window(player)
         return
     end
 
+    if STORAGE_EnsureGlobal then
+        STORAGE_EnsureGlobal()
+    end
+    if STORAGE_MakePlayerStorage then
+        STORAGE_MakePlayerStorage(player)
+    end
+
     if player.gui and player.gui.left then
-        if player.gui.left.m45_online then
-            player.gui.left.m45_online.destroy()
+        local left = player.gui.left
+        if left.m45_online then
+            left.m45_online.destroy()
         end
-        if not player.gui.left.m45_online then
-            local main_flow = player.gui.left.add {
+        if not left.m45_online then
+            local main_flow = left.add {
                 type = "frame",
                 name = "m45_online",
                 direction = "vertical"
@@ -721,6 +732,16 @@ function ONLINE_Clicks(event)
         local args = UTIL_SplitStr(event.element.name, ",")
 
         if player and player.valid then
+            if STORAGE_EnsureGlobal then
+                STORAGE_EnsureGlobal()
+            end
+            if STORAGE_MakePlayerStorage then
+                STORAGE_MakePlayerStorage(player)
+            end
+            if not (storage and storage.PData and storage.PData[player.index]) then
+                return
+            end
+
             -- Grab target if we have one
             local victim_name
             local victim

@@ -572,14 +572,15 @@ function LOG_PreMined(event)
     local player = game.players[event.player_index]
     local obj = event.entity
 
-    if obj.force.name ~= "enemy" and obj.force.name ~= "neutral" then
+    local force_name = (obj.force and obj.force.name) or "neutral"
+    if force_name ~= "enemy" and force_name ~= "neutral" then
         if obj.name ~= "tile-ghost" and obj.name ~= "tile" then
             if obj.name ~= "entity-ghost" then
                 -- log
                 UTIL_ConsolePrint("[ACT] " .. player.name .. " mined " .. obj.name .. " " .. obj.gps_tag)
 
                 -- Mark player as having picked up an item, and needing to be cleaned.
-                if storage.PData[event.player_index].cleaned then
+                if storage and storage.PData and storage.PData[event.player_index] and storage.PData[event.player_index].cleaned then
                     storage.PData[event.player_index].cleaned = false
                 end
             else

@@ -535,6 +535,9 @@ end
 function QUICKBAR_MakeExchangeButton(player)
     QUICKBAR_ClearString(player)
 
+    if not (player and player.valid and player.gui and player.gui.top) then
+        return
+    end
     if player.gui.top.qb_exchange_button then
         player.gui.top.qb_exchange_button.destroy()
     end
@@ -552,6 +555,9 @@ end
 function QUICKBAR_MakeExchangeWindow(player, exportMode)
     QUICKBAR_ClearString(player)
 
+    if not (player and player.valid and player.gui and player.gui.screen) then
+        return
+    end
     if player.gui.screen.quickbar_exchange then
         player.gui.screen.quickbar_exchange.destroy()
     end
