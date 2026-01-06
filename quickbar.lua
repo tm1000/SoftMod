@@ -443,6 +443,10 @@ function ImportQuickbar(player, data)
         return false
     end
 
+    if not next(ITEM_ALIAS) then
+        QUICKBAR_GenerateItemAliases()
+    end
+
     --Limit compressed size
     if string.len(data) > 10240 then
         UTIL_SmartPrint(player, "String too long.")
@@ -501,9 +505,8 @@ function ImportQuickbar(player, data)
                 item = ITEM_FROM_ALIAS[item] or item
             end
 
-            local valid_item = type(prototypes) == "table" and type(prototypes.item) == "table" and prototypes.item[item]
-            local valid_quality = type(prototypes) == "table" and type(prototypes.quality) == "table" and
-                prototypes.quality[quality]
+            local valid_item = prototypes.item[item]
+            local valid_quality = prototypes.quality[quality]
 
             if valid_item and valid_quality then
                 if quality ~= "normal" then

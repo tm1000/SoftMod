@@ -9,9 +9,6 @@ local function UTIL_HasValidItemPrototype(name, quality)
         return false
     end
 
-    if type(prototypes) ~= "table" or type(prototypes.item) ~= "table" then
-        return false
-    end
     if not prototypes.item[name] then
         return false
     end
@@ -20,7 +17,7 @@ local function UTIL_HasValidItemPrototype(name, quality)
         if type(quality) ~= "string" then
             return false
         end
-        return type(prototypes.quality) == "table" and prototypes.quality[quality] ~= nil
+        return prototypes.quality[quality] ~= nil
     end
 
     return true
