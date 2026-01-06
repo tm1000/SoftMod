@@ -162,8 +162,8 @@ local function makeUI(player)
         ONELIFE_MakeButton(player)
         TODO_Setup(player)
         QUICKBAR_MakeExchangeButton(player)
-        FORCEDEL_MakeButton(player)
         INFO_MakeClock(player)
+        FORCEDEL_MakeButton(player)
     end
 end
 
@@ -281,7 +281,8 @@ script.on_event(
 		        defines.events.on_marked_for_deconstruction, defines.events.on_cancelled_deconstruction, defines.events
 		        .on_player_flushed_fluid, defines.events.on_player_driving_changed_state, defines.events.on_player_banned,
 		        defines.events.on_player_rotated_entity, defines.events.on_player_flipped_entity, defines.events
-	        .on_pre_player_mined_item, defines.events.on_built_entity, defines.events.on_gui_opened, defines.events.on_tick}, function(event)
+	        .on_pre_player_mined_item, defines.events.on_built_entity, defines.events.on_gui_opened,
+		        defines.events.on_player_promoted, defines.events.on_player_demoted, defines.events.on_tick}, function(event)
 	        -- If no event, or event is a tick
 	        if not event or (event and event.name == defines.events.on_tick) then
 	            ChunkPurge()
@@ -330,6 +331,14 @@ script.on_event(
             FORCEDEL_Clicks(event) --forcedel.lua
         elseif event.name == defines.events.on_gui_opened then
             FORCEDEL_OnGuiOpened(event) --forcedel.lua
+        elseif event.name == defines.events.on_player_promoted or event.name == defines.events.on_player_demoted then
+            if event.player_index then
+                local player = game.players[event.player_index]
+                if player and player.valid then
+                    PERMS_PromotePlayer(player)
+                    FORCEDEL_MakeButton(player)
+                end
+            end
         elseif event.name == defines.events.on_gui_text_changed then
             -- log
             INFO_TextChanged(event) --info.lua
