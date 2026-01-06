@@ -501,8 +501,9 @@ function ImportQuickbar(player, data)
                 item = ITEM_FROM_ALIAS[item] or item
             end
 
-            local valid_item = game.item_prototypes and game.item_prototypes[item]
-            local valid_quality = game.quality_prototypes and game.quality_prototypes[quality]
+            local valid_item = type(prototypes) == "table" and type(prototypes.item) == "table" and prototypes.item[item]
+            local valid_quality = type(prototypes) == "table" and type(prototypes.quality) == "table" and
+                prototypes.quality[quality]
 
             if valid_item and valid_quality then
                 if quality ~= "normal" then
