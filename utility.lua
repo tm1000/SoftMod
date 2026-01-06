@@ -8,7 +8,7 @@ local function UTIL_HasValidItemPrototype(name, quality)
     if not game or type(name) ~= "string" then
         return false
     end
-    if not game.item_prototypes[name] then
+    if not game.item_prototypes or not game.item_prototypes[name] then
         return false
     end
     if quality ~= nil then

@@ -114,12 +114,13 @@ function LOG_PlayerLeft(event)
         storage.PData[event.player_index].lastOnline = game.tick
     end
     local player = game.players[event.player_index]
+    local player_name = (player and player.name) or event.player_name or "<unknown player>"
 
     if event.reason then
         local reason = DISCONNECT_REASON[event.reason + 1] or "(unknown reason)"
-        UTIL_MsgDiscord(player.name .. " disconnected. " .. reason)
+        UTIL_MsgDiscord(player_name .. " disconnected. " .. reason)
     else
-        UTIL_MsgDiscord(player.name .. " disconnected!")
+        UTIL_MsgDiscord(player_name .. " disconnected!")
     end
 
     ONLINE_MarkDirty()
@@ -617,6 +618,7 @@ function LOG_Banned(event)
         return
     end
     local player = game.players[event.player_index]
+    local player_name = (player and player.name) or event.player_name or "<unknown player>"
     UTIL_DumpInv(player, true)
-    UTIL_MsgAllSys(player.name .. "'s items have been left at spawn, so they can be recovered.")
+    UTIL_MsgAllSys(player_name .. "'s items have been left at spawn, so they can be recovered.")
 end
