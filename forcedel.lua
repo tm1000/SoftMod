@@ -4,6 +4,7 @@
 -- License: MPL 2.0
 
 local FORCEDEL_BUTTON_NAME = "m45_force_delete_toggle"
+local FORCEDEL_SPRITE = "file/img/buttons/force-delete-64.png"
 
 local function is_armed(player)
     return storage and storage.PData and storage.PData[player.index] and storage.PData[player.index].force_delete_armed
@@ -41,20 +42,22 @@ local function draw_button(player)
     local button = player.gui.top[FORCEDEL_BUTTON_NAME]
     if not button then
         button = player.gui.top.add {
-            type = "button",
+            type = "sprite-button",
             name = FORCEDEL_BUTTON_NAME,
-            caption = "FD",
+            sprite = FORCEDEL_SPRITE,
             tooltip = "Force delete (admin): enable, then try mining an unminable entity"
         }
-        button.style = "mini_button"
+        button.style = "tool_button"
+        button.style.size = { 64, 64 }
     end
 
     if is_armed(player) then
-        button.caption = "FD!"
+        button.number = 1
         button.style = "mini_tool_button_red"
     else
-        button.caption = "FD"
-        button.style = "mini_button"
+        button.number = nil
+        button.style = "tool_button"
+        button.style.size = { 64, 64 }
     end
 end
 
