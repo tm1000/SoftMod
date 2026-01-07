@@ -7,8 +7,9 @@ Requires Factorio 2.0.27 or newer.
 <br>Currently approximately 8700 lines of lua.
 <br>
 This mod keeps all persistent state in a global table named `storage`. See
-[`docs/storage.md`](docs/storage.md) for an overview of its layout. A basic
-`luacheck` configuration is provided for optional linting:
+[`docs/storage.md`](docs/storage.md) for an overview of its layout and
+[`docs/in-place-upgrades.md`](docs/in-place-upgrades.md) for upgrade guardrails.
+A basic `luacheck` configuration is provided for optional linting:
 
 ```bash
 luacheck *.lua
