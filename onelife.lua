@@ -108,6 +108,11 @@ function ONELIFE_MakeButton(player)
     if player.gui.top.spec_button then
         player.gui.top.spec_button.destroy()
     end
+    -- Some maps/mods temporarily put players on an "empty_void" surface for a selection/limbo screen.
+    -- Don't touch controller state there, or Factorio will reject entities from other surfaces.
+    if player.surface and player.surface.valid and player.surface.name == "empty_void" then
+        return
+    end
 
     if storage.SM_Store.oneLifeMode == false then
         if player.controller_type == defines.controllers.spectator then
