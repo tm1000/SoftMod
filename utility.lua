@@ -9,7 +9,7 @@ local function UTIL_HasValidItemPrototype(name, quality)
         return false
     end
 
-    if not prototypes.item[name] then
+    if not prototypes or not prototypes.item or not prototypes.item[name] then
         return false
     end
 
@@ -17,7 +17,7 @@ local function UTIL_HasValidItemPrototype(name, quality)
         if type(quality) ~= "string" then
             return false
         end
-        return prototypes.quality[quality] ~= nil
+        return prototypes.quality and prototypes.quality[quality] ~= nil
     end
 
     return true
@@ -29,36 +29,22 @@ local function UTIL_InsertContentsIntoCorpse(inv_corpse, contents, player)
     end
 
     local player_name = player and player.name or "<unknown>"
-    local entries = {}
 
-    -- Factorio 2.0: get_contents() returns array entries of {name, quality?, count}.
+    -- Factorio 2.0: get_contents() returns array entries of {name, quality, count}.
     for _, entry in ipairs(contents) do
         if entry and entry.name and entry.count and entry.count > 0 then
-            table.insert(entries, {
-                name = entry.name,
-                quality = entry.quality,
-                count = entry.count,
-            })
-        end
-    end
-
-    table.sort(entries, function(a, b)
-        if a.name ~= b.name then
-            return a.name < b.name
-        end
-        return tostring(a.quality or "") < tostring(b.quality or "")
-    end)
-
-    for _, entry in ipairs(entries) do
-        if UTIL_HasValidItemPrototype(entry.name, entry.quality) then
-            if entry.quality ~= nil then
-                inv_corpse.insert { name = entry.name, quality = entry.quality, count = entry.count }
+            if UTIL_HasValidItemPrototype(entry.name, entry.quality) then
+                if entry.quality ~= nil then
+                    inv_corpse.insert { name = entry.name, quality = entry.quality, count = entry.count }
+                else
+                    inv_corpse.insert { name = entry.name, count = entry.count }
+                end
             else
-                inv_corpse.insert { name = entry.name, count = entry.count }
+                UTIL_ConsolePrint("UTIL_DumpInv: skipping invalid item '" .. tostring(entry.name) .. ":" ..
+                    tostring(entry.quality) .. "' from " .. player_name)
             end
         else
-            UTIL_ConsolePrint("UTIL_DumpInv: skipping invalid item '" .. tostring(entry.name) .. ":" .. tostring(entry.quality) ..
-                "' from " .. player_name)
+            -- ignore invalid entries
         end
     end
 end
@@ -85,6 +71,11 @@ end
 
 function UTIL_DumpInv(player, force)
     if not player then
+        return false
+    end
+
+    if not prototypes or not prototypes.item or not prototypes.quality then
+        UTIL_ConsolePrint("[ERROR] UTIL_DumpInv: global 'prototypes' is unavailable; aborting inventory dump to avoid item loss.")
         return false
     end
 

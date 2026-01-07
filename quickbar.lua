@@ -482,6 +482,10 @@ function ImportQuickbar(player, data)
 
     --Restore from string
     local items = SplitStr(payload or "", ",")
+    if not prototypes or not prototypes.item or not prototypes.quality then
+        UTIL_SmartPrint(player, "Quickbar Import: global 'prototypes' unavailable; aborting import.")
+        return false
+    end
 
     local error_list = ""
     for i, entry in ipairs(items) do
