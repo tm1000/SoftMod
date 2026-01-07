@@ -105,20 +105,36 @@ function ONELIFE_MakeButton(player)
     if not (player and player.valid and player.gui and player.gui.top) then
         return
     end
+    if not (player.surface and player.surface.valid) then
+        return
+    end
     if player.gui.top.spec_button then
         player.gui.top.spec_button.destroy()
-    end
-    -- Some maps/mods temporarily put players on an "empty_void" surface for a selection/limbo screen.
-    -- Don't touch controller state there, or Factorio will reject entities from other surfaces.
-    if player.surface and player.surface.valid and player.surface.name == "empty_void" then
-        return
     end
 
     if storage.SM_Store.oneLifeMode == false then
         if player.controller_type == defines.controllers.spectator then
+            -- Factorio 2.0 can place players on an "empty_void" surface (e.g. selection/limbo screens).
+            -- Reviving by creating a character on a different surface causes:
+            -- "LuaEntity belongs to surface nauvis ... but ... empty_void was expected."
+            local surface = player.surface
+            if surface.name == "empty_void" then
+                surface = game.surfaces[1]
+                if not (surface and surface.valid) then
+                    return
+                end
+            end
+
+            local position = surface.find_non_colliding_position("character", player.position, 1024, 1, false) or
+                surface.find_non_colliding_position("character", { x = 0, y = 0 }, 1024, 1, false) or { x = 0, y = 0 }
+            player.teleport(position, surface)
+            local character = surface.create_entity({ name = "character", position = position, force = player.force })
+            if not (character and character.valid) then
+                return
+            end
             player.set_controller {
                 type = defines.controllers.character,
-                character = game.surfaces[1].create_entity({ name = "character", position = game.surfaces[1].find_non_colliding_position("character", { x = 0, y = 0 }, 1024, 1, false), force = game.forces.player })
+                character = character
             }
             UTIL_SmartPrint(player, "You have been revived!")
             ONLINE_MarkDirty()
