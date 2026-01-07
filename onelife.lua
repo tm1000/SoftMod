@@ -21,16 +21,26 @@ function ONELIFE_Main(event)
         return
     end
 
-    player.set_controller {
-        type = defines.controllers.spectator
-    }
-    UTIL_SmartPrint(player, "Game over! you are now a spectator.")
-    ONLINE_MarkDirty()
+    -- PlanetPicker mod: it can temporarily put players on an "empty_void" surface (planet selection / limbo) and
+    -- relies on controlling player state. Don't teleport them out or change controller types from SoftMod while there.
+    local surface = player.surface
+    if surface and surface.valid and surface.name == "empty_void" then
+        return
+    end
 
-    if not player.character or not player.character.valid then
+    -- Only switch controller modes when the player is actually in character control.
+    if player.controller_type ~= defines.controllers.character then
         return
     end
     local character = player.character
+    if not (character and character.valid) then
+        return
+    end
+
+    player.set_controller { type = defines.controllers.spectator }
+    UTIL_SmartPrint(player, "Game over! you are now a spectator.")
+    ONLINE_MarkDirty()
+
     -- Stop player states, or they will continue forever
     character.walking_state = {
         walking = false,
@@ -114,15 +124,12 @@ function ONELIFE_MakeButton(player)
 
     if storage.SM_Store.oneLifeMode == false then
         if player.controller_type == defines.controllers.spectator then
-            -- Factorio 2.0 can place players on an "empty_void" surface (e.g. selection/limbo screens).
-            -- Reviving by creating a character on a different surface causes:
-            -- "LuaEntity belongs to surface nauvis ... but ... empty_void was expected."
+            -- PlanetPicker mod uses an "empty_void" surface for planet selection / limbo; do not teleport players out
+            -- of it or change their controller type here, since PlanetPicker expects to manage that transition itself.
             local surface = player.surface
-            if surface.name == "empty_void" then
-                surface = game.surfaces[1]
-                if not (surface and surface.valid) then
-                    return
-                end
+            if surface and surface.valid and surface.name == "empty_void" then
+                UTIL_SmartPrint(player, "Can't revive while on PlanetPicker's 'empty_void' surface; finish selecting a planet first.")
+                return
             end
 
             local position = surface.find_non_colliding_position("character", player.position, 1024, 1, false) or

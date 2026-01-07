@@ -55,6 +55,7 @@ commonly needed utility functions<br>
 <br>
 *onelife.lua*<br>
 permadeath-onelife mode<br>
+PlanetPicker note: SoftMod avoids teleporting players off the `empty_void` surface or forcing controller changes while PlanetPicker is using it for planet selection / limbo.<br>
 <br>
 *quickbar.lua*<br>
 save/restore quickbar via chatwire. Exchange strings now use the `M45-QB2` format. Item names are shortened to two-letter aliases (AA, AB, ...) from a predefined list and qualities use (`u`, `r`, `e`, `l`) when present (e.g. `IP:l` for `iron-plate`).<br>
