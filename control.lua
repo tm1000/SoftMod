@@ -42,7 +42,6 @@ function RunSetup()
     if storage.SM_OldVersion ~= SM_VERSION then
         storage.SM_OldVersion = SM_VERSION
         BANISH_MakeJail()
-        LOGO_DrawLogo(true)
         UTIL_MapPin()
 
         game.forces["player"].friendly_fire = false -- disable friendly fire
