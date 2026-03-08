@@ -515,9 +515,9 @@ function UTIL_Is_New(victim)
 end
 
 function UTIL_SmartPrintColor(victim, message)
-    UTIL_SmartPrint(victim, "[color=red]" .. message .. "[/color]")
-    UTIL_SmartPrint(victim, "[color=cyan]" .. message .. "[/color]")
-    UTIL_SmartPrint(victim, "[color=black]" .. message .. "[/color]")
+    UTIL_SmartPrint(victim, {"", "[color=red]", message, "[/color]"})
+    UTIL_SmartPrint(victim, {"", "[color=cyan]", message, "[/color]"})
+    UTIL_SmartPrint(victim, {"", "[color=black]", message, "[/color]"})
 end
 
 -- Check if player should be considered banished
