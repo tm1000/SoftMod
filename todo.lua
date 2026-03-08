@@ -205,6 +205,10 @@ local function makeTodoSubmenu(player, i, edit_mode)
                 (not player.admin and player.name ~= target.owner and not target.can_edit) then
                 no_edit = true
             end
+            local editing_id = storage.todo_player_editing_id and storage.todo_player_editing_id[player.index] or nil
+            local target_id = target.id or editing_id or 0
+            local target_owner = target.owner or "Unknown"
+            local target_last_user = target.last_user or target_owner
 
             --Mark read
             markNoteIDRead(player, i)
@@ -237,7 +241,7 @@ local function makeTodoSubmenu(player, i, edit_mode)
                         todo_submenu_titlebar.add {
                             type = "label",
                             style = "frame_title",
-                            caption = "To-Do ID# " .. target.id
+                            caption = "To-Do ID# " .. target_id
                         }
                         local pusher = todo_submenu_titlebar.add {
                             type = "empty-widget",
@@ -326,8 +330,8 @@ local function makeTodoSubmenu(player, i, edit_mode)
                         }
                         todo_submenu_body.add {
                             type = "label",
-                            caption = "[font=default-large-bold]Notes:   [/font]" .. "Owner: " .. target.owner ..
-                                ",  Last Edit: " .. target.last_user
+                            caption = "[font=default-large-bold]Notes:   [/font]" .. "Owner: " .. target_owner ..
+                                ",  Last Edit: " .. target_last_user
                         }
 
                         local notes_textbox = todo_submenu_body.add {
@@ -385,7 +389,7 @@ local function makeTodoSubmenu(player, i, edit_mode)
                                     type = "button",
                                     caption = {"strings.todo_unhide"},
                                     style = "red_button",
-                                    name = "m45_todo_hide," .. storage.todo_player_editing_id[player.index]
+                                    name = "m45_todo_hide," .. target_id
                                 }
                                 if no_edit then
                                     delete_button.enabled = false
@@ -395,7 +399,7 @@ local function makeTodoSubmenu(player, i, edit_mode)
                                     type = "button",
                                     caption = {"strings.todo_hide"},
                                     style = "red_button",
-                                    name = "m45_todo_hide," .. storage.todo_player_editing_id[player.index]
+                                    name = "m45_todo_hide," .. target_id
                                 }
                                 if no_edit then
                                     delete_button.enabled = false
@@ -409,7 +413,7 @@ local function makeTodoSubmenu(player, i, edit_mode)
                                 type = "button",
                                 caption = {"strings.todo_save"},
                                 style = "green_button",
-                                name = "m45_todo_save," .. storage.todo_player_editing_id[player.index]
+                                name = "m45_todo_save," .. target_id
                             }
 
                             if no_edit then
