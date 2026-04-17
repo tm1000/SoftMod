@@ -14,6 +14,24 @@ function CMD_AddCommand(name, help, handler)
     commands.add_command(name, help, handler)
 end
 
+function CMD_GetPlayer(param)
+    if param and param.player_index then
+        return game.players[param.player_index]
+    end
+    return nil
+end
+
+function CMD_GetActorName(player)
+    if player and player.valid then
+        return player.name
+    end
+    return "Console"
+end
+
+function CMD_RejectConsole(message)
+    UTIL_SmartPrint(nil, message or "This command can only be used in-game.")
+end
+
 local function cleanSurface(psurface, pforce, delayTick, victim)
     -- Phase 1: Unchart all
     pforce.clear_chart(psurface)
@@ -378,12 +396,13 @@ function CMD_RegisterCommands()
 
         -- register command
         CMD_AddCommand("register", "<code> (Requires a registration code from discord)", function(param)
-            local player
-
-            if param and param.player_index then
-                player = game.players[param.player_index]
-            end
+            local player = CMD_GetPlayer(param)
             if CMD_NoSys(param) then
+                return
+            end
+
+            if not player then
+                CMD_RejectConsole("The console can't register this way.")
                 return
             end
 
@@ -993,12 +1012,12 @@ function CMD_RegisterCommands()
 
         -- Teleport to
         CMD_AddCommand("goto", "Moderators only: goto to <player>", function(param)
-            local player
-
-            if param and param.player_index then
-                player = game.players[param.player_index]
-            end
+            local player = CMD_GetPlayer(param)
             if CMD_NoSys(param) or CMD_ModsOnly(param) then
+                return
+            end
+            if not player then
+                CMD_RejectConsole("The console can't use /goto. This command requires an in-game player.")
                 return
             end
 
@@ -1036,11 +1055,12 @@ function CMD_RegisterCommands()
 
         CMD_AddCommand("tp", "Moderators only: teleport to <x,y>, <surface>, or [gps=x,y] or [gps=x,y,surface]",
             function(param)
-                local player
-                if param and param.player_index then
-                    player = game.players[param.player_index]
-                end
+                local player = CMD_GetPlayer(param)
                 if CMD_NoSys(param) or CMD_ModsOnly(param) then
+                    return
+                end
+                if not player then
+                    CMD_RejectConsole("The console can't use /tp. This command requires an in-game player.")
                     return
                 end
 
@@ -1105,11 +1125,12 @@ function CMD_RegisterCommands()
 
         -- Teleport player to me
         CMD_AddCommand("summon", "Moderators only: summon <player> to me", function(param)
-            local player
-            if param and param.player_index then
-                player = game.players[param.player_index]
-            end
+            local player = CMD_GetPlayer(param)
             if CMD_NoSys(param) or CMD_ModsOnly(param) then
+                return
+            end
+            if not player then
+                CMD_RejectConsole("The console can't use /summon. This command requires an in-game player.")
                 return
             end
 
@@ -1152,8 +1173,8 @@ function CMD_RegisterCommands()
                     return
                 end
 
-                local player = (param and param.player_index) and game.players[param.player_index] or nil
-                local actor_name = player and player.name or "Console"
+                local player = CMD_GetPlayer(param)
+                local actor_name = CMD_GetActorName(player)
 
                 if not param.parameter then
                     UTIL_SmartPrint(player, "Transport who to where?")

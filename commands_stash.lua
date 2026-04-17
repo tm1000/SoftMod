@@ -3,7 +3,10 @@
 function STASH_AddStashCommands()
     CMD_AddCommand("stash", "Donator-only: Stash current weapons, ammo and armor.",
         function(param)
-            if not param or not param.player_index then return end
+            if not param or not param.player_index then
+                CMD_RejectConsole("The console can't use /stash.")
+                return
+            end
             local player = game.players[param.player_index]
 
             if not is_player_valid(player) then
@@ -57,7 +60,10 @@ function STASH_AddStashCommands()
 
     CMD_AddCommand("unstash", "Donator-only: Unstash weapons, ammo and armor.",
         function(param)
-            if not param or not param.player_index then return end
+            if not param or not param.player_index then
+                CMD_RejectConsole("The console can't use /unstash.")
+                return
+            end
             local player = game.players[param.player_index]
 
             if not is_player_valid(player) then

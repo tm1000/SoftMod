@@ -148,79 +148,82 @@ function BANISH_AddBanishCommands()
 
     -- Print votes
     CMD_AddCommand("votes", "(Shows banish votes)", function(param)
-        if param and param.player_index then
-            local player = game.players[param.player_index]
+        local player = CMD_GetPlayer(param)
 
-            if CMD_NoBanished(player) then
-                return
+        if not player then
+            CMD_RejectConsole("The console can't review banish votes this way.")
+            return
+        end
+
+        if CMD_NoBanished(player) then
+            return
+        end
+
+        -- Only if banish data found
+        if storage.SM_Store and storage.SM_Store.votes then
+            -- Print votes
+            local pcount = 0
+            for _, vote in ipairs(storage.SM_Store.votes) do
+                if vote and vote.voter and vote.voter.valid and vote.victim then
+                    local notes = ""
+                    if vote.withdrawn then
+                        notes = "(WITHDRAWN) "
+                    end
+                    if vote.overruled then
+                        notes = "(OVERRULED) "
+                    end
+                    pcount = pcount + 1
+                    UTIL_SmartPrint(player, notes .. "plaintiff: " .. vote.voter.name .. ", defendant: " ..
+                        vote.victim.name .. ", complaint:\n" .. vote.reason)
+                end
             end
 
-            -- Only if banish data found
-            if storage.SM_Store and storage.SM_Store.votes then
-                -- Print votes
-                local pcount = 0
-                for _, vote in ipairs(storage.SM_Store.votes) do
-                    if vote and vote.voter and vote.voter.valid and vote.victim then
-                        local notes = ""
-                        if vote.withdrawn then
-                            notes = "(WITHDRAWN) "
-                        end
-                        if vote.overruled then
-                            notes = "(OVERRULED) "
-                        end
+            -- Tally votes before proceeding
+            BANISH_UpdateVotes()
+
+            local player_indices = {}
+            for player_index, _ in pairs(game.players) do
+                table.insert(player_indices, player_index)
+            end
+            table.sort(player_indices)
+
+            -- Print accused
+            if storage.PData then
+                for _, victim_index in ipairs(player_indices) do
+                    local victim = game.players[victim_index]
+                    if storage.PData[victim.index].banished and storage.PData[victim.index].banished > 0 then
+                        UTIL_SmartPrint(player, victim.name .. " has had " .. storage.PData[victim.index].banished ..
+                            " complaints against them.")
                         pcount = pcount + 1
-                        UTIL_SmartPrint(player, notes .. "plaintiff: " .. vote.voter.name .. ", defendant: " ..
-                            vote.victim.name .. ", complaint:\n" .. vote.reason)
                     end
                 end
-
-                -- Tally votes before proceeding
-                BANISH_UpdateVotes()
-
-                local player_indices = {}
-                for player_index, _ in pairs(game.players) do
-                    table.insert(player_indices, player_index)
-                end
-                table.sort(player_indices)
-
-                -- Print accused
-                if storage.PData then
-                    for _, victim_index in ipairs(player_indices) do
-                        local victim = game.players[victim_index]
-                        if storage.PData[victim.index].banished and storage.PData[victim.index].banished > 0 then
-                            UTIL_SmartPrint(player, victim.name .. " has had " .. storage.PData[victim.index].banished ..
-                                " complaints against them.")
-                            pcount = pcount + 1
-                        end
-                    end
-                end
-                -- Show summery of votes against them
-                if storage.SM_Store.votes then
-                    for _, victim_index in ipairs(player_indices) do
-                        local victim = game.players[victim_index]
-                        local votecount = 0
-                        for _, vote in ipairs(storage.SM_Store.votes) do
-                            if victim == vote.voter then
-                                votecount = votecount + 1
-                            end
-                        end
-                        if votecount > 2 then
-                            UTIL_SmartPrint(player, victim.name .. " has voted against " .. votecount .. " players.")
-                            pcount = pcount + 1
-                        end
-                    end
-                end
-                -- Nothing found, report it
-                if pcount <= 0 then
-                    UTIL_SmartPrint(player, "The docket is clean.")
-                end
-                return
-            else
-                -- No vote data
-                UTIL_SmartPrint(player, "The docket is clean.")
-                BANISH_UpdateVotes()
-                return
             end
+            -- Show summery of votes against them
+            if storage.SM_Store.votes then
+                for _, victim_index in ipairs(player_indices) do
+                    local victim = game.players[victim_index]
+                    local votecount = 0
+                    for _, vote in ipairs(storage.SM_Store.votes) do
+                        if victim == vote.voter then
+                            votecount = votecount + 1
+                        end
+                    end
+                    if votecount > 2 then
+                        UTIL_SmartPrint(player, victim.name .. " has voted against " .. votecount .. " players.")
+                        pcount = pcount + 1
+                    end
+                end
+            end
+            -- Nothing found, report it
+            if pcount <= 0 then
+                UTIL_SmartPrint(player, "The docket is clean.")
+            end
+            return
+        else
+            -- No vote data
+            UTIL_SmartPrint(player, "The docket is clean.")
+            BANISH_UpdateVotes()
+            return
         end
     end)
 
@@ -289,30 +292,32 @@ function BANISH_AddBanishCommands()
     -- Banish command
     CMD_AddCommand("banish", "<player> <reason for banishment>\n(Sends player to a confined area, off-map)",
         function(param)
-            if param and param.player_index then
-                local player = game.players[param.player_index]
-
-                if not param.parameter then
-                    UTIL_SmartPrint(player, "Banish who?")
-                    return
-                end
-                local args = UTIL_SplitStr(param.parameter, " ")
-                if not args[2] then
-                    UTIL_SmartPrint(player, "You must specify a reason.")
-                    return
-                end
-                local victim = game.players[args[1]]
-
-                -- Quick arg combine
-                local reason = table.concat(args, " ", 2)
-
-                if UTIL_Is_Banished(victim) then
-                    UTIL_SmartPrint(player, "They are already banished!")
-                    return
-                end
-
-                BANISH_DoBanish(player, victim, reason)
+            local player = CMD_GetPlayer(param)
+            if not player then
+                CMD_RejectConsole("The console can't file banish votes.")
+                return
             end
+
+            if not param.parameter then
+                UTIL_SmartPrint(player, "Banish who?")
+                return
+            end
+            local args = UTIL_SplitStr(param.parameter, " ")
+            if not args[2] then
+                UTIL_SmartPrint(player, "You must specify a reason.")
+                return
+            end
+            local victim = game.players[args[1]]
+
+            -- Quick arg combine
+            local reason = table.concat(args, " ", 2)
+
+            if UTIL_Is_Banished(victim) then
+                UTIL_SmartPrint(player, "They are already banished!")
+                return
+            end
+
+            BANISH_DoBanish(player, victim, reason)
         end)
 
     -- User report command
