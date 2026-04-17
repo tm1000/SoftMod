@@ -557,7 +557,7 @@ function UTIL_Is_Banished(victim)
         end
 
         --Has enough votes against them
-        if storage.PData and storage.PData[victim.index] and storage.PData[victim.index].banished and storage.PData[victim.index].banished > pointsNeeded then
+        if storage.PData and storage.PData[victim.index] and storage.PData[victim.index].banished and storage.PData[victim.index].banished >= pointsNeeded then
             return true
         else
             return false

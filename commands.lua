@@ -272,7 +272,7 @@ function CMD_RegisterCommands()
                         local victim = game.players[param.parameter]
 
                         if victim then
-                            if storage.PData[victim.index].permDeath then
+                            if ONELIFE_IsRevivable(victim) then
                                 storage.SM_Store.oneLifeMode = false
                                 ONELIFE_MakeButton(victim)
                                 storage.SM_Store.oneLifeMode = true
@@ -391,7 +391,7 @@ function CMD_RegisterCommands()
                 UTIL_SmartPrint(player, "New player restrictions enabled.")
                 return
             end
-            STORAGE_MakePlayerStorage()
+            UTIL_SmartPrint(player, "options: on, off")
         end)
 
         -- register command

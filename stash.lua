@@ -225,9 +225,11 @@ function move_items_to_inventory_or_leave(source_inv, target_inv)
         local stack = source_inv[i]
         if stack.valid_for_read then
             local stack_to_transfer = stack_definition_from_stack(stack)
-            if target_inv.can_insert(stack_to_transfer) then
-                local inserted = target_inv.insert(stack_to_transfer)
-                if inserted > 0 then
+            local inserted = target_inv.insert(stack_to_transfer)
+            if inserted > 0 then
+                if inserted < stack.count then
+                    stack.count = stack.count - inserted
+                else
                     stack.clear()
                 end
             end

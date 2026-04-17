@@ -272,7 +272,8 @@ function BANISH_DoJail(victim)
         UTIL_MsgAll(victim.name .. " moved to jailed group.")
     end
 
-    storage.PData[victim.index].playScore = 0
+    storage.PData[victim.index].score = 0
+    storage.PData[victim.index].lastPromoScore = 0
     UTIL_DumpInv(victim, true)
     UTIL_MsgAllSys(victim.name ..
         "'s inventory has been dumped at spawn so the items can be recovered.")

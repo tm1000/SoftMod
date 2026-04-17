@@ -9,7 +9,8 @@ function PERMS_MakeNew(player, victim)
             UTIL_MsgAll(victim.name .. " is now reset!")
             if storage.PData and storage.PData[victim.index] then
                 storage.PData[victim.index].level = 0
-                storage.PData[victim.index].playScore = 0
+                storage.PData[victim.index].score = 0
+                storage.PData[victim.index].lastPromoScore = 0
             end
             if victim and storage.SM_Store.defGroup then
                 storage.SM_Store.defGroup.add_player(victim)

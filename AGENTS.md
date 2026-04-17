@@ -19,6 +19,13 @@
   <https://lua-api.factorio.com/latest/index.html>
 - Standard Lua 5.2 reference manual:
   <https://www.lua.org/manual/5.2/>
+- Local parser tooling available in this repo environment:
+  - `lua5.2`
+  - `luac5.2`
+- These tools are useful for basic Lua 5.2 syntax checks only.
+- They do not validate Factorio-specific globals, runtime APIs, event payloads, `storage` behavior, or mod loading semantics.
+- Example syntax check:
+  - `for f in *.lua; do luac5.2 -p "$f"; done`
 
 ## Practical Limitations
 

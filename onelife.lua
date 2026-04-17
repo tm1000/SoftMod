@@ -4,6 +4,13 @@
 -- License: MPL 2.0
 -- Safe console print
 
+function ONELIFE_IsRevivable(player)
+    return player
+       and player.valid
+       and player.controller_type == defines.controllers.spectator
+       and (not player.character or not player.character.valid)
+end
+
 function ONELIFE_Main(event)
     if not storage.SM_Store.oneLifeMode then
         return
@@ -96,7 +103,7 @@ function ONELIFE_Clicks(event)
         -- Otherwise confirm
         if storage.PData[player.index].permDeath then
             if storage.PData[player.index].permDeath >= 2 then
-                storage.PData[player.index].permDeath = nil
+                storage.PData[player.index].permDeath = 0
                 player.character.die("player")
                 ONELIFE_Main(event)
                 return
@@ -123,7 +130,7 @@ function ONELIFE_MakeButton(player)
     end
 
     if storage.SM_Store.oneLifeMode == false then
-        if player.controller_type == defines.controllers.spectator then
+        if ONELIFE_IsRevivable(player) then
             -- PlanetPicker mod uses an "empty_void" surface for planet selection / limbo; do not teleport players out
             -- of it or change their controller type here, since PlanetPicker expects to manage that transition itself.
             local surface = player.surface
