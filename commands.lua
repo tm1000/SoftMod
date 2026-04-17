@@ -1152,7 +1152,8 @@ function CMD_RegisterCommands()
                     return
                 end
 
-                local player = game.players[param.player_index]
+                local player = (param and param.player_index) and game.players[param.player_index] or nil
+                local actor_name = player and player.name or "Console"
 
                 if not param.parameter then
                     UTIL_SmartPrint(player, "Transport who to where?")
@@ -1219,14 +1220,14 @@ function CMD_RegisterCommands()
                     UTIL_SmartPrint(player,
                         "You transported " ..
                         victim.name .. " to (" .. xpos .. "," .. ypos .. ") on '" .. surface.name .. "'.")
-                    UTIL_SmartPrint(victim, player.name .. " has transported you.")
+                    UTIL_SmartPrint(victim, actor_name .. " has transported you.")
                 elseif surface then
                     local position = { x = 0, y = 0 }
                     local newpos = surface.find_non_colliding_position("character", position, 1024, 1, false)
                     victim.teleport(newpos or position, surface)
                     UTIL_SmartPrint(player,
                         "You transported " .. victim.name .. " to the spawn of '" .. surface.name .. "'.")
-                    UTIL_SmartPrint(victim, player.name .. " has transported you.")
+                    UTIL_SmartPrint(victim, actor_name .. " has transported you.")
                 else
                     UTIL_SmartPrint(player, "Transport target location invalid.")
                 end
