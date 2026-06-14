@@ -383,24 +383,24 @@ function INFO_InfoWin(player)
                 type = "label",
                 caption = "  "
             }
-            -- relay url
-            local relay_label = tab1_info_top.add {
-                type = "label",
-                caption = {"strings.info_relay_label"}
-            }
-            relay_label.style.font = "default-large"
-            tab1_info_top.add {
-                type = "text-box",
-                name = "relay_url",
-                text = "http://eu.m45sci.xyz",
-                tooltip = {"strings.copy_tooltip"}
-            }
-            tab1_info_top.relay_url.style.font = "default-large"
-            tab1_info_top.relay_url.style.minimal_width = 350
-            tab1_info_top.add {
-                type = "label",
-                caption = "  "
-            }
+            -- -- relay url
+            -- local relay_label = tab1_info_top.add {
+            --     type = "label",
+            --     caption = {"strings.info_relay_label"}
+            -- }
+            -- relay_label.style.font = "default-large"
+            -- tab1_info_top.add {
+            --     type = "text-box",
+            --     name = "relay_url",
+            --     text = "http://eu.m45sci.xyz",
+            --     tooltip = {"strings.copy_tooltip"}
+            -- }
+            -- tab1_info_top.relay_url.style.font = "default-large"
+            -- tab1_info_top.relay_url.style.minimal_width = 350
+            -- tab1_info_top.add {
+            --     type = "label",
+            --     caption = "  "
+            -- }
 
             -- localization contribution url
             local locale_label = tab1_info_top.add {
