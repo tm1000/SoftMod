@@ -375,6 +375,111 @@ local function QUICKBAR_GenerateItemAliases()
     end
 end
 
+local QUICKBAR_uses_paged_slots
+
+local function QUICKBAR_UsesPagedSlots()
+    if QUICKBAR_uses_paged_slots ~= nil then
+        return QUICKBAR_uses_paged_slots
+    end
+
+    local ok, active_mods = pcall(function()
+        return script.active_mods
+    end)
+    local base_version = ok and active_mods and active_mods["base"] or nil
+    if base_version then
+        local major, minor = base_version:match("^(%d+)%.(%d+)")
+        major = tonumber(major)
+        minor = tonumber(minor)
+        QUICKBAR_uses_paged_slots = (major and major > 2) or (major == 2 and minor and minor >= 1)
+    else
+        QUICKBAR_uses_paged_slots = false
+    end
+
+    return QUICKBAR_uses_paged_slots
+end
+
+local function QUICKBAR_GetPageSlot(player, index)
+    local width = 10
+    local ok, quick_bar_width = pcall(function()
+        return player.quick_bar_width
+    end)
+    if ok and type(quick_bar_width) == "number" and quick_bar_width > 0 then
+        width = quick_bar_width
+    end
+
+    return math.floor((index - 1) / width) + 1, ((index - 1) % width) + 1
+end
+
+local function QUICKBAR_GetSlot(player, index)
+    if QUICKBAR_UsesPagedSlots() then
+        local page_index, slot_index = QUICKBAR_GetPageSlot(player, index)
+        return player.get_quick_bar_slot(page_index, slot_index)
+    end
+
+    return player.get_quick_bar_slot(index)
+end
+
+local function QUICKBAR_SetSlot(player, index, filter)
+    if QUICKBAR_UsesPagedSlots() then
+        local page_index, slot_index = QUICKBAR_GetPageSlot(player, index)
+        player.set_quick_bar_slot(page_index, slot_index, filter)
+        return
+    end
+
+    player.set_quick_bar_slot(index, filter)
+end
+
+local function QUICKBAR_GetItemAndQuality(filter)
+    if not filter then
+        return nil, nil
+    end
+    if type(filter) == "string" then
+        return filter, nil
+    end
+
+    local name = filter.name
+    if name ~= nil and type(name) ~= "string" and name.name then
+        name = name.name
+    end
+
+    local quality = filter.quality
+    if quality ~= nil and type(quality) ~= "string" and quality.name then
+        quality = quality.name
+    end
+
+    return name, quality
+end
+
+local function QUICKBAR_GetSlotItemAndQuality(slot)
+    if not slot then
+        return nil, nil
+    end
+
+    if slot.filter then
+        return QUICKBAR_GetItemAndQuality(slot.filter)
+    end
+    if slot.item then
+        return QUICKBAR_GetItemAndQuality(slot.item)
+    end
+
+    return QUICKBAR_GetItemAndQuality(slot)
+end
+
+local function QUICKBAR_MakeSlotFilter(item, quality)
+    if QUICKBAR_UsesPagedSlots() then
+        local filter = { name = item }
+        if quality and quality ~= "normal" then
+            filter.quality = quality
+        end
+        return { type = "filter", filter = filter }
+    end
+
+    if quality and quality ~= "normal" then
+        return { name = item, quality = quality }
+    end
+    return item
+end
+
 function ExportQuickbar(player, limit)
     if not player or not player.valid then
         return
@@ -391,30 +496,25 @@ function ExportQuickbar(player, limit)
     end
 
     for i = 1, maxExport do
-        local slot = player.get_quick_bar_slot(i)
+        local slot = QUICKBAR_GetSlot(player, i)
         if slot ~= nil then
-            local quality = slot.quality
-            if quality ~= nil and type(quality) ~= "string" and quality.name then
-                quality = quality.name
-            end
+            local name, quality = QUICKBAR_GetSlotItemAndQuality(slot)
             quality = quality or "normal"
 
-            local name = slot.name
-            if name ~= nil and type(name) ~= "string" and name.name then
-                name = name.name
-            end
-            local ialias = ITEM_ALIAS[name]
-            if ialias then
-                outbuf = outbuf .. ialias
-            else
-                outbuf = outbuf .. name
-            end
-            if quality ~= "normal" then
-                local alias = QUALITY_ALIAS[quality]
-                if alias then
-                    outbuf = outbuf .. ":" .. alias
+            if name then
+                local ialias = ITEM_ALIAS[name]
+                if ialias then
+                    outbuf = outbuf .. ialias
                 else
-                    outbuf = outbuf .. ":" .. quality
+                    outbuf = outbuf .. name
+                end
+                if quality ~= "normal" then
+                    local alias = QUALITY_ALIAS[quality]
+                    if alias then
+                        outbuf = outbuf .. ":" .. alias
+                    else
+                        outbuf = outbuf .. ":" .. quality
+                    end
                 end
             end
         end
@@ -477,7 +577,7 @@ function ImportQuickbar(player, data)
 
     --Clear all bars
     for i = 1, 100 do
-        player.set_quick_bar_slot(i, nil)
+        QUICKBAR_SetSlot(player, i, nil)
     end
 
     --Restore from string
@@ -513,11 +613,7 @@ function ImportQuickbar(player, data)
             local valid_quality = prototypes.quality[quality]
 
             if valid_item and valid_quality then
-                if quality ~= "normal" then
-                    player.set_quick_bar_slot(i, { name = item, quality = quality })
-                else
-                    player.set_quick_bar_slot(i, item)
-                end
+                QUICKBAR_SetSlot(player, i, QUICKBAR_MakeSlotFilter(item, quality))
             else
                 if error_list ~= "" then
                     error_list = error_list .. ", "
