@@ -48,4 +48,5 @@
 
 - For command handlers, resolve the caller defensively and support console/RCON only when semantics are clear without a player body or position.
 - When a command is player-only, reject console explicitly with a clear message instead of silently no-oping.
+- Do not treat every nil/index crash as a bug. Some impossible-state paths are intentionally fail-fast so server operators see corrupted state, broken setup, or invalid invariants instead of silently continuing.
 - Prefer official Factorio docs over forum posts, blogs, or stale wiki advice when changing runtime behavior.
