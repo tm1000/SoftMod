@@ -123,7 +123,11 @@ function UTIL_DumpInv(player, force)
         return false
     end
 
-    corpse.active = true
+    -- corpse.active = true
+    -- Commented out: character corpses are already active by default (so their
+    -- time_to_live decay still runs), and as of Factorio 2.1.8 LuaEntity.active
+    -- is read-only. Assigning to it raises "LuaEntity::active is read only" and
+    -- crashes the scenario.
 
     local inv_corpse = corpse.get_inventory(defines.inventory.character_corpse)
 
