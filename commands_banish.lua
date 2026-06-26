@@ -94,8 +94,16 @@ function BANISH_AddBanishCommands()
 
             -- Moderator only
             if storage.SM_Store and storage.SM_Store.votes then
+                local input = (param and param.parameter) or ""
+                input = input:match("^%s*(.-)%s*$")
+                if input == "" then
+                    UTIL_SmartPrint(player,
+                        "Who do you want to overrule votes against? <player> or <clear> (clears/unbanishes all)")
+                    return
+                end
+
                 -- get arguments
-                local args = UTIL_SplitStr(param.parameter, " ")
+                local args = UTIL_SplitStr(input, " ")
 
                 -- Must have arguments
                 if args and args[1] ~= "" then
