@@ -362,12 +362,12 @@ function BANISH_DoBanish(player, victim, reason)
                                         -- Count player's total votes, cap them
                                         if vote.voter == player then
                                             votecount = votecount + 1
-                                        end
-                                        -- Limit number of votes player gets
-                                        if not vote.voter.admin and votecount >= 5 then
-                                            UTIL_SmartPrint(player,
-                                                "You have exhausted your voting privilege for this map.")
-                                            return
+                                            -- Limit number of votes player gets
+                                            if not vote.voter.admin and votecount >= 5 then
+                                                UTIL_SmartPrint(player,
+                                                    "You have exhausted your voting privilege for this map.")
+                                                return
+                                            end
                                         end
 
                                         -- Can't vote twice

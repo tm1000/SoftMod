@@ -188,7 +188,7 @@ function CMD_RegisterCommands()
 
                 if pforce then
                     if string.lower(param.parameter) == "off" then
-                        storage.SM_Store.noBlueprints = false
+                        storage.SM_Store.noBlueprints = true
                         PERMS_SetBlueprintsAllowed(storage.SM_Store.defGroup, false)
                         PERMS_SetBlueprintsAllowed(storage.SM_Store.memGroup, false)
                         PERMS_SetBlueprintsAllowed(storage.SM_Store.regGroup, false)
@@ -196,7 +196,7 @@ function CMD_RegisterCommands()
                         PERMS_SetBlueprintsAllowed(storage.SM_Store.modGroup, false)
                         UTIL_SmartPrint(player, "blueprints disabled...")
                     elseif string.lower(param.parameter) == "on" then
-                        storage.SM_Store.noBlueprints = true
+                        storage.SM_Store.noBlueprints = false
                         PERMS_SetBlueprintsAllowed(storage.SM_Store.defGroup, true)
                         PERMS_SetBlueprintsAllowed(storage.SM_Store.memGroup, true)
                         PERMS_SetBlueprintsAllowed(storage.SM_Store.regGroup, true)
