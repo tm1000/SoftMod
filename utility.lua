@@ -571,6 +571,18 @@ function UTIL_Is_Banished(victim)
     return false
 end
 
+-- As of Factorio 2.1.7, LuaPlayer.teleport() no longer implicitly exits remote
+-- view. When SoftMod forcibly relocates a player (banish, send-to-spawn) we want
+-- the old behavior: after the move the player should be looking at their body,
+-- not still spectating the old location. exit_remote_view() is a safe no-op when
+-- the player is not in remote view; we additionally gate on controller_type so we
+-- only ever touch players that are actually spectating.
+function UTIL_ExitRemoteView(victim)
+    if victim and victim.valid and victim.controller_type == defines.controllers.remote then
+        victim.exit_remote_view()
+    end
+end
+
 function UTIL_SendToDefaultSpawn(victim)
     if victim and victim.character then
         local nsurf = game.surfaces[1] -- Find default surface
@@ -584,6 +596,7 @@ function UTIL_SendToDefaultSpawn(victim)
                 UTIL_ConsolePrint("[ERROR] send_to_default_spawn: victim does not have a valid force.")
             end
             local newpos = nsurf.find_non_colliding_position("character", spawnpos, 1024, 1, false)
+            UTIL_ExitRemoteView(victim)
             if newpos then
                 victim.teleport(newpos, nsurf)
             else
@@ -609,6 +622,7 @@ function UTIL_SendToSpawn(victim)
                 UTIL_ConsolePrint("[ERROR] send_to_surface_spawn: victim force invalid")
             end
             local newpos = nsurf.find_non_colliding_position("character", spawnpos, 1024, 1, false)
+            UTIL_ExitRemoteView(victim)
             if newpos then
                 victim.teleport(newpos, nsurf)
             else

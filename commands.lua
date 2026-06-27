@@ -1035,6 +1035,7 @@ function CMD_RegisterCommands()
                         victim.physical_position, 1024,
                         1, false)
                     if (newpos) then
+                        UTIL_ExitRemoteView(player)
                         player.teleport(newpos, victim.physical_surface)
                         if player and victim then
                             UTIL_SmartPrint(player, "You goto " .. victim.name)
@@ -1104,6 +1105,7 @@ function CMD_RegisterCommands()
                 if xpos and ypos then
                     local position = { x = xpos, y = ypos }
                     local newpos = surface.find_non_colliding_position("character", position, 1024, 1, false)
+                    UTIL_ExitRemoteView(player)
                     if newpos then
                         player.teleport(newpos, surface)
                         UTIL_SmartPrint(player,
@@ -1116,6 +1118,7 @@ function CMD_RegisterCommands()
                 elseif surface then
                     local position = { x = 0, y = 0 }
                     local newpos = surface.find_non_colliding_position("character", position, 1024, 1, false)
+                    UTIL_ExitRemoteView(player)
                     player.teleport(newpos or position, surface)
                     UTIL_SmartPrint(player, "You teleport to spawn of surface '" .. surface.name .. "'.")
                 else
@@ -1151,6 +1154,7 @@ function CMD_RegisterCommands()
                         player.physical_position, 1024,
                         1, false)
                     if (newpos) then
+                        UTIL_ExitRemoteView(victim)
                         victim.teleport(newpos, player.physical_surface)
                         if player and victim then
                             UTIL_SmartPrint(player, victim.name .. " suddenly appears before you.")
@@ -1237,6 +1241,7 @@ function CMD_RegisterCommands()
                         newpos = position
                         UTIL_ConsolePrint("[ERROR] transport: unable to find non_colliding_position.")
                     end
+                    UTIL_ExitRemoteView(victim)
                     victim.teleport(newpos, surface)
                     UTIL_SmartPrint(player,
                         "You transported " ..
@@ -1245,6 +1250,7 @@ function CMD_RegisterCommands()
                 elseif surface then
                     local position = { x = 0, y = 0 }
                     local newpos = surface.find_non_colliding_position("character", position, 1024, 1, false)
+                    UTIL_ExitRemoteView(victim)
                     victim.teleport(newpos or position, surface)
                     UTIL_SmartPrint(player,
                         "You transported " .. victim.name .. " to the spawn of '" .. surface.name .. "'.")

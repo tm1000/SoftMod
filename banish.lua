@@ -443,6 +443,7 @@ function BANISH_SendToSurface(player)
                             index = i
                             break
                         end
+                        UTIL_ExitRemoteView(player)
                         if item.position then
                             local newpos = surf.find_non_colliding_position("character", item.position, 1024, 1,
                                 false)
