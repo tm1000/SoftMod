@@ -26,6 +26,15 @@
 - They do not validate Factorio-specific globals, runtime APIs, event payloads, `storage` behavior, or mod loading semantics.
 - Example syntax check:
   - `for f in *.lua; do luac5.2 -p "$f"; done`
+- If `lua5.2`/`luac5.2` are not installed locally, run the parse check against a
+  real Lua 5.2 in Docker. Do not rely on a newer host `luac` (e.g. Lua 5.5):
+  newer versions reject code that is valid in 5.2 and report false positives. For
+  example, Lua 5.5 makes generic-`for` loop control variables const, so
+  reassigning a loop variable (legal in 5.2, and done in `UTIL_Dump`) fails to
+  compile under 5.5.
+  - `docker run --rm -v "$PWD":/work -w /work nickblah/lua:5.2-alpine sh -c 'for f in *.lua; do luac -p "$f"; done'`
+  - This is parse-only; like the local tooling it does not validate Factorio
+    globals, runtime APIs, event payloads, or `storage` behavior.
 
 ## Practical Limitations
 
@@ -50,3 +59,16 @@
 - When a command is player-only, reject console explicitly with a clear message instead of silently no-oping.
 - Do not treat every nil/index crash as a bug. Some impossible-state paths are intentionally fail-fast so server operators see corrupted state, broken setup, or invalid invariants instead of silently continuing.
 - Prefer official Factorio docs over forum posts, blogs, or stale wiki advice when changing runtime behavior.
+
+## Versioning
+
+- `version.lua` returns a single string identifying the current build. Bump it
+  whenever you make a user-facing change (it is shown in-game / logged).
+- Format: `<build>-<MM.DD.YYYY>-<time>`
+  - `<build>`: monotonically increasing integer. Increment by 1 for a new
+    change (e.g. `660` -> `661`).
+  - `<MM.DD.YYYY>`: the date of the change, zero-padded month and day.
+  - `<time>`: clock time as `Hmm` followed by `a` (AM) or `p` (PM); the hour may
+    be zero-padded. Examples: `850a` = 8:50 AM, `821p` = 8:21 PM, `0530p` = 5:30 PM.
+- Example: `return "661-06.27.2026-850a"`
+- Edit only the string in `version.lua`; do not change its return shape.
