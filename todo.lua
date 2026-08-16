@@ -334,6 +334,22 @@ local function makeTodoSubmenu(player, i, edit_mode)
                                 ",  Last Edit: " .. target_last_user
                         }
 
+                        local location_label = todo_submenu_body.add {
+                            type = "label",
+                            name = "m45_todo_gps," .. target_id,
+                            caption = {
+                                "",
+                                "[font=default-bold]",
+                                {"strings.todo_location_label"},
+                                "[/font] ",
+                                target.gps and
+                                    ("[gps=" .. target.gps.x .. "," .. target.gps.y .. "," .. target.gps.surface .. "]") or
+                                    {"strings.todo_location_none"}
+                            },
+                            tooltip = target.gps and {"strings.todo_location_tooltip"} or nil
+                        }
+                        location_label.style.rich_text_setting = defines.rich_text_setting.enabled
+
                         local notes_textbox = todo_submenu_body.add {
                             type = "text-box",
                             text = target.text,
@@ -403,6 +419,47 @@ local function makeTodoSubmenu(player, i, edit_mode)
                                 }
                                 if no_edit then
                                     delete_button.enabled = false
+                                end
+                            end
+                            local loc_spacer = todo_save_frame.add {
+                                type = "empty-widget"
+                            }
+                            loc_spacer.style.width = 16
+                            if target.gps then
+                                local update_loc_button = todo_save_frame.add {
+                                    type = "button",
+                                    caption = {"strings.todo_update_location"},
+                                    style = "green_button",
+                                    name = "m45_todo_setloc," .. target_id,
+                                    tooltip = {"strings.todo_update_location_tooltip"}
+                                }
+                                if no_edit then
+                                    update_loc_button.enabled = false
+                                end
+                                local clear_loc_spacer = todo_save_frame.add {
+                                    type = "empty-widget"
+                                }
+                                clear_loc_spacer.style.width = 8
+                                local clear_loc_button = todo_save_frame.add {
+                                    type = "button",
+                                    caption = {"strings.todo_clear_location"},
+                                    style = "red_button",
+                                    name = "m45_todo_clearloc," .. target_id,
+                                    tooltip = {"strings.todo_clear_location_tooltip"}
+                                }
+                                if no_edit then
+                                    clear_loc_button.enabled = false
+                                end
+                            else
+                                local loc_button = todo_save_frame.add {
+                                    type = "button",
+                                    caption = {"strings.todo_set_location"},
+                                    style = "green_button",
+                                    name = "m45_todo_setloc," .. target_id,
+                                    tooltip = {"strings.todo_set_location_tooltip"}
+                                }
+                                if no_edit then
+                                    loc_button.enabled = false
                                 end
                             end
                             local lock_spacer = todo_save_frame.add {
@@ -611,10 +668,16 @@ function TODO_MakeWindow(player)
                             can_edit = false
                         end
 
-                        local gps_spacer = pframe.add {
-                            type = "empty-widget"
+                        local gps_label = pframe.add {
+                            type = "label",
+                            name = "m45_todo_gps," .. target.id, -- pass-item
+                            caption = target.gps and
+                                ("[gps=" .. target.gps.x .. "," .. target.gps.y .. "," .. target.gps.surface .. "]") or
+                                "",
+                            tooltip = target.gps and {"strings.todo_location_tooltip"} or nil
                         }
-                        gps_spacer.style.width = 54
+                        gps_label.style.width = 54
+                        gps_label.style.rich_text_setting = defines.rich_text_setting.enabled
                         local id_label = pframe.add {
                             type = "label",
                             caption = target.id
@@ -910,7 +973,12 @@ local function guiClick(event)
                     last_user = player.name,
                     can_edit = true,
                     id = storage.todo_list_id,
-                    hidden = false
+                    hidden = false,
+                    gps = {
+                        x = math.floor(player.physical_position.x),
+                        y = math.floor(player.physical_position.y),
+                        surface = player.physical_surface.name
+                    }
                 })
 
                 updateTodoCount()
@@ -965,6 +1033,72 @@ local function guiClick(event)
                     end
                 else
                     UTIL_SmartPrint(player, {"strings.todo_id_error", id})
+                end
+            elseif args and args[2] and (args[1] == "m45_todo_setloc" or args[1] == "m45_todo_clearloc") then
+                ----------------------------------------------------------------
+                if player and player.valid then
+                    local id = tonumber(args[2]) -- Grab passed ID
+                    local i = id_to_index(id)    -- Find by ID, index can change
+                    if i > 0 then                -- If we found the note
+                        local target = storage.todo_list[i]
+                        local no_edit = false
+                        if UTIL_Is_New(player) or
+                            (not player.admin and player.name ~= target.owner and not target.can_edit) then
+                            no_edit = true
+                        end
+
+                        if no_edit then
+                            UTIL_SmartPrint(player, {"strings.todo_save_error"})
+                        else
+                            if not storage.todo_throttle then
+                                storage.todo_throttle = {}
+                            end
+                            if storage.todo_throttle[player.index] and
+                                game.tick - storage.todo_throttle[player.index] < (60 * 5) then -- 5 seconds
+                                UTIL_SmartPrintColor(player, {"strings.todo_changes_throttle"})
+                                return
+                            end
+                            storage.todo_throttle[player.index] = game.tick
+
+                            if args[1] == "m45_todo_clearloc" then
+                                target.gps = nil
+                                UTIL_ConsolePrint("[TODO] " .. player.name .. " cleared location for todo item: " ..
+                                    todo_key(i))
+                            else
+                                target.gps = {
+                                    x = math.floor(player.physical_position.x),
+                                    y = math.floor(player.physical_position.y),
+                                    surface = player.physical_surface.name
+                                }
+                                UTIL_ConsolePrint("[TODO] " .. player.name .. " updated location for todo item: " ..
+                                    todo_key(i))
+                            end
+                            target.last_user = player.name
+                            target.time = game.tick
+
+                            -- Refresh windows and reopen the submenu with the updated location
+                            updateTODOWindows()
+                            makeTodoSubmenu(player, i, true)
+                        end
+                    else
+                        UTIL_SmartPrint(player, {"strings.todo_id_error", id})
+                    end
+                end
+            elseif args and args[2] and args[1] == "m45_todo_gps" then
+                ----------------------------------------------------------------
+                local id = tonumber(args[2]) -- Grab passed ID
+                local i = id_to_index(id)    -- Find by ID, index can change
+                if i > 0 and storage.todo_list[i].gps then
+                    local gps = storage.todo_list[i].gps
+                    if game.surfaces[gps.surface] then
+                        player.set_controller({
+                            type = defines.controllers.remote,
+                            position = { x = gps.x, y = gps.y },
+                            surface = gps.surface
+                        })
+                    else
+                        UTIL_SmartPrint(player, {"strings.todo_location_missing_surface"})
+                    end
                 end
             elseif args and args[2] and args[1] == "m45_todo_save" then
                 ----------------------------------------------------------------
