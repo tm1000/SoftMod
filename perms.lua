@@ -3,6 +3,8 @@
 -- GitHub: https://github.com/M45-Science/SoftMod
 -- License: MPL 2.0
 
+local CONFIG = require("config")
+
 function PERMS_MakeNew(player, victim)
     if victim  then
             UTIL_SmartPrint(player, "Player set to new.")
@@ -410,7 +412,7 @@ function PERMS_WelcomeMember(player)
                 lframe.style.padding = 4
                 lframe.add {
                     type = "sprite",
-                    sprite = "file/img/info-win/m45-128.png",
+                    sprite = CONFIG.logo_info_win,
                     tooltip = ""
                 }
 
@@ -460,7 +462,7 @@ function PERMS_WelcomeMember(player)
                 local m45_32 = rframe.add {
                     type = "sprite-button",
                     name = "m45_button",
-                    sprite = "file/img/buttons/m45-64.png",
+                    sprite = CONFIG.logo_button,
                     tooltip = "Opens the server-info window."
                 }
                 m45_32.style.size = { 64, 64 }

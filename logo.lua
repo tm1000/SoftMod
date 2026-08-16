@@ -3,6 +3,8 @@
 -- GitHub: https://github.com/M45-Science/SoftMod
 -- License: MPL 2.0
 
+local CONFIG = require("config")
+
 -- Add M45 Logo to spawn area
 function LOGO_DrawLogo(force)
     local function pos_components(pos)
@@ -75,7 +77,7 @@ function LOGO_DrawLogo(force)
 
 
         storage.SM_Store.spawnLogo = rendering.draw_sprite {
-            sprite = "file/img/world/m45-pad-v6.png",
+            sprite = CONFIG.logo_spawn_pad,
             render_layer = "floor",
             target = newPos,
             x_scale = 0.5,
@@ -103,7 +105,7 @@ function LOGO_DrawLogo(force)
             }
         end
         storage.SM_Store.inviteText = rendering.draw_text {
-            text = "discord.gg/rQANzBheVh",
+            text = CONFIG.discord_display,
             draw_on_ground = true,
             surface = msurf,
             target = { newPos.x - 0.125, newPos.y + 1.5 },
@@ -113,7 +115,7 @@ function LOGO_DrawLogo(force)
             scale_with_zoom = false
         }
         storage.SM_Store.webText = rendering.draw_text {
-            text = "m45sci.xyz",
+            text = CONFIG.website_display,
             draw_on_ground = true,
             surface = msurf,
             target = { newPos.x - 0.125, newPos.y + 2.5 },

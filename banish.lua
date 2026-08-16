@@ -3,6 +3,8 @@
 -- GitHub: https://github.com/M45-Science/SoftMod
 -- License: MPL 2.0
 
+local CONFIG = require("config")
+
 function BANISH_UnbanishPlayer(victim)
     if not victim then
         return
@@ -202,7 +204,8 @@ local function informBanished(victim)
             }
             banished_main.add {
                 type = "label",
-                caption = "[font=default-large]Moderators will review the public action-logs on m45sci.xyz and perm-ban you if the vote-banish was for good a reason.[/font]"
+                caption = "[font=default-large]Moderators will review the public action-logs on " ..
+                    CONFIG.website_display .. " and perm-ban you if the vote-banish was for good a reason.[/font]"
             }
             banished_main.add {
                 type = "label",

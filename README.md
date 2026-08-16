@@ -21,6 +21,11 @@ Allows regulars to vote-ban players,<br>
 *commands.lua*<br>
 Server, moderator and player commands<br>
 <br>
+*config.lua*<br>
+Server/community branding: Discord invite, website, patreon, server-list URL,
+and identity sprites (logo, QR codes). Edit this file to rebrand for a
+different server without touching the rest of the codebase.<br>
+<br>
 *control.lua*<br>
 Main, loads modules<br>
 <br>

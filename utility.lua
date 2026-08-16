@@ -4,6 +4,8 @@
 -- License: MPL 2.0
 -- Safe console print
 
+local CONFIG = require("config")
+
 local function UTIL_HasValidItemPrototype(name, quality)
     if not game or type(name) ~= "string" then
         return false
@@ -169,7 +171,7 @@ function UTIL_MapPin()
         storage.SM_Store.mapPin = nil
     end
     if (not storage.SM_Store.mapPin) then
-        local label = "https://discord.gg/rQANzBheVh"
+        local label = CONFIG.discord_url
 
         local chartTag = {
             position = UTIL_GetDefaultSpawn(),

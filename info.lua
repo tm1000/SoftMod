@@ -3,6 +3,8 @@
 -- GitHub: https://github.com/M45-Science/SoftMod
 -- License: MPL 2.0
 
+local CONFIG = require("config")
+
 function INFO_MakeClock(player)
     -- Online button--
     if player.gui.top.reset_clock then
@@ -32,8 +34,8 @@ function INFO_MakeButton(player)
         local m45_32 = player.gui.top.add {
             type = "sprite-button",
             name = "m45_button",
-            sprite = "file/img/buttons/m45-64.png",
-            tooltip = {"strings.m45_button_tooltip"}
+            sprite = CONFIG.logo_button,
+            tooltip = {"strings.m45_button_tooltip", CONFIG.community_name}
         }
         m45_32.style.size = { 64, 64 }
     end
@@ -175,12 +177,12 @@ function INFO_InfoWin(player)
             tab1_lframe.style.padding = 4
             tab1_lframe.add {
                 type = "sprite",
-                sprite = "file/img/info-win/m45-128.png",
+                sprite = CONFIG.logo_info_win,
                 tooltip = ""
             }
             local m45_label = tab1_lframe.add {
                 type = "label",
-                caption = {"strings.info_m45_science"}
+                caption = {"strings.info_m45_science", CONFIG.community_name}
             }
             m45_label.style.font = "default-large-bold"
             tab1_lframe.add {
@@ -368,13 +370,13 @@ function INFO_InfoWin(player)
             }
             local maps_label = tab1_info_top.add {
                 type = "label",
-                caption = {"strings.info_other_maps_label"}
+                caption = {"strings.info_other_maps_label", CONFIG.community_short}
             }
             maps_label.style.font = "default-large"
             tab1_info_top.add {
                 type = "text-box",
                 name = "server_list",
-                text = "http://factorio.go-game.net/?tag=M45",
+                text = CONFIG.server_list_url,
                 tooltip = {"strings.copy_tooltip"}
             }
             tab1_info_top.server_list.style.font = "default-large"
@@ -451,7 +453,7 @@ function INFO_InfoWin(player)
             commands_newmap.style.font = "default-large"
             local commands_web = tab1_discord_sub1_frame.add {
                 type = "label",
-                caption = {"strings.info_commands_website"}
+                caption = {"strings.info_commands_website", CONFIG.website_display}
             }
             commands_web.style.font = "default-large"
 
@@ -464,13 +466,13 @@ function INFO_InfoWin(player)
             tab1_discord_sub2_frame.add {
                 type = "sprite",
                 name = "tab1_discord_logo",
-                sprite = "file/img/info-win/discord-64.png",
+                sprite = CONFIG.discord_icon,
                 tooltip = ""
             }
             tab1_discord_sub2_frame.add {
                 type = "text-box",
                 name = "discord_url",
-                text = "https://discord.gg/rQANzBheVh",
+                text = CONFIG.discord_url,
                 tooltip = {"strings.copy_tooltip"}
             }
 
@@ -772,7 +774,8 @@ function INFO_InfoWin(player)
             }
             tab3_main_frame.add {
                 type = "label",
-                caption = {"", "[font=default-large-bold]8: [item=locomotive] ", {"strings.info_rule8"}, "[/font]"}
+                caption = {"", "[font=default-large-bold]8: [item=locomotive] ",
+                    {"strings.info_rule8", CONFIG.website_display, CONFIG.reddit_handle}, "[/font]"}
             }
 
             -- Close Button Frame
@@ -803,12 +806,12 @@ function INFO_InfoWin(player)
             tab5_qr_frame.add {
                 type = "sprite",
                 name = "tab1_discord_logo",
-                sprite = "file/img/info-win/discord-64.png",
+                sprite = CONFIG.discord_icon,
                 tooltip = ""
             }
             local durl = tab5_qr_frame.add {
                 type = "text-box",
-                text = "https://discord.gg/rQANzBheVh",
+                text = CONFIG.discord_url,
                 name = "discord_url",
                 tooltip = {"strings.copy_tooltip"}
             }
@@ -819,7 +822,7 @@ function INFO_InfoWin(player)
             }
             local tab5_qr = tab5_qr_frame.add {
                 type = "sprite",
-                sprite = "file/img/info-win/m45-qr.png",
+                sprite = CONFIG.discord_qr,
                 tooltip = "Just open camera on a cellphone!"
             }
             tab5_qr_frame.add {
@@ -852,12 +855,12 @@ function INFO_InfoWin(player)
             tab6_qr_frame.add {
                 type = "sprite",
                 name = "tab6_patreon_logo",
-                sprite = "file/img/info-win/patreon-64.png",
+                sprite = CONFIG.patreon_icon,
                 tooltip = ""
             }
             local purl = tab6_qr_frame.add {
                 type = "text-box",
-                text = "https://www.patreon.com/m45sci",
+                text = CONFIG.patreon_url,
                 name = "patreon_url",
                 tooltip = {"strings.copy_tooltip"}
             }
@@ -868,7 +871,7 @@ function INFO_InfoWin(player)
             }
             local tab6_qr = tab6_qr_frame.add {
                 type = "sprite",
-                sprite = "file/img/info-win/patreon-qr.png",
+                sprite = CONFIG.patreon_qr,
                 tooltip = "Just open camera on a cellphone!"
             }
             tab6_qr_frame.add {
@@ -989,13 +992,13 @@ function INFO_TextChanged(event)
         local player = game.players[event.player_index]
 
         if event.element.name == "discord_url" then
-            event.element.text = "https://discord.gg/rQANzBheVh"
+            event.element.text = CONFIG.discord_url
         elseif event.element.name == "server_list" then
-            event.element.text = "http://factorio.go-game.net/?tag=M45"
+            event.element.text = CONFIG.server_list_url
         elseif event.element.name == "relay_url" then
             event.element.text = "http://eu.m45sci.xyz"
         elseif event.element.name == "patreon_url" then
-            event.element.text = "https://www.patreon.com/m45sci"
+            event.element.text = CONFIG.patreon_url
         end
     end
 end
