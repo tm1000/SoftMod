@@ -6,34 +6,34 @@
 return {
     -- Discord invite shown to players (full link, and a bare "domain/code"
     -- form used for compact in-world text near spawn).
-    discord_url = "https://discord.gg/rQANzBheVh",
-    discord_display = "discord.gg/rQANzBheVh",
+    discord_url = "https://discord.gg/nFCrGkxjf7",
+    discord_display = "discord.gg/nFCrGkxjf7",
 
     -- Community website.
-    website_url = "https://m45sci.xyz",
-    website_display = "m45sci.xyz",
+    website_url = "https://e81.us",
+    website_display = "e81.us",
 
     -- Patreon page.
-    patreon_url = "https://www.patreon.com/m45sci",
+    patreon_url = "",
 
     -- Factorio server-browser search URL tagged to this community.
-    server_list_url = "http://factorio.go-game.net/?tag=M45",
+    server_list_url = "",
 
     -- Community subreddit, shown as plain text (not a clickable link).
-    reddit_handle = "/r/M45Sci",
+    reddit_handle = "",
 
     -- Community display name, used in the info window and tooltips.
-    community_name = "M45-Science",
-    community_short = "M45",
+    community_name = "E81",
+    community_short = "E81",
 
     -- Server-identity sprites (spawn logo, info-window logo, QR codes).
     -- Generic functional icons (todo list, online list, force-delete, etc.)
     -- are not branding and stay hardcoded in their own files.
-    logo_spawn_pad = "file/img/world/m45-pad-v6.png",
+    logo_spawn_pad = "file/img/world/e81-pad.png",
     logo_button = "file/img/buttons/m45-64.png",
-    logo_info_win = "file/img/info-win/m45-128.png",
+    logo_info_win = "file/img/info-win/e81-128.png",
     discord_icon = "file/img/info-win/discord-64.png",
-    discord_qr = "file/img/info-win/m45-qr.png",
+    discord_qr = "file/img/info-win/e81-discord.png",
     patreon_icon = "file/img/info-win/patreon-64.png",
     patreon_qr = "file/img/info-win/patreon-qr.png",
 }

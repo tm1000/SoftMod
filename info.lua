@@ -364,27 +364,27 @@ function INFO_InfoWin(player)
             end
 
             -- server list URL
-            tab1_info_top.add {
-                type = "label",
-                caption = ""
-            }
-            local maps_label = tab1_info_top.add {
-                type = "label",
-                caption = {"strings.info_other_maps_label", CONFIG.community_short}
-            }
-            maps_label.style.font = "default-large"
-            tab1_info_top.add {
-                type = "text-box",
-                name = "server_list",
-                text = CONFIG.server_list_url,
-                tooltip = {"strings.copy_tooltip"}
-            }
-            tab1_info_top.server_list.style.font = "default-large"
-            tab1_info_top.server_list.style.minimal_width = 350
-            tab1_info_top.add {
-                type = "label",
-                caption = "  "
-            }
+            -- tab1_info_top.add {
+            --     type = "label",
+            --     caption = ""
+            -- }
+            -- local maps_label = tab1_info_top.add {
+            --    type = "label",
+            --    caption = {"strings.info_other_maps_label", CONFIG.community_short}
+            -- }
+            -- maps_label.style.font = "default-large"
+            -- tab1_info_top.add {
+            --     type = "text-box",
+            --     name = "server_list",
+            --     text = CONFIG.server_list_url,
+            --     tooltip = {"strings.copy_tooltip"}
+            -- }
+            --  tab1_info_top.server_list.style.font = "default-large"
+            --   tab1_info_top.server_list.style.minimal_width = 350
+            -- tab1_info_top.add {
+            --     type = "label",
+            --     caption = "  "
+            -- }
             -- -- relay url
             -- local relay_label = tab1_info_top.add {
             --     type = "label",
@@ -405,23 +405,23 @@ function INFO_InfoWin(player)
             -- }
 
             -- localization contribution url
-            local locale_label = tab1_info_top.add {
-                type = "label",
-                caption = {"strings.info_locale_label"}
-            }
-            locale_label.style.font = "default-large"
-            tab1_info_top.add {
-                type = "text-box",
-                name = "locale_url",
-                text = "https://github.com/M45-Science/SoftMod/tree/main/locale",
-                tooltip = {"strings.copy_tooltip"}
-            }
-            tab1_info_top.locale_url.style.font = "default-large"
-            tab1_info_top.locale_url.style.minimal_width = 500
-            tab1_info_top.add {
-                type = "label",
-                caption = "  "
-            }
+            -- local locale_label = tab1_info_top.add {
+            --     type = "label",
+            --     caption = {"strings.info_locale_label"}
+            -- }
+            -- locale_label.style.font = "default-large"
+            -- tab1_info_top.add {
+            --     type = "text-box",
+            --     name = "locale_url",
+            --     text = "https://github.com/M45-Science/SoftMod/tree/main/locale",
+            --     tooltip = {"strings.copy_tooltip"}
+            -- }
+            -- tab1_info_top.locale_url.style.font = "default-large"
+            -- tab1_info_top.locale_url.style.minimal_width = 500
+            -- tab1_info_top.add {
+            --     type = "label",
+            --     caption = "  "
+            -- }
 
             -- Tab 1 Main -- Discord
             local tab1_discord_frame = tab1_rframe.add {
@@ -772,11 +772,11 @@ function INFO_InfoWin(player)
                 type = "label",
                 caption = ""
             }
-            tab3_main_frame.add {
-                type = "label",
-                caption = {"", "[font=default-large-bold]8: [item=locomotive] ",
-                    {"strings.info_rule8", CONFIG.website_display, CONFIG.reddit_handle}, "[/font]"}
-            }
+            -- tab3_main_frame.add {
+            --     type = "label",
+            --     caption = {"", "[font=default-large-bold]8: [item=locomotive] ",
+            --         {"strings.info_rule8", CONFIG.website_display, CONFIG.reddit_handle}, "[/font]"}
+            -- }
 
             -- Close Button Frame
             local tab3_close_frame = tab3_main_frame.add {
@@ -839,51 +839,51 @@ function INFO_InfoWin(player)
             --------------
             --- Patreon    ---
             ---------------
-            local tab6_frame = info_pane.add {
-                type = "flow",
-                direction = "vertical"
-            }
+            -- local tab6_frame = info_pane.add {
+            --     type = "flow",
+            --     direction = "vertical"
+            -- }
 
-            local tab6_qr_frame = tab6_frame.add {
-                type = "flow",
-                direction = "vertical"
-            }
-            tab6_qr_frame.style.horizontally_stretchable = true
-            tab6_qr_frame.style.vertically_stretchable = true
-            tab6_qr_frame.style.horizontal_align = "center"
-            tab6_qr_frame.style.vertical_align = "center"
-            tab6_qr_frame.add {
-                type = "sprite",
-                name = "tab6_patreon_logo",
-                sprite = CONFIG.patreon_icon,
-                tooltip = ""
-            }
-            local purl = tab6_qr_frame.add {
-                type = "text-box",
-                text = CONFIG.patreon_url,
-                name = "patreon_url",
-                tooltip = {"strings.copy_tooltip"}
-            }
-            purl.style.minimal_width = 350
-            tab6_qr_frame.add {
-                type = "label",
-                caption = ""
-            }
-            local tab6_qr = tab6_qr_frame.add {
-                type = "sprite",
-                sprite = CONFIG.patreon_qr,
-                tooltip = "Just open camera on a cellphone!"
-            }
-            tab6_qr_frame.add {
-                type = "label",
-                caption = ""
-            }
-            tab6_qr_frame.add {
-                type = "label",
-                caption = {"strings.info_qr_hint"}
-            }
+            -- local tab6_qr_frame = tab6_frame.add {
+            --     type = "flow",
+            --     direction = "vertical"
+            -- }
+            -- tab6_qr_frame.style.horizontally_stretchable = true
+            -- tab6_qr_frame.style.vertically_stretchable = true
+            -- tab6_qr_frame.style.horizontal_align = "center"
+            -- tab6_qr_frame.style.vertical_align = "center"
+            -- tab6_qr_frame.add {
+            --     type = "sprite",
+            --     name = "tab6_patreon_logo",
+            --     sprite = CONFIG.patreon_icon,
+            --     tooltip = ""
+            -- }
+            -- local purl = tab6_qr_frame.add {
+            --     type = "text-box",
+            --     text = CONFIG.patreon_url,
+            --     name = "patreon_url",
+            --     tooltip = {"strings.copy_tooltip"}
+            -- }
+            -- purl.style.minimal_width = 350
+            -- tab6_qr_frame.add {
+            --     type = "label",
+            --     caption = ""
+            -- }
+            -- local tab6_qr = tab6_qr_frame.add {
+            --     type = "sprite",
+            --     sprite = CONFIG.patreon_qr,
+            --     tooltip = "Just open camera on a cellphone!"
+            -- }
+            -- tab6_qr_frame.add {
+            --     type = "label",
+            --     caption = ""
+            -- }
+            -- tab6_qr_frame.add {
+            --     type = "label",
+            --     caption = {"strings.info_qr_hint"}
+            -- }
 
-            info_pane.add_tab(tab6, tab6_frame)
+            -- info_pane.add_tab(tab6, tab6_frame)
         end
         local tab_index = 1
         if storage and storage.PData and storage.PData[player.index] and storage.PData[player.index].info_tab_index then
