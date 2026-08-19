@@ -270,6 +270,31 @@ function UTIL_IsNatural(entity)
     return false
 end
 
+-- Find a player by name, falling back to a case-insensitive match.
+-- ChatWire stores names lowercased in its player DB, so the system commands
+-- it writes to us (/member, /regular, /veteran) arrive with the case stripped.
+-- game.players is an exact-match lookup, so those would silently fail for any
+-- name containing uppercase. The scan only runs when the exact match misses.
+function UTIL_FindPlayer(name)
+    if not name or name == "" then
+        return nil
+    end
+
+    local victim = game.players[name]
+    if victim and victim.valid then
+        return victim
+    end
+
+    local lname = string.lower(name)
+    for _, player in pairs(game.players) do
+        if player.valid and string.lower(player.name) == lname then
+            return player
+        end
+    end
+
+    return nil
+end
+
 -- Smart/safe Print
 function UTIL_SmartPrint(player, message)
     if message then
