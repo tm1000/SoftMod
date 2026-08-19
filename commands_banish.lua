@@ -15,7 +15,7 @@ function BANISH_AddBanishCommands()
 
             -- Only if name provided
             if param.parameter then
-                local victim = game.players[param.parameter]
+                local victim = UTIL_FindPlayer(param.parameter)
 
                 if (victim) then
                     STORAGE_MakePlayerStorage(victim)
@@ -47,7 +47,7 @@ function BANISH_AddBanishCommands()
 
             -- Only if name provided
             if param.parameter then
-                local victim = game.players[param.parameter]
+                local victim = UTIL_FindPlayer(param.parameter)
 
                 if (victim) then
                     STORAGE_MakePlayerStorage(victim)

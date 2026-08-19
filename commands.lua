@@ -269,7 +269,7 @@ function CMD_RegisterCommands()
                             ONELIFE_MakeButton(victim)
                         end
                     elseif storage.SM_Store.oneLifeMode then
-                        local victim = game.players[param.parameter]
+                        local victim = UTIL_FindPlayer(param.parameter)
 
                         if victim then
                             if ONELIFE_IsRevivable(victim) then
@@ -345,7 +345,7 @@ function CMD_RegisterCommands()
                 local target = player
 
                 if param and param.parameter then
-                    victim = game.players[param.parameter]
+                    victim = UTIL_FindPlayer(param.parameter)
                 end
 
                 if victim then
@@ -522,7 +522,7 @@ function CMD_RegisterCommands()
 
             -- Argument needed
             if param.parameter then
-                local victim = game.players[param.parameter]
+                local victim = UTIL_FindPlayer(param.parameter)
                 PERMS_MakeNew(player, victim)
                 return
             end
@@ -542,7 +542,7 @@ function CMD_RegisterCommands()
 
             -- Argument required
             if param.parameter then
-                local victim = game.players[param.parameter]
+                local victim = UTIL_FindPlayer(param.parameter)
 
                 if not victim then
                     UTIL_SmartPrint(player, "Player not found.")
@@ -562,9 +562,10 @@ function CMD_RegisterCommands()
 
             -- Argument required
             if param.parameter then
-                local victim = game.players[param.parameter]
+                local victim = UTIL_FindPlayer(param.parameter)
                 if not victim then
                     UTIL_SmartPrint(player, "Player not found.")
+                    UTIL_ConsolePrint("[ERROR] /veteran: player not found: " .. param.parameter)
                     return
                 end
                 PERMS_MakeVeteran(player, victim)
@@ -580,9 +581,10 @@ function CMD_RegisterCommands()
 
             -- Argument required
             if param.parameter then
-                local victim = game.players[param.parameter]
+                local victim = UTIL_FindPlayer(param.parameter)
                 if not victim then
                     UTIL_SmartPrint(player, "Player not found.")
+                    UTIL_ConsolePrint("[ERROR] /regular: player not found: " .. param.parameter)
                     return
                 end
                 PERMS_MakeRegular(player, victim)
@@ -598,7 +600,7 @@ function CMD_RegisterCommands()
 
             -- Argument required
             if param.parameter then
-                local victim = game.players[param.parameter]
+                local victim = UTIL_FindPlayer(param.parameter)
 
                 if (victim) then
                     if victim then
@@ -629,7 +631,7 @@ function CMD_RegisterCommands()
 
             -- Argument required
             if param.parameter then
-                local victim = game.players[param.parameter]
+                local victim = UTIL_FindPlayer(param.parameter)
 
                 if (victim) then
                     if victim then
@@ -1023,7 +1025,7 @@ function CMD_RegisterCommands()
 
             -- Argument required
             if param.parameter then
-                local victim = game.players[param.parameter]
+                local victim = UTIL_FindPlayer(param.parameter)
 
                 if victim == player then
                     UTIL_SmartPrint(player, "You can't goto yourself, are you having an identity crisis?")
@@ -1139,7 +1141,7 @@ function CMD_RegisterCommands()
 
             -- Argument required
             if param.parameter then
-                local victim = game.players[param.parameter]
+                local victim = UTIL_FindPlayer(param.parameter)
                 if UTIL_Is_Banished(victim) then
                     UTIL_SmartPrint(player, "They are in jail, use /unjail <name>")
                     return
