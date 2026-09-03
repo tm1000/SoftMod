@@ -282,7 +282,8 @@ script.on_event(
 		        .on_player_flushed_fluid, defines.events.on_player_driving_changed_state, defines.events.on_player_banned,
 		        defines.events.on_player_rotated_entity, defines.events.on_player_flipped_entity, defines.events
 	        .on_pre_player_mined_item, defines.events.on_built_entity, defines.events.on_gui_opened,
-		        defines.events.on_player_promoted, defines.events.on_player_demoted, defines.events.on_tick}, function(event)
+		        defines.events.on_player_promoted, defines.events.on_player_demoted,
+		        defines.events.on_permission_group_edited, defines.events.on_tick}, function(event)
 	        -- If no event, or event is a tick
 	        if not event or (event and event.name == defines.events.on_tick) then
 	            ChunkPurge()
@@ -337,6 +338,17 @@ script.on_event(
                 if player and player.valid then
                     PERMS_PromotePlayer(player)
                     FORCEDEL_MakeButton(player)
+                end
+            end
+        elseif event.name == defines.events.on_permission_group_edited then
+            -- Fires for our own PERMS_MakeX() group.add_player() calls too, not
+            -- just manual /permissions GUI moves -- PERMS_SyncLevelFromGroup is
+            -- idempotent (it just re-reads the live group), so that's harmless.
+            if (event.type == "add-player" or event.type == "remove-player") and event.other_player_index then
+                local player = game.players[event.other_player_index]
+                if player and player.valid then
+                    PERMS_SyncLevelFromGroup(player)
+                    ONLINE_MarkDirty()
                 end
             end
         elseif event.name == defines.events.on_gui_text_changed then
