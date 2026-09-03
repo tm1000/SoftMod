@@ -67,6 +67,48 @@ function PERMS_MakeVeteran(player, victim)
     end
 end
 
+-- Keep storage.PData[].level in sync with the player's actual permission group.
+-- UTIL_Is_Veteran/Regular/Member/etc. OR a live group-name check against this
+-- cached level as a fallback for mods that mess with permission groups. That
+-- cache is only ever written by our own PERMS_MakeX()/promotion functions, so
+-- any group change that bypasses them (most commonly a moderator dragging a
+-- player between groups in the native /permissions GUI) leaves it stale --
+-- the OR then keeps reporting the player's old, higher role forever, since
+-- nothing ever clears it. Call this after any permission group change so the
+-- cache always reflects the live group.
+function PERMS_SyncLevelFromGroup(player)
+    if not player or not player.valid then
+        return
+    end
+    if not storage.PData or not storage.PData[player.index] then
+        return
+    end
+    if not storage.SM_Store or not player.permission_group then
+        return
+    end
+
+    local gname = player.permission_group.name
+    local level = 0
+
+    if player.admin then
+        level = 255
+    elseif storage.SM_Store.vetGroup and gname == storage.SM_Store.vetGroup.name then
+        level = 3
+    elseif storage.SM_Store.regGroup and gname == storage.SM_Store.regGroup.name then
+        level = 2
+    elseif storage.SM_Store.memGroup and gname == storage.SM_Store.memGroup.name then
+        level = 1
+    elseif storage.SM_Store.defGroup and gname == storage.SM_Store.defGroup.name then
+        level = 0
+    else
+        -- Jailed, or an unrecognized group (e.g. another mod's): leave the
+        -- cached level as-is rather than guessing.
+        return
+    end
+
+    storage.PData[player.index].level = level
+end
+
 -- Create player groups if they don't exist, and create storage links to them
 -- Actions that the default group should never be allowed to perform
 local DEF_GROUP_ALWAYS_DISABLED = {
